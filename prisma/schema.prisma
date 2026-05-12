@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MemberStatus {
+  pending
+  approved
+  rejected
+  inactive
+  removed
+}
+
+enum Gender {
+  Male
+  Female
+  NonBinary
+  PreferNotToSay
+}
+
+model Member {
+  id                  String       @id @default(uuid())
+  student_number      String       @unique
+  full_name           String
+  email               String
+  scholar_email       String?
+  year_level          Int
+  section             String
+  course              String?
+  gender              Gender?
+  skills              String[]
+  why_join            String?      @db.Text
+  expectations        String?      @db.Text
+  cor_url             String?
+  proof_of_share_url  String?
+  sticker_id          String?
+  status              MemberStatus @default(pending)
+  sbg_id              String?      @unique
+  school_year         String?
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
+
+  @@index([student_number])
+  @@index([status])
+  @@index([course])
+  @@index([gender])
+}
+
+model SchoolYear {
+  id         String   @id @default(uuid())
+  label      String   @unique
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+}
