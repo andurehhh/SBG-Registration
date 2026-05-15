@@ -6,7 +6,7 @@ import { validateBody } from "../middleware/validate";
 import { registrationBodySchema } from "../lib/validations";
 import { sanitize } from "../lib/utils";
 import { driveService } from "../services/drive";
-import db from "../lib/db";
+import db, { withRetry } from "../lib/db";
 
 export const membersRouter = Router();
 
@@ -64,10 +64,10 @@ membersRouter.post(
 
       // Check for duplicate student number
       // Allow re-registration if previous record is inactive or rejected
-      const existing = await db.member.findUnique({
+      const existing = await withRetry(() => db.member.findUnique({
         where: { student_number: body.student_number },
         select: { id: true, status: true },
-      });
+      }));
 
       if (existing) {
         if (existing.status === "pending" || existing.status === "approved") {
@@ -80,7 +80,7 @@ membersRouter.post(
           return;
         }
         // inactive or rejected — delete old record so they can re-register fresh
-        await db.member.delete({ where: { id: existing.id } });
+        await withRetry(() => db.member.delete({ where: { id: existing.id } }));
       }
 
       // Upload files to Google Drive
@@ -100,7 +100,7 @@ membersRouter.post(
       ]);
 
       // Sanitize text inputs
-      const member = await db.member.create({
+      const member = await withRetry(() => db.member.create({
         data: {
           full_name: sanitize(body.full_name),
           student_number: body.student_number,
@@ -118,7 +118,7 @@ membersRouter.post(
           status: "pending",
         },
         select: { id: true },
-      });
+      }));
 
       res.status(201).json({ success: true, data: { id: member.id } });
     } catch (error) {
