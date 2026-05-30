@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { CheckCircle, XCircle, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { ApplicantDetailModal } from './ApplicantDetailModal'
-import { api } from '../../lib/api'
+import { edgeFn } from '../../lib/api'
 import type { Member } from '../../types'
 
 interface PendingApplicantListProps {
@@ -19,7 +19,7 @@ export function PendingApplicantList({ members, onRefresh }: PendingApplicantLis
     e.stopPropagation()
     setActionLoading(`approve-${member.id}`)
     try {
-      await api.post(`/api/admin/members/${member.id}/approve`)
+      await edgeFn.post(`approve`, { id: member.id })
       onRefresh()
     } finally {
       setActionLoading(null)
@@ -30,7 +30,7 @@ export function PendingApplicantList({ members, onRefresh }: PendingApplicantLis
     e.stopPropagation()
     setActionLoading(`reject-${member.id}`)
     try {
-      await api.post(`/api/admin/members/${member.id}/reject`)
+      await edgeFn.post(`reject`, { id: member.id })
       onRefresh()
     } finally {
       setActionLoading(null)

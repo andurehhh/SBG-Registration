@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { X, ExternalLink, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Badge } from '../ui/Badge'
-import { api, ApiError } from '../../lib/api'
+import { edgeFn, ApiError } from '../../lib/api'
 import type { Member, MemberStatus } from '../../types'
 
 interface ApplicantDetailModalProps {
@@ -21,7 +21,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
     setIsApproving(true)
     setActionError(null)
     try {
-      await api.post(`/api/admin/members/${member.id}/approve`)
+      await edgeFn.post(`approve`, { id: member.id })
       onAction()
       onClose()
     } catch (err) {
@@ -35,7 +35,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
     setIsRejecting(true)
     setActionError(null)
     try {
-      await api.post(`/api/admin/members/${member.id}/reject`)
+      await edgeFn.post(`reject`, { id: member.id })
       onAction()
       onClose()
     } catch (err) {

@@ -2,7 +2,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Users, BarChart2, Megaphone, LogOut } from 'lucide-react'
 import { useAdminStore } from '../../store/admin'
-import { api } from '../../lib/api'
 
 const NAV_ITEMS = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -13,15 +12,10 @@ const NAV_ITEMS = [
 
 export function AdminSidebar() {
   const navigate = useNavigate()
-  const { clearAuth } = useAdminStore()
+  const { logout } = useAdminStore()
 
   async function handleLogout() {
-    try {
-      await api.post('/api/auth/logout')
-    } catch {
-      // Ignore errors — clear auth regardless
-    }
-    clearAuth()
+    await logout()
     navigate('/admin/login', { replace: true })
   }
 

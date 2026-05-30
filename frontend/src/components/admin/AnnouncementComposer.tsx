@@ -6,7 +6,7 @@ import { Textarea } from '../ui/Textarea'
 import { Select } from '../ui/Select'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
-import { api, ApiError } from '../../lib/api'
+import { supabase, edgeFn, ApiError } from '../../lib/api'
 import type { Member, AnnouncementPayload, MemberStatus, PaginatedResponse } from '../../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -136,20 +136,17 @@ function MemberSelector({ selectedIds, onToggle }: MemberSelectorProps) {
     setLoading(true)
     setError(null)
 
-    api.get<PaginatedResponse<Member>>('/api/admin/members?status=approved&limit=500')
-      .then((res) => {
-        if (!cancelled && res.success) {
-          const raw = res as unknown as { success: true; data: Member[] }
-          setMembers(raw.data ?? [])
-        }
-      })
-      .catch((err) => {
+    supabase
+      .from('Member')
+      .select('id, email, full_name')
+      .eq('status', 'approved')
+      .limit(500)
+      .then(({ data, error }) => {
         if (!cancelled) {
-          setError(err instanceof ApiError ? err.message : 'Failed to load members')
+          if (error) setError('Failed to load members')
+          else setMembers(data ?? [])
+          setLoading(false)
         }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
       })
 
     return () => { cancelled = true }
@@ -319,10 +316,8 @@ export function AnnouncementComposer() {
     }
 
     try {
-      const result = await api.post<SendResult>('/api/admin/announcements/send', payload)
-      if (result.success) {
-        setSendResult(result.data)
-      }
+      const result = await edgeFn.post<SendResult>('send-announcement', payload)
+      if (result.success) setSendResult(result.data)
     } catch (err) {
       if (err instanceof ApiError) {
         // 207 Partial success — data may still contain sent/failed counts

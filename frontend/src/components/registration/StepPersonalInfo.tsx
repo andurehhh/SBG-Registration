@@ -7,7 +7,6 @@ import { Select } from '../ui/Select'
 import { Button } from '../ui/Button'
 import { useRegistrationStore } from '../../store/registration'
 import { registrationStep1Schema, AWS_INTERESTS, type RegistrationStep1Data } from '../../lib/validations'
-import { api, ApiError } from '../../lib/api'
 import type { Gender } from '../../types'
 
 const COURSE_OPTIONS = [
@@ -47,7 +46,6 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
     handleSubmit,
     control,
     watch,
-    setError,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegistrationStep1Data>({
@@ -68,38 +66,6 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
   const selectedCourse = watch('course')
 
   async function onSubmit(data: RegistrationStep1Data) {
-      // Check for duplicate student number — only block if pending or approved
-      // Inactive and rejected members are allowed to re-register
-      try {
-        const result = await api.get<{ status: string }>(`/api/members/lookup?student_number=${encodeURIComponent(data.student_number)}`)
-        if (result.success) {
-          // Member is approved and active — block
-          setError('student_number', {
-            message: 'This student number already has an active membership.',
-          })
-          return
-        }
-        if (!result.success) {
-          const status = result.error
-          if (status === 'pending') {
-            setError('student_number', {
-              message: 'This student number already has a pending application.',
-            })
-            return
-          }
-          // 'inactive', 'rejected', 'removed' — allow re-registration, fall through
-        }
-      } catch (err) {
-        if (err instanceof ApiError && err.status === 404) {
-          // Not found — good, proceed
-        } else if (err instanceof ApiError && err.status === 429) {
-          setError('student_number', { message: 'Too many requests. Please try again later.' })
-          return
-        }
-        // Other errors — proceed anyway
-      }
-
-    // Save to store
     store.setField('full_name', data.full_name)
     store.setField('student_number', data.student_number)
     store.setField('course', data.course)

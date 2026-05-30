@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
 import { AdminSidebar } from './AdminSidebar'
 import { useAdminStore } from '../../store/admin'
-import { api, ApiError } from '../../lib/api'
+import { supabase } from '../../lib/supabase'
 
 export function AdminLayout() {
   const { isAuthenticated, setAuth, clearAuth } = useAdminStore()
@@ -15,24 +15,14 @@ export function AdminLayout() {
       return
     }
 
-    // Verify session via GET /api/auth/me
-    api
-      .get<{ adminId: string }>('/api/auth/me')
-      .then((result) => {
-        if (result.success) {
-          setAuth(result.data.adminId)
-        } else {
-          clearAuth()
-        }
-      })
-      .catch((err) => {
-        if (err instanceof ApiError && err.status === 401) {
-          clearAuth()
-        }
-      })
-      .finally(() => {
-        setIsChecking(false)
-      })
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        setAuth(data.session.user.id, data.session.access_token)
+      } else {
+        clearAuth()
+      }
+      setIsChecking(false)
+    })
   }, [isAuthenticated, setAuth, clearAuth])
 
   if (isChecking) {

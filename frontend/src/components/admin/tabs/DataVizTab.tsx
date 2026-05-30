@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Users, UserCheck, Clock, UserX, RefreshCw } from 'lucide-react'
 import { BarChartCard, PieChartCard } from '../Charts'
 import { Button } from '../../ui/Button'
-import { api } from '../../../lib/api'
+import { supabase } from '../../../lib/api'
 import type { DashboardStats } from '../../../types'
 
 interface StatCardProps {
@@ -60,34 +60,63 @@ export function DataVizTab() {
 
   // Fetch available school years on mount
   useEffect(() => {
-    api.get<string[]>('/api/admin/stats/school-years')
-      .then((res) => {
-        if (res.success) {
-          setSchoolYears(res.data)
-          // Default to the most recent term
-          if (res.data.length > 0) setSelectedYear(res.data[0])
-        }
+    supabase
+      .from('Member')
+      .select('school_year')
+      .not('school_year', 'is', null)
+      .then(({ data }) => {
+        const years = [...new Set((data ?? []).map((r) => r.school_year as string))].sort().reverse()
+        setSchoolYears(years)
+        if (years.length > 0) setSelectedYear(years[0])
       })
-      .catch(() => {/* silently ignore */})
   }, [])
 
   // Fetch stats whenever selected year changes
   useEffect(() => {
     setIsLoading(true)
     setError(null)
-    const url = selectedYear
-      ? `/api/admin/stats?school_year=${encodeURIComponent(selectedYear)}`
-      : '/api/admin/stats'
-    api
-      .get<DashboardStats>(url)
-      .then((result) => {
-        if (result.success) {
-          setStats(result.data)
-        } else {
-          setError('Failed to load statistics.')
-        }
+
+    const termWhere = selectedYear ? { school_year: selectedYear } : {}
+
+    Promise.all([
+      supabase.from('Member').select('status').match(termWhere),
+      supabase.from('Member').select('course').match({ ...termWhere, status: 'approved' }).not('course', 'is', null),
+      supabase.from('Member').select('year_level').match({ ...termWhere, status: 'approved' }),
+      supabase.from('Member').select('gender').match({ ...termWhere, status: 'approved' }).not('gender', 'is', null),
+    ]).then(([statusRes, courseRes, yearRes, genderRes]) => {
+      const statusMap: Record<string, number> = {}
+      for (const row of statusRes.data ?? []) {
+        statusMap[row.status] = (statusMap[row.status] ?? 0) + 1
+      }
+
+      const courseMap: Record<string, number> = {}
+      for (const row of courseRes.data ?? []) {
+        courseMap[row.course] = (courseMap[row.course] ?? 0) + 1
+      }
+
+      const yearMap: Record<number, number> = {}
+      for (const row of yearRes.data ?? []) {
+        yearMap[row.year_level] = (yearMap[row.year_level] ?? 0) + 1
+      }
+
+      const genderMap: Record<string, number> = {}
+      for (const row of genderRes.data ?? []) {
+        genderMap[row.gender] = (genderMap[row.gender] ?? 0) + 1
+      }
+
+      setStats({
+        total: (statusRes.data ?? []).length,
+        pending: statusMap['pending'] ?? 0,
+        approved: statusMap['approved'] ?? 0,
+        rejected: statusMap['rejected'] ?? 0,
+        inactive: statusMap['inactive'] ?? 0,
+        removed: statusMap['removed'] ?? 0,
+        byCourse: Object.entries(courseMap).map(([course, count]) => ({ course, count })),
+        byYearLevel: Object.entries(yearMap).map(([year, count]) => ({ year: Number(year), count })),
+        byGender: Object.entries(genderMap).map(([gender, count]) => ({ gender, count })),
+        bySkill: [],
       })
-      .catch(() => setError('Failed to load statistics.'))
+    }).catch(() => setError('Failed to load statistics.'))
       .finally(() => setIsLoading(false))
   }, [selectedYear])
 

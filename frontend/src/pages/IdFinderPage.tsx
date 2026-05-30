@@ -5,7 +5,7 @@ import { IdCard } from '../components/id-card/IdCard'
 import { BackButton } from '../components/ui/BackButton'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
-import { api, ApiError } from '../lib/api'
+import { supabase } from '../lib/api'
 import { assignSticker } from '../lib/utils'
 import type { Member } from '../types'
 
@@ -29,28 +29,24 @@ export default function IdFinderPage() {
     setSearchState({ status: 'loading' })
 
     try {
-      const result = await api.get<Member>(`/api/members/lookup?student_number=${encodeURIComponent(studentNumber.trim())}`)
+      const { data: member, error } = await supabase
+        .from('Member')
+        .select('id, full_name, sbg_id, course, year_level, section, school_year, skills, sticker_id, status, created_at')
+        .eq('student_number', studentNumber.trim())
+        .single()
 
-      if (result.success) {
-        const member = result.data
-        const stickerId = member.sticker_id ?? assignSticker(member.id)
-        setSearchState({ status: 'found', member, stickerId })
-      } else {
-        setSearchState({ status: 'not_approved', memberStatus: result.error })
+      if (error || !member) {
+        setSearchState({ status: 'not_found' })
+        return
       }
-    } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.status === 404) {
-          setSearchState({ status: 'not_found' })
-        } else if (err.status === 429) {
-          setSearchState({ status: 'rate_limited' })
-        } else {
-          setSearchState({ status: 'error', message: err.message })
-        }
-      } else {
-        setSearchState({ status: 'error', message: 'An unexpected error occurred.' })
+
+      if (member.status !== 'approved') {
+        setSearchState({ status: 'not_approved', memberStatus: member.status })
+        return
       }
-    }
+
+      const stickerId = member.sticker_id ?? assignSticker(member.id)
+      setSearchState({ status: 'found', member, stickerId })
   }
 
   return (

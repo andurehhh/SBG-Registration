@@ -6,35 +6,34 @@ import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { useAdminStore } from '../store/admin'
-import { api, ApiError } from '../lib/api'
+import { supabase } from '../lib/supabase'
 
 export default function AdminLoginPage() {
   const navigate = useNavigate()
   const { setAuth } = useAdminStore()
-  const [secret, setSecret] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!secret.trim()) return
+    if (!email.trim() || !password.trim()) return
 
     setIsLoading(true)
     setError(null)
 
-    try {
-      await api.post('/api/auth/login', { secret })
-      setAuth('admin')
-      navigate('/admin/dashboard', { replace: true })
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        setError('Invalid secret. Please try again.')
-      } else {
-        setError('An error occurred. Please try again.')
-      }
-    } finally {
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (authError || !data.user) {
+      setError('Invalid credentials. Please try again.')
       setIsLoading(false)
+      return
     }
+
+    setAuth(data.user.id, data.session.access_token)
+    navigate('/admin/dashboard', { replace: true })
+    setIsLoading(false)
   }
 
   return (
@@ -56,17 +55,23 @@ export default function AdminLoginPage() {
               <p className="text-sbg-text-muted text-sm">Enter your admin secret to continue.</p>
             </div>
 
-            <div className="relative">
-              <Input
-                label="Admin Secret"
-                type="password"
-                placeholder="Enter secret..."
-                value={secret}
-                onChange={(e) => setSecret(e.target.value)}
-                error={error ?? undefined}
-                autoComplete="current-password"
-              />
-            </div>
+            <Input
+              label="Email"
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+            />
+            <Input
+              label="Password"
+              type="password"
+              placeholder="Enter password..."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={error ?? undefined}
+              autoComplete="current-password"
+            />
 
             <Button
               type="submit"

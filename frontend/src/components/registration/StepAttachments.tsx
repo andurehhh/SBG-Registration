@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { FileUpload } from '../ui/FileUpload'
 import { Button } from '../ui/Button'
 import { useRegistrationStore } from '../../store/registration'
-import { api, ApiError } from '../../lib/api'
+import { edgeFn, ApiError } from '../../lib/api'
 
 interface StepAttachmentsProps {
   onBack: () => void
@@ -48,7 +48,7 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
       formData.append('cor_file', store.cor_file!)
       formData.append('proof_of_share_file', store.proof_of_share_file!)
 
-      await api.postForm('/api/members/register', formData)
+      await edgeFn.postForm('register', formData)
       store.setSubmissionStatus('success')
     } catch (err) {
       store.setSubmissionStatus('error')
