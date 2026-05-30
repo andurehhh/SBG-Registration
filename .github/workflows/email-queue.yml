@@ -2,8 +2,8 @@ name: Process Email Queue
 
 on:
   schedule:
-    # Every 10 seconds
-    - cron: '*/10 * * * *'
+    # Every 1 minute
+    - cron: '* * * * *'
   # Allow manual trigger
   workflow_dispatch:
 
