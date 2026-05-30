@@ -263,27 +263,37 @@ All emails use consistent template with:
 
 ```bash
 git clone <repository-url>
-cd SBG-Registration
-cd frontend
+cd SBG-Registration/frontend
 ```
 
-### 2. Install dependencies
+### 2. Create environment file
+
+Copy the template:
+```bash
+cp .env.example .env.local
+```
+
+Or create `.env.local` manually with the values from `.env.example`
+
+### 3. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure environment variables
-
-Create `.env.local` in the `frontend/` directory:
+### 4. Run development server
 
 ```bash
-VITE_SUPABASE_URL=https://[your-project-id].supabase.co
-VITE_SUPABASE_ANON_KEY=[your-anon-key]
-VITE_APP_URL=http://localhost:5173
+npm run dev
 ```
 
-### 4. Set up Supabase backend
+Visit http://localhost:5173
+
+---
+
+## Supabase Backend Setup
+
+For backend development or deployment:
 
 ```bash
 # Initialize Supabase (if not already done)

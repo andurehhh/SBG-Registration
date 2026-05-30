@@ -13,11 +13,12 @@ class ApiError extends Error {
 async function callFunction<T>(name: string, options: RequestInit = {}): Promise<ActionResult<T>> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   const res = await fetch(`${FUNCTIONS_URL}/${name}`, {
     ...options,
     headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      Authorization: `Bearer ${token || anonKey}`,
       ...(options.body && !(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
       ...options.headers,
     },
