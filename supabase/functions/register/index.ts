@@ -18,9 +18,8 @@ async function uploadToCloudinary(fileBuffer: ArrayBuffer, mimeType: string, pub
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const resourceType = mimeType === "application/pdf" ? "raw" : "image";
   
-  // Cloudinary signature: SHA-1 of "param1=value1&param2=value2...{api_secret}"
-  // Parameters must be sorted alphabetically by key
-  const paramsToSign = `public_id=${publicId}&resource_type=${resourceType}&timestamp=${timestamp}${apiSecret}`;
+  // Cloudinary signature format: SHA-1("public_id=X&timestamp=Y" + api_secret)
+  const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
   
   // Calculate SHA-1 digest (NOT HMAC)
   const encoder = new TextEncoder();
