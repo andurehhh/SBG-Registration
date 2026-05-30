@@ -13,7 +13,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-3">
           <img src="/sbg-logo.svg" alt="SBG" className="h-9 w-9" />
           <div>
-            <p className="font-bold text-white text-sm leading-tight">Student Builder Group</p>
+            <p className="font-bold text-white text-sm leading-tight"> AWS Student Builder Group</p>
             <p className="text-sbg-text-muted text-xs">PUP Biñan Campus</p>
           </div>
         </div>

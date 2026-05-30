@@ -4,7 +4,7 @@ import { RefreshCw, ToggleLeft, ToggleRight, RotateCcw, AlertTriangle, ChevronLe
 import { PendingApplicantList } from '../PendingApplicantList'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
-import { api } from '../../../lib/api'
+import { supabase, edgeFn } from '../../../lib/api'
 import type { Member, PaginatedResponse } from '../../../types'
 
 const COURSE_OPTIONS = [
@@ -79,15 +79,21 @@ export function DashboardTab() {
   const fetchPending = useCallback(async (p = 1) => {
     setIsLoading(true)
     try {
-      const params = new URLSearchParams({ status: 'pending', sort, limit: String(PAGE_SIZE), page: String(p) })
-      if (filterCourse) params.set('course', filterCourse)
-      const result = await api.get<PaginatedResponse<Member>>(`/api/admin/members?${params}`)
-      if (result.success) {
-        const raw = result as unknown as { success: true; data: Member[]; total: number }
-        setMembers(raw.data ?? [])
-        setTotal(raw.total ?? 0)
-        setPage(p)
-      }
+      let query = supabase
+        .from('Member')
+        .select('*', { count: 'exact' })
+        .eq('status', 'pending')
+
+      if (filterCourse) query = query.eq('course', filterCourse)
+      query = sort === 'created_at_asc' ? query.order('created_at', { ascending: true }) : query.order('created_at', { ascending: false })
+
+      const from = (p - 1) * PAGE_SIZE
+      query = query.range(from, from + PAGE_SIZE - 1)
+
+      const { data, count } = await query
+      setMembers(data ?? [])
+      setTotal(count ?? 0)
+      setPage(p)
     } finally {
       setIsLoading(false)
     }
@@ -108,7 +114,7 @@ export function DashboardTab() {
   async function handleTermReset() {
     setIsResetting(true)
     try {
-      await api.post('/api/admin/term-reset')
+      await edgeFn.post('term-reset', {})
       setShowResetConfirm(false)
       localStorage.setItem(TERM_RESET_KEY, new Date().toISOString())
       void fetchPending(1)

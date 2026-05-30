@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum MemberStatus {
@@ -55,4 +56,28 @@ model SchoolYear {
   label      String   @unique
   is_active  Boolean  @default(true)
   created_at DateTime @default(now())
+}
+
+enum EmailQueueStatus {
+  pending
+  sent
+  failed
+}
+
+model EmailQueue {
+  id           String             @id @default(uuid())
+  to           String
+  subject      String
+  html         String             @db.Text
+  from_email   String
+  status       EmailQueueStatus   @default(pending)
+  error        String?
+  retry_count  Int                @default(0)
+  max_retries  Int                @default(3)
+  created_at   DateTime           @default(now())
+  sent_at      DateTime?
+  updated_at   DateTime           @updatedAt
+
+  @@index([status])
+  @@index([created_at])
 }

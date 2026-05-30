@@ -4,7 +4,7 @@ import { RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { MembersTable } from '../MembersTable'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
-import { api } from '../../../lib/api'
+import { supabase } from '../../../lib/api'
 import type { Member, MemberStatus, PaginatedResponse } from '../../../types'
 
 const STATUS_OPTIONS = [
@@ -98,25 +98,30 @@ export function MembersTab() {
   const fetchMembers = useCallback(async (p = 1) => {
     setIsLoading(true)
     try {
-      const params = new URLSearchParams({ sort, limit: String(PAGE_SIZE), page: String(p) })
-      // Default to approved + inactive (members), never show pending/rejected here
-      if (filterStatus) {
-        params.set('status', filterStatus)
-      } else {
-        // When "All" is selected, show approved and inactive only
-        // We fetch approved first, then inactive — simplest approach is to
-        // just not filter and let the table show all, but filter client-side
-        params.set('status', 'approved')
-      }
-      if (filterCourse) params.set('course', filterCourse)
+      let query = supabase
+        .from('Member')
+        .select('*', { count: 'exact' })
 
-      const result = await api.get<PaginatedResponse<Member>>(`/api/admin/members?${params}`)
-      if (result.success) {
-        const raw = result as unknown as { success: true; data: Member[]; total: number }
-        setMembers(raw.data ?? [])
-        setTotal(raw.total ?? 0)
-        setPage(p)
+      const statusFilter = filterStatus || 'approved'
+      query = query.eq('status', statusFilter)
+      if (filterCourse) query = query.eq('course', filterCourse)
+
+      const orderMap: Record<string, { col: string; asc: boolean }> = {
+        created_at_desc: { col: 'created_at', asc: false },
+        created_at_asc: { col: 'created_at', asc: true },
+        status: { col: 'status', asc: true },
+        year_level: { col: 'year_level', asc: true },
       }
+      const order = orderMap[sort] ?? { col: 'created_at', asc: false }
+      query = query.order(order.col, { ascending: order.asc })
+
+      const from = (p - 1) * PAGE_SIZE
+      query = query.range(from, from + PAGE_SIZE - 1)
+
+      const { data, count } = await query
+      setMembers(data ?? [])
+      setTotal(count ?? 0)
+      setPage(p)
     } finally {
       setIsLoading(false)
     }
