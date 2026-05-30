@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { generateEmailHTML } from "../_shared/emailTemplate.ts";
 import { isRateLimited, getClientIp, CORS_HEADERS, corsResponse, rateLimitedResponse } from "../_shared/rateLimiter.ts";
 
 function generateSbgId(year: number, sequence: number): string {
@@ -26,29 +27,6 @@ async function generateUniqueSbgId(supabase: ReturnType<typeof createClient>, ye
   throw new Error("Failed to generate unique SBG ID");
 }
 
-async function sendWelcomeEmail(toEmail: string, fullName: string, sbgId: string, studentNumber: string) {
-  const appUrl = Deno.env.get("APP_URL") ?? "http://localhost:3000";
-  const html = `<!DOCTYPE html><html><body style="background:#0f1117;color:#E2E8F0;font-family:Inter,sans-serif;padding:32px;">
-    <div style="max-width:600px;margin:0 auto;background:#1a1f2e;border-radius:8px;padding:32px;border:1px solid rgba(255,255,255,0.08);">
-      <h1 style="color:#ffffff;">Welcome to SBG! 🎉</h1>
-      <p>Hi <strong>${fullName}</strong>, your application has been <strong style="color:#7C3AED;">approved</strong>.</p>
-      <div style="background:#252b3b;border-radius:8px;padding:16px;margin:24px 0;">
-        <p style="margin:0;font-size:12px;color:#94A3B8;">YOUR SBG ID</p>
-        <p style="margin:8px 0 0;font-size:20px;color:#7C3AED;font-weight:bold;">${sbgId}</p>
-      </div>
-      <a href="${appUrl}/id-finder" style="display:inline-block;background:#7C3AED;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">View My ID Card</a>
-      <p style="color:#94A3B8;font-size:14px;margin-top:24px;">Enter student number <strong>${studentNumber}</strong> on the ID Finder page.</p>
-    </div>
-  </body></html>`;
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${Deno.env.get("RESEND_API_KEY")}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: Deno.env.get("RESEND_FROM_EMAIL"), to: toEmail, subject: "Welcome to SBG — Your Application Has Been Approved!", html }),
-  });
-  if (!res.ok) throw new Error(`Resend error: ${await res.text()}`);
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return corsResponse();
 
@@ -74,7 +52,24 @@ Deno.serve(async (req) => {
     const { data: updated, error: updateError } = await supabase.from("Member").update({ status: "approved", sbg_id: sbgId, school_year: schoolYear }).eq("id", id).select().single();
     if (updateError) throw updateError;
 
-    sendWelcomeEmail(member.email, member.full_name, sbgId, member.student_number).catch(console.error);
+    // Queue approval email instead of sending directly
+    const appUrl = Deno.env.get("APP_URL") ?? "http://localhost:3000";
+    const html = generateEmailHTML({
+      recipientName: member.full_name,
+      body: `Congratulations! Your application to the Student Builder Group (SBG) has been approved!\n\nYour SBG ID: ${sbgId}\n\nYou are now an official member of SBG PUP Biñan. Visit the portal to view and download your digital membership ID.`,
+      signature: "Welcome to the team!\nStudent Builder Group\nPUP Biñan Campus",
+    });
+
+    const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
+    const { error: queueError } = await supabase.from("EmailQueue").insert({
+      to: member.email,
+      subject: "Welcome to SBG! Your Membership is Approved",
+      html,
+      from_email: fromEmail,
+      status: "pending",
+    });
+
+    if (queueError) throw queueError;
 
     return Response.json({ success: true, data: updated }, { headers: CORS_HEADERS });
   } catch (err) {
