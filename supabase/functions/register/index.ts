@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { isRateLimited, getClientIp, CORS_HEADERS, corsResponse, rateLimitedResponse } from "../_shared/rateLimiter.ts";
+import { generateEmailHTML } from "../_shared/emailTemplate.ts";
+import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "application/pdf"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
@@ -99,7 +101,70 @@ Deno.serve(async (req) => {
     }).select("id").single();
 
     if (error) throw error;
-    return Response.json({ success: true, data: { id: member.id } }, { status: 201, headers: CORS_HEADERS });
+
+    const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
+    const html = generateEmailHTML({
+      recipientName: sanitize(formData.get("full_name") as string),
+      body: `Thank you for your application to the Student Builder Group (SBG)!
+
+We have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.
+
+In the meantime, if you have any questions, feel free to reach out to us.`,
+      signature: "Best regards,\nStudent Builder Group\nPUP Biñan Campus",
+    });
+
+    const { data: queuedEmail, error: queueError } = await supabase
+      .from("EmailQueue")
+      .insert({
+        to: formData.get("email") as string,
+        subject: "Application Received – SBG PUP Biñan",
+        html,
+        from_email: fromEmail,
+        status: "pending",
+      })
+      .select("id")
+      .single();
+
+    let emailSent = false;
+    let emailError: string | undefined;
+
+    if (queueError || !queuedEmail) {
+      emailError = queueError?.message || "Failed to queue email";
+      console.error("Queue insert error:", emailError);
+    } else {
+      await supabase.from("EmailQueue").update({ status: "processing" }).eq("id", queuedEmail.id);
+
+      const sendResult = await sendEmailViaLambda(
+        formData.get("email") as string,
+        "Application Received – SBG PUP Biñan",
+        html,
+        fromEmail
+      );
+
+      if (sendResult.success) {
+        emailSent = true;
+        const { error: sentError } = await supabase
+          .from("EmailQueue")
+          .update({ status: "sent", sent_at: new Date().toISOString() })
+          .eq("id", queuedEmail.id);
+
+        if (sentError) {
+          console.error("Failed to mark registration email as sent:", sentError);
+        }
+      } else {
+        emailError = sendResult.error || "Failed to send registration confirmation";
+        await supabase.from("EmailQueue").update({
+          status: "failed",
+          error: emailError,
+          retry_count: 1,
+        }).eq("id", queuedEmail.id);
+      }
+    }
+
+    return Response.json(
+      { success: true, data: { id: member.id, emailSent, emailError } },
+      { status: 201, headers: CORS_HEADERS }
+    );
   } catch (err) {
     console.error("Registration error:", err);
     return Response.json({ success: false, error: err instanceof Error ? err.message : "Registration failed" }, { status: 500, headers: CORS_HEADERS });

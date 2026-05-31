@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { generateEmailHTML } from "../_shared/emailTemplate.ts";
 import { isRateLimited, getClientIp, CORS_HEADERS, corsResponse, rateLimitedResponse } from "../_shared/rateLimiter.ts";
+import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 
 function generateSbgId(year: number, sequence: number): string {
   return `SBG-${year}-${String(sequence).padStart(4, "0")}-PUPBC`;
@@ -52,8 +53,7 @@ Deno.serve(async (req) => {
     const { data: updated, error: updateError } = await supabase.from("Member").update({ status: "approved", sbg_id: sbgId, school_year: schoolYear }).eq("id", id).select().single();
     if (updateError) throw updateError;
 
-    // Queue approval email instead of sending directly
-    const appUrl = Deno.env.get("APP_URL") ?? "http://localhost:3000";
+    // Queue approval email and send immediately
     const html = generateEmailHTML({
       recipientName: member.full_name,
       body: `Congratulations! Your application to the Student Builder Group (SBG) has been approved!\n\nYour SBG ID: ${sbgId}\n\nYou are now an official member of SBG PUP Biñan. Visit the portal to view and download your digital membership ID.`,
@@ -61,17 +61,52 @@ Deno.serve(async (req) => {
     });
 
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
-    const { error: queueError } = await supabase.from("EmailQueue").insert({
+    const { data: queuedEmail, error: queueError } = await supabase.from("EmailQueue").insert({
       to: member.email,
       subject: "Welcome to SBG! Your Membership is Approved",
       html,
       from_email: fromEmail,
       status: "pending",
-    });
+    }).select("id").single();
 
     if (queueError) throw queueError;
 
-    return Response.json({ success: true, data: updated }, { headers: CORS_HEADERS });
+    const { error: processingError } = await supabase
+      .from("EmailQueue")
+      .update({ status: "processing" })
+      .eq("id", queuedEmail.id);
+
+    if (processingError) {
+      console.error("Failed to mark approval email as processing:", processingError);
+    }
+
+    const sendResult = await sendEmailViaLambda(member.email, "Welcome to SBG! Your Membership is Approved", html, fromEmail);
+
+    if (sendResult.success) {
+      const { error: sentError } = await supabase
+        .from("EmailQueue")
+        .update({ status: "sent", sent_at: new Date().toISOString() })
+        .eq("id", queuedEmail.id);
+
+      if (sentError) throw sentError;
+
+      return Response.json({ success: true, data: { ...updated, emailSent: true } }, { headers: CORS_HEADERS });
+    }
+
+    const { error: pendingError } = await supabase
+      .from("EmailQueue")
+      .update({
+        status: "failed",
+        error: sendResult.error || "Unknown email error",
+        retry_count: 1,
+      })
+      .eq("id", queuedEmail.id);
+
+    if (pendingError) {
+      console.error("Failed to mark approval email as failed:", pendingError);
+    }
+
+    return Response.json({ success: true, data: { ...updated, emailSent: false, emailError: sendResult.error || "Failed to send approval email" } }, { headers: CORS_HEADERS });
   } catch (err) {
     console.error("Approve error:", err);
     return Response.json({ success: false, error: "Failed to approve member" }, { status: 500, headers: CORS_HEADERS });

@@ -1,24 +1,24 @@
 # Lambda Email Sender Deployment Guide
 
-This Lambda function sends emails via Gmail using nodemailer.
+This Lambda function sends emails via Gmail using Python's `smtplib`.
 
 ## Prerequisites
 
 - AWS Account
 - AWS CLI configured
-- Node.js 18+
-- npm
+- Python 3.11+
+- `pip`
 
 ## Step 1: Build the Lambda Function
 
 ```bash
 cd lambda/email-sender
-npm install
-npm run build
-npm run package
+python3 -m pip install -r requirements.txt -t package
+cd package && zip -r ../function.zip . && cd ..
+zip -g function.zip app.py
 ```
 
-This creates `function.zip` with compiled TypeScript and node_modules.
+This creates `function.zip` with the Python handler and bundled dependencies.
 
 ## Step 2: Create IAM Role
 
@@ -32,9 +32,9 @@ This creates `function.zip` with compiled TypeScript and node_modules.
 ```bash
 aws lambda create-function \
   --function-name sbg-email-sender \
-  --runtime nodejs18.x \
+  --runtime python3.11 \
   --role arn:aws:iam::YOUR_ACCOUNT_ID:role/sbg-lambda-email-role \
-  --handler dist/index.handler \
+  --handler app.handler \
   --zip-file fileb://function.zip \
   --timeout 30 \
   --environment "Variables={GMAIL_ADDRESS=sbg.pupbinan@gmail.com,GMAIL_APP_PASSWORD=qixk_kmwx_ejcs_tqkn}" \

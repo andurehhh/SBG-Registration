@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { generateEmailHTML } from "../_shared/emailTemplate.ts";
 import { CORS_HEADERS, corsResponse } from "../_shared/rateLimiter.ts";
+import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return corsResponse();
@@ -39,7 +40,7 @@ Deno.serve(async (req) => {
       signature: "Welcome to the team!\nStudent Builder Group\nPUP Biñan Campus",
     });
 
-    const { error: insertError } = await supabase
+    const { data: queuedEmail, error: insertError } = await supabase
       .from("EmailQueue")
       .insert({
         to: member.email,
@@ -47,7 +48,9 @@ Deno.serve(async (req) => {
         html,
         from_email: fromEmail,
         status: "pending",
-      });
+      })
+      .select("id")
+      .single();
 
     if (insertError) {
       console.error("Queue insert error:", insertError);
@@ -57,7 +60,37 @@ Deno.serve(async (req) => {
       );
     }
 
-    return Response.json({ success: true }, { status: 200, headers: CORS_HEADERS });
+    const { error: processingError } = await supabase
+      .from("EmailQueue")
+      .update({ status: "processing" })
+      .eq("id", queuedEmail.id);
+
+    if (processingError) {
+      console.error("Failed to mark approval email as processing:", processingError);
+    }
+
+    const sendResult = await sendEmailViaLambda(member.email, "Welcome to SBG! Your Membership is Approved", html, fromEmail);
+
+    if (sendResult.success) {
+      const { error: sentError } = await supabase
+        .from("EmailQueue")
+        .update({ status: "sent", sent_at: new Date().toISOString() })
+        .eq("id", queuedEmail.id);
+
+      if (sentError) {
+        return Response.json({ success: false, error: sentError.message }, { status: 500, headers: CORS_HEADERS });
+      }
+
+      return Response.json({ success: true, data: { emailSent: true } }, { status: 200, headers: CORS_HEADERS });
+    }
+
+    await supabase.from("EmailQueue").update({
+      status: "failed",
+      error: sendResult.error || "Unknown email error",
+      retry_count: 1,
+    }).eq("id", queuedEmail.id);
+
+    return Response.json({ success: true, data: { emailSent: false, emailError: sendResult.error || "Failed to send approval email" } }, { status: 200, headers: CORS_HEADERS });
   } catch (err) {
     console.error("Approval email error:", err);
     return Response.json({ success: false, error: String(err) }, { status: 500, headers: CORS_HEADERS });

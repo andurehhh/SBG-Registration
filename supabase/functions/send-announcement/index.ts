@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { isRateLimited, getClientIp, CORS_HEADERS, corsResponse, rateLimitedResponse } from "../_shared/rateLimiter.ts";
 import { generateEmailHTML } from "../_shared/emailTemplate.ts";
+import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return corsResponse();
@@ -32,37 +33,64 @@ Deno.serve(async (req) => {
 
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
 
-    // Insert all emails into queue instead of sending immediately
-    const emailsToQueue = members.map((member) => {
+    let sent = 0;
+    const failed: Array<{ to: string; error: string }> = [];
+
+    for (const member of members) {
       const html = generateEmailHTML({
         recipientName: member.full_name,
         body,
         signature,
       });
-      
-      return {
-        to: member.email,
-        subject,
-        html,
-        from_email: fromEmail,
-        status: "pending",
-      };
-    });
 
-    const { error: insertError } = await supabase
-      .from("EmailQueue")
-      .insert(emailsToQueue);
+      const { data: queuedEmail, error: insertError } = await supabase
+        .from("EmailQueue")
+        .insert({
+          to: member.email,
+          subject,
+          html,
+          from_email: fromEmail,
+          status: "pending",
+        })
+        .select("id")
+        .single();
 
-    if (insertError) {
-      console.error("Queue insert error:", insertError);
-      return Response.json(
-        { success: false, error: insertError.message },
-        { status: 500, headers: CORS_HEADERS }
-      );
+      if (insertError || !queuedEmail) {
+        const errorMessage = insertError?.message || "Failed to queue email";
+        console.error("Queue insert error:", errorMessage);
+        failed.push({ to: member.email, error: errorMessage });
+        continue;
+      }
+
+      await supabase.from("EmailQueue").update({ status: "processing" }).eq("id", queuedEmail.id);
+
+      const sendResult = await sendEmailViaLambda(member.email, subject, html, fromEmail);
+
+      if (sendResult.success) {
+        const { error: sentError } = await supabase
+          .from("EmailQueue")
+          .update({ status: "sent", sent_at: new Date().toISOString() })
+          .eq("id", queuedEmail.id);
+
+        if (sentError) {
+          failed.push({ to: member.email, error: sentError.message });
+          continue;
+        }
+
+        sent++;
+      } else {
+        await supabase.from("EmailQueue").update({
+          status: "failed",
+          error: sendResult.error || "Unknown email error",
+          retry_count: 1,
+        }).eq("id", queuedEmail.id);
+
+        failed.push({ to: member.email, error: sendResult.error || "Failed to send announcement email" });
+      }
     }
 
     return Response.json(
-      { success: true, data: { queued: emailsToQueue.length, failed: [] } }, 
+      { success: true, data: { sent, failed } },
       { status: 200, headers: CORS_HEADERS }
     );
   } catch (err) {

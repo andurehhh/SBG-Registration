@@ -16,14 +16,17 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
   const [isApproving, setIsApproving] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [actionWarning, setActionWarning] = useState<string | null>(null)
 
   async function handleApprove() {
     setIsApproving(true)
     setActionError(null)
+    setActionWarning(null)
     try {
-      await edgeFn.post(`approve`, { id: member.id })
+      const result = await edgeFn.post<{ emailSent: boolean; emailError?: string }>(`approve`, { id: member.id })
       onAction()
-      onClose()
+      if (result.data.emailSent) onClose()
+      else setActionWarning(result.data.emailError || 'Approved, but the email could not be sent.')
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : 'Failed to approve')
     } finally {
@@ -34,6 +37,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
   async function handleReject() {
     setIsRejecting(true)
     setActionError(null)
+    setActionWarning(null)
     try {
       await edgeFn.post(`reject`, { id: member.id })
       onAction()
@@ -146,6 +150,9 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
 
           {actionError && (
             <p className="text-sm text-red-400 font-mono">{actionError}</p>
+          )}
+          {actionWarning && (
+            <p className="text-sm text-yellow-400 font-mono">{actionWarning}</p>
           )}
         </div>
 
