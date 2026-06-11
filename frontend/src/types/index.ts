@@ -26,6 +26,28 @@ export interface Member {
   updated_at: string;
 }
 
+/**
+ * Subset of Member fields exposed by `member_public_view`.
+ * Used by the IdFinderPage and IdCard components for anonymous access.
+ * Excludes sensitive fields: email, scholar_email, gender, why_join,
+ * expectations, cor_url, proof_of_share_url, updated_at.
+ */
+export type PublicMember = Pick<
+  Member,
+  | 'id'
+  | 'student_number'
+  | 'full_name'
+  | 'sbg_id'
+  | 'course'
+  | 'year_level'
+  | 'section'
+  | 'school_year'
+  | 'skills'
+  | 'sticker_id'
+  | 'status'
+  | 'created_at'
+>;
+
 export interface DashboardStats {
   total: number;
   pending: number;
@@ -65,5 +87,34 @@ export interface AnnouncementPayload {
   subject: string;
   body: string;
   signature: string;
+  headerImageUrl?: string;
+  footerImageUrl?: string;
   recipients: AnnouncementRecipients;
+}
+
+export type AuditActionType =
+  | 'approve'
+  | 'reject'
+  | 'bulk_approve'
+  | 'bulk_reject'
+  | 'announcement_sent'
+  | 'registration_toggled'
+  | 'term_reset';
+
+export interface AuditLogEntry {
+  id: string;
+  action_type: AuditActionType;
+  actor_email: string;
+  actor_id: string;
+  target_member_id: string | null;
+  target_member_name: string | null;
+  details: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface BulkOperationResult {
+  total: number;
+  succeeded: number;
+  failed: number;
+  errors: { memberId: string; memberName: string; error: string }[];
 }

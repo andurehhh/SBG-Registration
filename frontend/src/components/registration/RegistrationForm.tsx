@@ -8,32 +8,37 @@ import { StepAttachments } from './StepAttachments'
 import { SuccessState } from './SuccessState'
 import { Card } from '../ui/Card'
 import { useRegistrationStore } from '../../store/registration'
-
-const STORAGE_KEY = 'sbg_registration_open'
+import { getRegistrationOpen } from '../../lib/appConfig'
 
 export function RegistrationForm() {
   const store = useRegistrationStore()
   const [isFlipped, setIsFlipped] = useState(false)
   const [pendingStep, setPendingStep] = useState<1 | 2 | 3 | null>(null)
-  const [registrationOpen, setRegistrationOpen] = useState<boolean>(() => {
-    return localStorage.getItem(STORAGE_KEY) !== 'false'
-  })
+  const [registrationOpen, setRegistrationOpen] = useState<boolean | null>(null)
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true)
 
-  // Listen for admin toggling registration open/close in another tab
+  // Fetch registration open/closed status from database
   useEffect(() => {
-    function handleStorage(e: StorageEvent) {
-      if (e.key === STORAGE_KEY) {
-        setRegistrationOpen(e.newValue !== 'false')
-      }
-    }
-    window.addEventListener('storage', handleStorage)
-    return () => window.removeEventListener('storage', handleStorage)
+    getRegistrationOpen()
+      .then(setRegistrationOpen)
+      .finally(() => setIsLoadingConfig(false))
   }, [])
 
   if (store.submissionStatus === 'success') {
     return (
       <Card>
         <SuccessState />
+      </Card>
+    )
+  }
+
+  // Loading config state
+  if (isLoadingConfig) {
+    return (
+      <Card>
+        <div className="flex items-center justify-center py-12">
+          <div className="w-8 h-8 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
+        </div>
       </Card>
     )
   }

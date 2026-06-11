@@ -54,10 +54,10 @@ describe('Property 9 — Progress Bar Segment Count', () => {
 
         expect(allSegments).toHaveLength(TOTAL)
 
-        const filledSegments = Array.from(allSegments).filter((el) =>
+        const filledSegments = Array.from<Element>(allSegments).filter((el) =>
           el.classList.contains(FILLED_CLASS),
         )
-        const unfilledSegments = Array.from(allSegments).filter((el) =>
+        const unfilledSegments = Array.from<Element>(allSegments).filter((el) =>
           el.classList.contains(UNFILLED_CLASS),
         )
 
@@ -86,7 +86,7 @@ describe('Property 9b — Filled segments precede unfilled segments', () => {
       fc.property(fc.integer({ min: 1, max: 3 }), (current) => {
         const { container } = render(<ProgressBar current={current} total={TOTAL} />)
 
-        const allSegments = Array.from(container.querySelectorAll('div.flex-1'))
+        const allSegments = Array.from<Element>(container.querySelectorAll('div.flex-1'))
 
         allSegments.forEach((el, index) => {
           if (index < current) {
@@ -132,8 +132,8 @@ describe('ProgressBar — example-based sanity checks', () => {
   it('Step 1 of 3: 1 filled, 2 unfilled', () => {
     const { container } = render(<ProgressBar current={1} total={3} />)
     const segments = container.querySelectorAll('div.flex-1')
-    const filled = Array.from(segments).filter((el) => el.classList.contains(FILLED_CLASS))
-    const unfilled = Array.from(segments).filter((el) => el.classList.contains(UNFILLED_CLASS))
+    const filled = Array.from<Element>(segments).filter((el) => el.classList.contains(FILLED_CLASS))
+    const unfilled = Array.from<Element>(segments).filter((el) => el.classList.contains(UNFILLED_CLASS))
     expect(filled).toHaveLength(1)
     expect(unfilled).toHaveLength(2)
   })
@@ -141,8 +141,8 @@ describe('ProgressBar — example-based sanity checks', () => {
   it('Step 2 of 3: 2 filled, 1 unfilled', () => {
     const { container } = render(<ProgressBar current={2} total={3} />)
     const segments = container.querySelectorAll('div.flex-1')
-    const filled = Array.from(segments).filter((el) => el.classList.contains(FILLED_CLASS))
-    const unfilled = Array.from(segments).filter((el) => el.classList.contains(UNFILLED_CLASS))
+    const filled = Array.from<Element>(segments).filter((el) => el.classList.contains(FILLED_CLASS))
+    const unfilled = Array.from<Element>(segments).filter((el) => el.classList.contains(UNFILLED_CLASS))
     expect(filled).toHaveLength(2)
     expect(unfilled).toHaveLength(1)
   })
@@ -150,8 +150,8 @@ describe('ProgressBar — example-based sanity checks', () => {
   it('Step 3 of 3: 3 filled, 0 unfilled', () => {
     const { container } = render(<ProgressBar current={3} total={3} />)
     const segments = container.querySelectorAll('div.flex-1')
-    const filled = Array.from(segments).filter((el) => el.classList.contains(FILLED_CLASS))
-    const unfilled = Array.from(segments).filter((el) => el.classList.contains(UNFILLED_CLASS))
+    const filled = Array.from<Element>(segments).filter((el) => el.classList.contains(FILLED_CLASS))
+    const unfilled = Array.from<Element>(segments).filter((el) => el.classList.contains(UNFILLED_CLASS))
     expect(filled).toHaveLength(3)
     expect(unfilled).toHaveLength(0)
   })

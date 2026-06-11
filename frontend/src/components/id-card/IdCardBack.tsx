@@ -1,9 +1,9 @@
 // frontend/src/components/id-card/IdCardBack.tsx
 import { type RefObject } from 'react'
-import type { Member } from '../../types'
+import type { PublicMember } from '../../types'
 
 interface IdCardBackProps {
-  member: Member
+  member: PublicMember
   stickerId: string
   cardRef?: RefObject<HTMLDivElement>
 }

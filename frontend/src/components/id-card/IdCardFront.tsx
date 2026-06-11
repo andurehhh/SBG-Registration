@@ -1,10 +1,10 @@
 // frontend/src/components/id-card/IdCardFront.tsx
 import { type RefObject } from 'react'
 import { StickerLayer } from './StickerLayer'
-import type { Member } from '../../types'
+import type { PublicMember } from '../../types'
 
 interface IdCardFrontProps {
-  member: Member
+  member: PublicMember
   stickerId: string
   cardRef?: RefObject<HTMLDivElement>
 }

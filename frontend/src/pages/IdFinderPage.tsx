@@ -7,12 +7,12 @@ import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { supabase } from '../lib/api'
 import { assignSticker } from '../lib/utils'
-import type { Member } from '../types'
+import type { PublicMember } from '../types'
 
 type SearchState =
   | { status: 'idle' }
   | { status: 'loading' }
-  | { status: 'found'; member: Member; stickerId: string }
+  | { status: 'found'; member: PublicMember; stickerId: string }
   | { status: 'not_found' }
   | { status: 'not_approved'; memberStatus: string }
   | { status: 'rate_limited' }
@@ -30,8 +30,8 @@ export default function IdFinderPage() {
 
     try {
       const { data: member, error } = await supabase
-        .from('Member')
-        .select('id, full_name, sbg_id, course, year_level, section, school_year, skills, sticker_id, status, created_at')
+        .from('member_public_view')
+        .select('id, student_number, full_name, sbg_id, course, year_level, section, school_year, skills, sticker_id, status, created_at')
         .eq('student_number', studentNumber.trim())
         .single()
 
@@ -47,6 +47,12 @@ export default function IdFinderPage() {
 
       const stickerId = member.sticker_id ?? assignSticker(member.id)
       setSearchState({ status: 'found', member, stickerId })
+    } catch (err) {
+      setSearchState({
+        status: 'error',
+        message: err instanceof Error ? err.message : 'An unexpected error occurred',
+      })
+    }
   }
 
   return (
@@ -71,7 +77,7 @@ export default function IdFinderPage() {
 
           <h2 className="font-bold text-white text-3xl mb-3">ID Finder</h2>
           <p className="text-sbg-text-muted text-sm mb-8">
-            Enter your student number to view your digital membership ID card.
+            Enter your student number to view your official AWS digital membership ID card.
           </p>
 
           {/* Search Form */}

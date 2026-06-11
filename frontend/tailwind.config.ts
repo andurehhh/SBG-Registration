@@ -8,17 +8,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'sbg-black': '#0f1117',
-        'sbg-navy': '#1a1f2e',
-        'sbg-navy-light': '#252b3b',
+        // Semantic theme-aware colors (these switch with dark/light mode)
+        'sbg-black': 'var(--color-bg)',
+        'sbg-navy': 'var(--color-surface)',
+        'sbg-navy-light': 'var(--color-surface-raised)',
         'sbg-purple': '#7C3AED',
         'sbg-purple-light': '#8B5CF6',
         'sbg-purple-muted': '#3b2f6e',
         'sbg-orange': '#FF9900',
         'sbg-white': '#FFFFFF',
         'sbg-gray': '#F2F3F3',
-        'sbg-text': '#E2E8F0',
-        'sbg-text-muted': '#94A3B8',
+        'sbg-text': 'var(--color-text-primary)',
+        'sbg-text-muted': 'var(--color-text-secondary)',
+        // Additional semantic aliases
+        'page': 'var(--color-bg)',
+        'surface': 'var(--color-surface)',
+        'surface-raised': 'var(--color-surface-raised)',
+        'border-theme': 'var(--color-border)',
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
       },
       fontFamily: {
         mono: ['"Space Mono"', 'monospace'],

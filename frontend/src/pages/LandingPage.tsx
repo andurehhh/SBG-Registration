@@ -1,6 +1,7 @@
 // frontend/src/pages/LandingPage.tsx
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, CreditCard, Users, Award, Search } from 'lucide-react'
+import { ThemeToggle } from '../components/ui/ThemeToggle'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <button
             onClick={() => navigate('/id-finder')}
             className="font-mono text-sbg-text-muted text-sm hover:text-white transition-colors px-3 py-1.5"
@@ -132,16 +134,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="px-6 py-5 border-t border-white/[0.06] flex items-center justify-between">
+      <footer className="px-6 py-5 border-t border-white/[0.06] flex items-center justify-center">
         <p className="font-mono text-sbg-text-muted text-xs">
-          © 2025 AWS Student Builder Group — PUP Biñan
+          © 2026 AWS Student Builder Group — PUP Biñan
         </p>
-        <button
-          onClick={() => navigate('/admin/login')}
-          className="font-mono text-sbg-text-muted text-xs hover:text-white transition-colors"
-        >
-          Admin
-        </button>
       </footer>
 
     </div>

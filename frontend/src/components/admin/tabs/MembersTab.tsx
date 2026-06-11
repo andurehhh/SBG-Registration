@@ -1,11 +1,13 @@
 // frontend/src/components/admin/tabs/MembersTab.tsx
 import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RefreshCw, ChevronLeft, ChevronRight, Download } from 'lucide-react'
 import { MembersTable } from '../MembersTable'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase } from '../../../lib/api'
-import type { Member, MemberStatus, PaginatedResponse } from '../../../types'
+import { generateCsv, triggerDownload } from '../../../lib/csvExporter'
+import { useToastStore } from '../../../store/toast'
+import type { Member, MemberStatus } from '../../../types'
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
@@ -89,9 +91,11 @@ export function MembersTab() {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isExporting, setIsExporting] = useState(false)
   const [filterStatus, setFilterStatus] = useState<MemberStatus | ''>('approved')
   const [filterCourse, setFilterCourse] = useState('')
   const [sort, setSort] = useState('created_at_desc')
+  const addToast = useToastStore((state) => state.addToast)
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -129,6 +133,51 @@ export function MembersTab() {
 
   useEffect(() => { void fetchMembers(1) }, [fetchMembers])
 
+  const handleExportCsv = useCallback(async () => {
+    setIsExporting(true)
+    try {
+      let query = supabase
+        .from('Member')
+        .select('*')
+
+      const statusFilter = filterStatus || 'approved'
+      query = query.eq('status', statusFilter)
+      if (filterCourse) query = query.eq('course', filterCourse)
+
+      const orderMap: Record<string, { col: string; asc: boolean }> = {
+        created_at_desc: { col: 'created_at', asc: false },
+        created_at_asc: { col: 'created_at', asc: true },
+        status: { col: 'status', asc: true },
+        year_level: { col: 'year_level', asc: true },
+      }
+      const order = orderMap[sort] ?? { col: 'created_at', asc: false }
+      query = query.order(order.col, { ascending: order.asc })
+
+      // Bypass pagination — fetch all matching members
+      query = query.range(0, 9999)
+
+      const { data, error } = await query
+
+      if (error) {
+        addToast('Failed to export members', 'error')
+        return
+      }
+
+      if (!data || data.length === 0) {
+        addToast('No members to export', 'info')
+        return
+      }
+
+      const csv = generateCsv(data as Member[])
+      const today = new Date().toISOString().split('T')[0]
+      triggerDownload(csv, `sbg-members-${today}.csv`)
+    } catch {
+      addToast('Failed to export members', 'error')
+    } finally {
+      setIsExporting(false)
+    }
+  }, [filterStatus, filterCourse, sort, addToast])
+
   return (
     <div className="p-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -138,15 +187,27 @@ export function MembersTab() {
             {isLoading ? 'Loading...' : `${total} member${total !== 1 ? 's' : ''}`}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
-          onClick={() => fetchMembers(page)}
-          disabled={isLoading}
-        >
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<Download className="w-4 h-4" />}
+            onClick={handleExportCsv}
+            loading={isExporting}
+            disabled={isExporting || isLoading}
+          >
+            Export CSV
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
+            onClick={() => fetchMembers(page)}
+            disabled={isLoading}
+          >
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}

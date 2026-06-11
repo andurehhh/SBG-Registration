@@ -34,7 +34,7 @@ export function AdminLayout() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />
+    return <Navigate to={`/${__ADMIN_PATH__}/login`} replace />
   }
 
   return (

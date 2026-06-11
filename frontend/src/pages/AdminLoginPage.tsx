@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
     }
 
     setAuth(data.user.id, data.session.access_token)
-    navigate('/admin/dashboard', { replace: true })
+    navigate(`/${__ADMIN_PATH__}/dashboard`, { replace: true })
     setIsLoading(false)
   }
 

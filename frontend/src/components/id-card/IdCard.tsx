@@ -3,10 +3,10 @@ import { useRef, useState } from 'react'
 import { IdCardFront } from './IdCardFront'
 import { IdCardBack } from './IdCardBack'
 import { FlipCard } from '../registration/FlipCard'
-import type { Member } from '../../types'
+import type { PublicMember } from '../../types'
 
 interface IdCardProps {
-  member: Member
+  member: PublicMember
   stickerId: string
 }
 

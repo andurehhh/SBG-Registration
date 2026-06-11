@@ -1,11 +1,17 @@
 // frontend/src/components/admin/tabs/DashboardTab.tsx
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { RefreshCw, ToggleLeft, ToggleRight, RotateCcw, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PendingApplicantList } from '../PendingApplicantList'
+import { BulkActionToolbar } from '../BulkActionToolbar'
+import { ConfirmationModal } from '../../ui/ConfirmationModal'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase, edgeFn } from '../../../lib/api'
-import type { Member, PaginatedResponse } from '../../../types'
+import { insertAuditLog } from '../../../lib/auditLog'
+import { getRegistrationOpen, setRegistrationOpen as setRegistrationOpenDB } from '../../../lib/appConfig'
+import { useBulkAction } from '../../../lib/useBulkAction'
+import { useToastStore } from '../../../store/toast'
+import type { Member } from '../../../types'
 
 const COURSE_OPTIONS = [
   { value: '', label: 'All Courses' },
@@ -19,7 +25,6 @@ const SORT_OPTIONS = [
   { value: 'created_at_asc', label: 'Oldest First' },
 ]
 
-const STORAGE_KEY = 'sbg_registration_open'
 const TERM_RESET_KEY = 'sbg_term_reset_pending'
 const PAGE_SIZE = 15
 
@@ -62,17 +67,38 @@ function Pagination({ page, totalPages, total, pageSize, onPage }: {
 }
 
 export function DashboardTab() {
+  const addToast = useToastStore((state) => state.addToast)
   const [members, setMembers] = useState<Member[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [filterCourse, setFilterCourse] = useState('')
   const [sort, setSort] = useState('created_at_desc')
-  const [registrationOpen, setRegistrationOpen] = useState<boolean>(() => {
-    return localStorage.getItem(STORAGE_KEY) !== 'false'
-  })
+  const [registrationOpen, setRegistrationOpen] = useState<boolean>(true)
+  const [isTogglingRegistration, setIsTogglingRegistration] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
+
+  // Bulk action state
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [showBulkConfirm, setShowBulkConfirm] = useState<{ action: 'approve' | 'reject' } | null>(null)
+
+  // Build a memberNames map for audit logging
+  const memberNames = useMemo(() => {
+    const map = new Map<string, string>()
+    members.forEach((m) => map.set(m.id, m.full_name))
+    return map
+  }, [members])
+
+  const bulkAction = useBulkAction({
+    action: showBulkConfirm?.action ?? 'approve',
+    memberIds: selectedIds,
+    memberNames,
+    onComplete: () => {
+      setSelectedIds([])
+      void fetchPending(page)
+    },
+  })
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -101,14 +127,64 @@ export function DashboardTab() {
 
   useEffect(() => { void fetchPending(1) }, [fetchPending])
 
-  function toggleRegistration() {
+  // Fetch registration open/closed status from DB on mount
+  useEffect(() => {
+    getRegistrationOpen().then(setRegistrationOpen)
+  }, [])
+
+  // Handle selection change from PendingApplicantList
+  const handleSelectionChange = useCallback((ids: string[]) => {
+    setSelectedIds(ids)
+  }, [])
+
+  // Handle bulk action confirmation
+  async function handleBulkConfirm() {
+    if (!showBulkConfirm) return
+    const action = showBulkConfirm.action
+    setShowBulkConfirm(null)
+
+    const result = await bulkAction.execute()
+
+    if (result.succeeded > 0) {
+      addToast(
+        `${result.succeeded} applicant${result.succeeded !== 1 ? 's' : ''} ${action === 'approve' ? 'approved' : 'rejected'} successfully`,
+        'success'
+      )
+    }
+    if (result.failed > 0) {
+      addToast(
+        `${result.failed} applicant${result.failed !== 1 ? 's' : ''} failed to ${action}`,
+        'error'
+      )
+    }
+  }
+
+  async function toggleRegistration() {
     const next = !registrationOpen
-    setRegistrationOpen(next)
-    localStorage.setItem(STORAGE_KEY, String(next))
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: STORAGE_KEY,
-      newValue: String(next),
-    }))
+    setIsTogglingRegistration(true)
+    try {
+      await setRegistrationOpenDB(next)
+      setRegistrationOpen(next)
+      addToast(next ? 'Registration window opened' : 'Registration window closed', 'success')
+      // Audit log: registration toggled
+      const { data: sessionData } = await supabase.auth.getSession()
+      const user = sessionData.session?.user
+      if (user) {
+        insertAuditLog({
+          action_type: 'registration_toggled',
+          actor_email: user.email ?? '',
+          actor_id: user.id,
+          target_member_id: null,
+          target_member_name: null,
+          details: { new_state: next ? 'open' : 'closed' },
+        })
+      }
+    } catch (err) {
+      console.error('Failed to toggle registration:', err)
+      addToast('Failed to toggle registration', 'error')
+    } finally {
+      setIsTogglingRegistration(false)
+    }
   }
 
   async function handleTermReset() {
@@ -117,9 +193,24 @@ export function DashboardTab() {
       await edgeFn.post('term-reset', {})
       setShowResetConfirm(false)
       localStorage.setItem(TERM_RESET_KEY, new Date().toISOString())
+      addToast('School term ended — all members marked inactive', 'success')
+      // Audit log: term reset
+      const { data: sessionData } = await supabase.auth.getSession()
+      const user = sessionData.session?.user
+      if (user) {
+        insertAuditLog({
+          action_type: 'term_reset',
+          actor_email: user.email ?? '',
+          actor_id: user.id,
+          target_member_id: null,
+          target_member_name: null,
+          details: null,
+        })
+      }
       void fetchPending(1)
     } catch {
       setShowResetConfirm(false)
+      addToast('Failed to reset term', 'error')
     } finally {
       setIsResetting(false)
     }
@@ -160,7 +251,8 @@ export function DashboardTab() {
           </div>
           <button
             onClick={toggleRegistration}
-            className="flex-shrink-0 transition-colors"
+            disabled={isTogglingRegistration}
+            className="flex-shrink-0 transition-colors disabled:opacity-50"
             aria-label={registrationOpen ? 'Close registration' : 'Open registration'}
           >
             {registrationOpen
@@ -199,6 +291,24 @@ export function DashboardTab() {
         </div>
       </div>
 
+      {/* Bulk Action Toolbar */}
+      <BulkActionToolbar
+        selectedCount={selectedIds.length}
+        onApprove={() => setShowBulkConfirm({ action: 'approve' })}
+        onReject={() => setShowBulkConfirm({ action: 'reject' })}
+        disabled={bulkAction.isRunning}
+      />
+
+      {/* Bulk operation progress */}
+      {bulkAction.isRunning && (
+        <div className="flex items-center gap-3 px-4 py-2 bg-sbg-navy-light border border-white/[0.08] rounded-[8px]">
+          <div className="w-4 h-4 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-mono text-sbg-text">
+            Processing {bulkAction.progress.completed} / {bulkAction.progress.total}...
+          </span>
+        </div>
+      )}
+
       {/* Applicant List */}
       <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] overflow-hidden">
         {isLoading ? (
@@ -207,7 +317,11 @@ export function DashboardTab() {
           </div>
         ) : (
           <>
-            <PendingApplicantList members={members} onRefresh={() => fetchPending(page)} />
+            <PendingApplicantList
+              members={members}
+              onRefresh={() => fetchPending(page)}
+              onSelectionChange={handleSelectionChange}
+            />
             <Pagination
               page={page}
               totalPages={totalPages}
@@ -218,6 +332,17 @@ export function DashboardTab() {
           </>
         )}
       </div>
+
+      {/* Bulk Action Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showBulkConfirm !== null}
+        title={showBulkConfirm?.action === 'approve' ? 'Bulk Approve' : 'Bulk Reject'}
+        message={`${showBulkConfirm?.action === 'approve' ? 'Approve' : 'Reject'} ${selectedIds.length} applicant${selectedIds.length !== 1 ? 's' : ''}?`}
+        confirmLabel={showBulkConfirm?.action === 'approve' ? 'Approve' : 'Reject'}
+        variant={showBulkConfirm?.action === 'reject' ? 'danger' : 'default'}
+        onConfirm={handleBulkConfirm}
+        onCancel={() => setShowBulkConfirm(null)}
+      />
 
       {/* Term Reset Confirmation Modal */}
       {showResetConfirm && (
