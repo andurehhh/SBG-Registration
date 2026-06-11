@@ -2,7 +2,7 @@
 
 ## SBG Membership & ID Management Portal
 
-A serverless, cloud-native membership portal for the **Student Builder Group (SBG) — PUP Biñan Campus**.
+A serverless, cloud-native membership portal for the **AWS Student Builder Group (SBG) — PUP Biñan Campus**.
 
 ## Purpose
 
