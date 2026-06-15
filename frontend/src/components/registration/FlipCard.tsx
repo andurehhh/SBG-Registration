@@ -1,5 +1,5 @@
 // frontend/src/components/registration/FlipCard.tsx
-import { useRef, type ReactNode } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 
 interface FlipCardProps {
   front: ReactNode
@@ -9,55 +9,31 @@ interface FlipCardProps {
 }
 
 export function FlipCard({ front, back, isFlipped, onFlipEnd }: FlipCardProps) {
-  const innerRef = useRef<HTMLDivElement>(null)
+  const [showBack, setShowBack] = useState(isFlipped)
+  const [animating, setAnimating] = useState(false)
 
-  function handleTransitionEnd(e: React.TransitionEvent<HTMLDivElement>) {
-    // Only fire for the transform property on the inner element
-    if (e.propertyName === 'transform' && e.target === innerRef.current) {
-      onFlipEnd?.()
+  useEffect(() => {
+    if (isFlipped !== showBack) {
+      setAnimating(true)
+      // Wait for scale-down, then swap content, then scale-up
+      const timer = setTimeout(() => {
+        setShowBack(isFlipped)
+        setAnimating(false)
+        onFlipEnd?.()
+      }, 200)
+      return () => clearTimeout(timer)
     }
-  }
+  }, [isFlipped, showBack, onFlipEnd])
 
   return (
-    <div
-      style={{ perspective: '1200px' }}
-      className="w-full"
-    >
+    <div className="w-full">
       <div
-        ref={innerRef}
-        onTransitionEnd={handleTransitionEnd}
-        style={{
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          position: 'relative',
-          width: '100%',
-        }}
+        className={[
+          'w-full transition-transform duration-200 ease-in-out',
+          animating ? 'scale-x-0' : 'scale-x-100',
+        ].join(' ')}
       >
-        {/* Front face */}
-        <div
-          style={{
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-          }}
-        >
-          {front}
-        </div>
-
-        {/* Back face */}
-        <div
-          style={{
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          {back}
-        </div>
+        {showBack ? back : front}
       </div>
     </div>
   )

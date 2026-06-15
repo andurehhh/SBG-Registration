@@ -1,12 +1,12 @@
 // frontend/src/components/admin/tabs/DashboardTab.tsx
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { RefreshCw, ToggleLeft, ToggleRight, RotateCcw, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RefreshCw, ToggleLeft, ToggleRight, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PendingApplicantList } from '../PendingApplicantList'
 import { BulkActionToolbar } from '../BulkActionToolbar'
 import { ConfirmationModal } from '../../ui/ConfirmationModal'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
-import { supabase, edgeFn } from '../../../lib/api'
+import { supabase } from '../../../lib/api'
 import { insertAuditLog } from '../../../lib/auditLog'
 import { getRegistrationOpen, setRegistrationOpen as setRegistrationOpenDB } from '../../../lib/appConfig'
 import { useBulkAction } from '../../../lib/useBulkAction'
@@ -25,7 +25,6 @@ const SORT_OPTIONS = [
   { value: 'created_at_asc', label: 'Oldest First' },
 ]
 
-const TERM_RESET_KEY = 'sbg_term_reset_pending'
 const PAGE_SIZE = 15
 
 function Pagination({ page, totalPages, total, pageSize, onPage }: {
@@ -78,6 +77,8 @@ export function DashboardTab() {
   const [isTogglingRegistration, setIsTogglingRegistration] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
+  const [newSchoolYear, setNewSchoolYear] = useState('')
+  const [newSemester, setNewSemester] = useState<'1st' | '2nd'>('1st')
 
   // Bulk action state
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -187,14 +188,35 @@ export function DashboardTab() {
     }
   }
 
-  async function handleTermReset() {
+  async function handleStartNewSemester() {
+    if (!newSchoolYear.trim()) {
+      addToast('Please enter a school year', 'error')
+      return
+    }
     setIsResetting(true)
     try {
-      await edgeFn.post('term-reset', {})
+      // 1. Deactivate current school year
+      await supabase.from('SchoolYear').update({ is_active: false }).eq('is_active', true)
+
+      // 2. Create new school year entry
+      const termLabel = `${newSchoolYear.trim()} — ${newSemester} Sem`
+      await supabase.from('SchoolYear').insert({
+        school_year: newSchoolYear.trim(),
+        semester: newSemester,
+        is_active: true,
+      })
+
+      // 3. Mark all approved members as inactive
+      await supabase.from('Member').update({ status: 'inactive' }).eq('status', 'approved')
+
+      // 4. Open registration for the new term
+      await setRegistrationOpenDB(true)
+      setRegistrationOpen(true)
+
       setShowResetConfirm(false)
-      localStorage.setItem(TERM_RESET_KEY, new Date().toISOString())
-      addToast('School term ended — all members marked inactive', 'success')
-      // Audit log: term reset
+      addToast(`New semester started: ${termLabel}`, 'success')
+
+      // Audit log
       const { data: sessionData } = await supabase.auth.getSession()
       const user = sessionData.session?.user
       if (user) {
@@ -204,13 +226,14 @@ export function DashboardTab() {
           actor_id: user.id,
           target_member_id: null,
           target_member_name: null,
-          details: null,
+          details: { school_year: newSchoolYear.trim(), semester: newSemester, label: termLabel },
         })
       }
+
       void fetchPending(1)
-    } catch {
-      setShowResetConfirm(false)
-      addToast('Failed to reset term', 'error')
+    } catch (err) {
+      console.error('Failed to start new semester:', err)
+      addToast('Failed to start new semester', 'error')
     } finally {
       setIsResetting(false)
     }
@@ -262,12 +285,12 @@ export function DashboardTab() {
           </button>
         </div>
 
-        {/* School term reset */}
+        {/* Start New Semester */}
         <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-4 flex items-center justify-between gap-4">
           <div>
-            <p className="font-mono text-white text-sm font-bold">End School Term</p>
+            <p className="font-mono text-white text-sm font-bold">Start New Semester</p>
             <p className="text-sbg-text-muted text-xs mt-0.5">
-              Mark all approved members as inactive and require re-registration
+              Begin a new term — marks all current members as inactive
             </p>
           </div>
           <Button
@@ -276,7 +299,7 @@ export function DashboardTab() {
             icon={<RotateCcw className="w-4 h-4" />}
             onClick={() => setShowResetConfirm(true)}
           >
-            Reset
+            New Sem
           </Button>
         </div>
       </div>
@@ -344,7 +367,7 @@ export function DashboardTab() {
         onCancel={() => setShowBulkConfirm(null)}
       />
 
-      {/* Term Reset Confirmation Modal */}
+      {/* Start New Semester Modal */}
       {showResetConfirm && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
@@ -355,17 +378,43 @@ export function DashboardTab() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-red-900/30 border border-red-700/50 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-full bg-sbg-purple-muted border border-sbg-purple/30 flex items-center justify-center flex-shrink-0">
+                <RotateCcw className="w-5 h-5 text-sbg-purple" />
               </div>
               <div>
-                <h3 className="font-mono text-white font-bold">End School Term?</h3>
-                <p className="text-sbg-text-muted text-xs mt-0.5">This action cannot be undone</p>
+                <h3 className="font-mono text-white font-bold">Start New Semester</h3>
+                <p className="text-sbg-text-muted text-xs mt-0.5">This will mark all current members as inactive</p>
               </div>
             </div>
-            <p className="text-sbg-text text-sm mb-6 leading-relaxed">
-              This will mark <span className="text-white font-medium">all approved members</span> as inactive and close the registration window. Members will need to re-register for the new term.
+
+            <div className="flex flex-col gap-4 mb-6">
+              <div>
+                <label className="text-xs font-mono text-sbg-text-muted block mb-1.5">School Year</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 2026-2027"
+                  value={newSchoolYear}
+                  onChange={(e) => setNewSchoolYear(e.target.value)}
+                  className="w-full px-3 py-2 rounded-[8px] text-sm text-white bg-sbg-navy-light border border-white/10 focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:border-sbg-purple placeholder:text-sbg-text-muted font-mono"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-mono text-sbg-text-muted block mb-1.5">Semester</label>
+                <select
+                  value={newSemester}
+                  onChange={(e) => setNewSemester(e.target.value as '1st' | '2nd')}
+                  className="w-full px-3 py-2 rounded-[8px] text-sm text-white bg-sbg-navy-light border border-white/10 focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:border-sbg-purple"
+                >
+                  <option value="1st" className="bg-sbg-navy-light">1st Semester</option>
+                  <option value="2nd" className="bg-sbg-navy-light">2nd Semester</option>
+                </select>
+              </div>
+            </div>
+
+            <p className="text-sbg-text text-xs mb-4 leading-relaxed bg-red-900/10 border border-red-700/30 rounded-[8px] p-3">
+              <span className="text-red-400 font-bold">Warning:</span> All currently approved members will be marked as inactive. Registration will open for the new semester. Members will need to re-register with an updated COR.
             </p>
+
             <div className="flex gap-3">
               <Button
                 variant="ghost"
@@ -376,13 +425,14 @@ export function DashboardTab() {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="primary"
                 className="flex-1"
                 icon={<RotateCcw className="w-4 h-4" />}
                 loading={isResetting}
-                onClick={handleTermReset}
+                onClick={handleStartNewSemester}
+                disabled={!newSchoolYear.trim()}
               >
-                End Term
+                Start Semester
               </Button>
             </div>
           </div>

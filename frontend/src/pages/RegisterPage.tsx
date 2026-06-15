@@ -1,8 +1,13 @@
 // frontend/src/pages/RegisterPage.tsx
+import { useState } from 'react'
 import { BackButton } from '../components/ui/BackButton'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
+import { RenewalForm } from '../components/registration/RenewalForm'
+
+type FormTab = 'new' | 'returning'
 
 export default function RegisterPage() {
+  const [activeTab, setActiveTab] = useState<FormTab>('new')
 
   return (
     <div className="min-h-screen bg-sbg-black flex flex-col lg:flex-row">
@@ -63,13 +68,50 @@ export default function RegisterPage() {
       {/* ── Right panel: registration form ── */}
       <div className="lg:flex-1 flex flex-col justify-center px-6 py-10 lg:px-12 lg:py-12 bg-sbg-black lg:overflow-y-auto">
         <div className="w-full max-w-lg mx-auto">
+          {/* Tab Toggle */}
+          <div className="mb-6">
+            <div className="inline-flex w-full rounded-[8px] bg-sbg-navy border border-white/[0.08] p-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab('new')}
+                className={[
+                  'flex-1 px-4 py-2 text-sm font-mono rounded-[6px] transition-colors duration-150',
+                  activeTab === 'new'
+                    ? 'bg-sbg-purple text-white'
+                    : 'bg-transparent text-sbg-text-muted hover:text-white',
+                ].join(' ')}
+              >
+                New Member
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('returning')}
+                className={[
+                  'flex-1 px-4 py-2 text-sm font-mono rounded-[6px] transition-colors duration-150',
+                  activeTab === 'returning'
+                    ? 'bg-sbg-purple text-white'
+                    : 'bg-transparent text-sbg-text-muted hover:text-white',
+                ].join(' ')}
+              >
+                Returning Member
+              </button>
+            </div>
+          </div>
+
+          {/* Heading */}
           <div className="mb-8">
-            <h2 className="font-bold text-white text-2xl">Create your application</h2>
+            <h2 className="font-bold text-white text-2xl">
+              {activeTab === 'new' ? 'Create your application' : 'Renew your membership'}
+            </h2>
             <p className="text-sbg-text-muted text-sm mt-1">
-              Fill out all three steps to complete your membership application.
+              {activeTab === 'new'
+                ? 'Fill out all three steps to complete your membership application.'
+                : 'Enter your SBG ID and upload your updated documents.'}
             </p>
           </div>
-          <RegistrationForm />
+
+          {/* Form */}
+          {activeTab === 'new' ? <RegistrationForm /> : <RenewalForm />}
         </div>
       </div>
 

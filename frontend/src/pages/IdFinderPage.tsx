@@ -40,7 +40,7 @@ export default function IdFinderPage() {
         return
       }
 
-      if (member.status !== 'approved') {
+      if (member.status !== 'approved' && member.status !== 'inactive') {
         setSearchState({ status: 'not_approved', memberStatus: member.status })
         return
       }
