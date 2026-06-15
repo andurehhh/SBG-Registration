@@ -1,7 +1,6 @@
 // frontend/src/pages/LandingPage.tsx
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, CreditCard, Users, Award, Search } from 'lucide-react'
-import { ThemeToggle } from '../components/ui/ThemeToggle'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -19,7 +18,6 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <ThemeToggle />
           <button
             onClick={() => navigate('/id-finder')}
             className="font-mono text-sbg-text-muted text-sm hover:text-white transition-colors px-3 py-1.5"

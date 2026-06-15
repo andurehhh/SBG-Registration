@@ -2,7 +2,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Users, BarChart2, Megaphone, ClipboardList, LogOut } from 'lucide-react'
 import { useAdminStore } from '../../store/admin'
-import { ThemeToggle } from '../ui/ThemeToggle'
 
 const NAV_ITEMS = [
   { to: `/${__ADMIN_PATH__}/dashboard`, label: 'Dashboard', icon: LayoutDashboard },
@@ -56,12 +55,8 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Theme Toggle + Logout */}
+      {/* Logout */}
       <div className="px-3 py-4 border-t border-white/[0.08] flex flex-col gap-1">
-        <div className="flex items-center gap-3 px-3 py-2.5">
-          <ThemeToggle />
-          <span className="text-sm font-mono text-sbg-text-muted">Theme</span>
-        </div>
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-mono text-sbg-text-muted hover:text-red-400 hover:bg-red-900/10 transition-colors w-full"

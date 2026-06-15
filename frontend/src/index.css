@@ -22,36 +22,7 @@
   --grid-stroke: white;
 }
 
-/* Light mode overrides */
-.light {
-  --color-bg: #f8f9fc;
-  --color-surface: #ffffff;
-  --color-surface-raised: #f0f2f8;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-subtle: rgba(0, 0, 0, 0.12);
-  --color-text-primary: #0f1117;
-  --color-text-secondary: #4b5563;
-  --color-purple: #7C3AED;
-  --color-purple-light: #8B5CF6;
-  --color-purple-muted: #3b2f6e;
-  --color-orange: #FF9900;
-  --grid-stroke: #1a1f2e;
-  color-scheme: light;
-}
-
-/* Light mode: override hardcoded text-white and border-white utilities */
-.light .text-white {
-  color: var(--color-text-primary) !important;
-}
-
-.light .border-white\/\[0\.08\],
-.light .border-white\/\[0\.06\] {
-  border-color: var(--color-border) !important;
-}
-
-.light .bg-black\/70 {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-}
+/* Dark mode only — no light mode */
 
 /* Base Styles */
 @layer base {

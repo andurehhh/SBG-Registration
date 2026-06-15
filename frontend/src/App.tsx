@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { ThemeProvider } from './components/ThemeProvider'
 import { ToastContainer } from './components/ui/ToastContainer'
 
 const LandingPage = lazy(() => import('./pages/LandingPage'))
@@ -28,28 +27,26 @@ function LoadingSpinner() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <BrowserRouter>
-          <Suspense fallback={<LoadingSpinner />}>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/id-finder" element={<IdFinderPage />} />
+      <BrowserRouter>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/id-finder" element={<IdFinderPage />} />
 
-              {/* Admin routes: gated by build flag + obscured path */}
-              {__ADMIN_ENABLED__ && AdminLoginPage && (
-                <Route path={`/${__ADMIN_PATH__}/login`} element={<AdminLoginPage />} />
-              )}
-              {__ADMIN_ENABLED__ && AdminPage && (
-                <Route path={`/${__ADMIN_PATH__}/*`} element={<AdminPage />} />
-              )}
+            {/* Admin routes: gated by build flag + obscured path */}
+            {__ADMIN_ENABLED__ && AdminLoginPage && (
+              <Route path={`/${__ADMIN_PATH__}/login`} element={<AdminLoginPage />} />
+            )}
+            {__ADMIN_ENABLED__ && AdminPage && (
+              <Route path={`/${__ADMIN_PATH__}/*`} element={<AdminPage />} />
+            )}
 
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <ToastContainer />
-      </ThemeProvider>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+      <ToastContainer />
     </ErrorBoundary>
   )
 }

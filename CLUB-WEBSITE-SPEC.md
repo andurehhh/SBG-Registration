@@ -56,16 +56,14 @@ What the official AWS Student Builder Group (PUP Biñan) website should contain 
 
 **Purpose:** Curated AWS learning path for members at every level.
 
-| Category | Resources |
+| Section | What it covers |
 |---|---|
-| **Getting Started** | What is Cloud Computing?, AWS overview video, free-tier setup guide |
-| **Beginner** | AWS Cloud Practitioner learning path, AWS Skill Builder free courses, intro labs |
-| **Builder** | Hands-on workshops, project ideas, AWS Well-Architected labs |
-| **Certification** | Study guides (CCP, SAA, DVA), practice exams, exam registration links |
-| **Community** | AWS Community Builder program, re:Post, Student Hub, re:Invent recordings |
-| **SBG Materials** | Club workshop recordings, slide decks, project repos (if any) |
+| **Getting Started with AWS** | What is cloud computing, AWS overview, free-tier setup, first console walkthrough |
+| **AWS Skill Builder** | Links to free AWS Skill Builder courses, learning plans, digital badges |
+| **Hands-on Workshops** | Lab exercises, guided projects, AWS Workshop Studio links, SBG's own workshop materials |
+| **Getting to the Next Level** | AWS Certifications — study paths, practice exams, exam registration, tips from certified members |
 
-**Format:** Grid of cards — title, short description, category badge, external link. Admin-editable in the future (store in DB).
+**Format:** Simple sections with curated link cards. Admin-editable via S3-hosted resources in the future.
 
 ---
 
@@ -107,7 +105,7 @@ Mobile: hamburger menu.
 ### Footer
 
 ```
-© 2025 AWS Student Builder Group — PUP Biñan
+© 2026 AWS Student Builder Group — PUP Biñan
 [Facebook] [Discord] [GitHub] [Email]
 ```
 
@@ -204,14 +202,35 @@ SBG has three departments: **Core Team Officers**, **Dev Team**, and **Skill Bui
 | Learning Resources | CRUD for resource cards (title, URL, category, description) — feeds the Learn page |
 | Site Settings | Edit mission, vision, tagline, social links — feeds public pages |
 
-### Planned — Member Portal (Self-Service)
+### Planned — Swag Inventory
+
+Track club merchandise (shirts, stickers, lanyards, etc.) and distribution.
 
 | Feature | Description |
 |---|---|
-| Magic Link Login | Members log in via email link (no password) |
-| My Profile | View/edit personal info, see department assignment |
-| My ID | View and download digital membership ID |
-| My Events | See registered events, QR codes, attendance history |
+| Add Swag Items | Name, description, image, quantity in stock, cost per unit |
+| Stock Tracking | Current quantity, low-stock alerts (configurable threshold) |
+| Distribution Log | Record who received what (member name, item, quantity, date) |
+| Claim / Request | Members can request swag (admin approves and marks as distributed) |
+| Restock History | Log when items are restocked (quantity added, date, notes) |
+| Export | CSV export of inventory status or distribution history |
+
+### Planned — Finance Tracker
+
+Simple income/expense tracking for club funds (event budgets, sponsorships, swag sales).
+
+| Feature | Description |
+|---|---|
+| Record Transaction | Type (income/expense), amount, category, description, date, receipt image (optional) |
+| Categories | Event expenses, swag purchases, sponsorship income, donations, miscellaneous |
+| Balance Dashboard | Current balance, income vs. expenses chart, monthly breakdown |
+| Per-Event Budget | Assign expenses to specific events — track event cost vs. attendance |
+| Reports | Monthly/semester financial summary, exportable as CSV or PDF |
+| Access Control | Finance data visible only to Core Team (role-based within admin) |
+
+### Planned — Member Portal (Self-Service)
+
+_Removed — keeping the member experience simple. Members use the public ID Finder page to view their card. No login required for members._
 
 ---
 
@@ -229,6 +248,5 @@ Audit Log
 ──────────────────
 Content           ← new (Officers, Resources, Settings)
 ──────────────────
-[Theme Toggle]
 Logout
 ```
