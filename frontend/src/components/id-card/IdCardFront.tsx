@@ -11,7 +11,11 @@ interface IdCardFrontProps {
 
 export function IdCardFront({ member, stickerId, cardRef }: IdCardFrontProps) {
   const isActive = member.status === 'approved'
-  const memberSince = new Date(member.created_at).getFullYear()
+  const memberSince = new Date(member.created_at).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
 
   return (
     <div

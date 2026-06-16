@@ -8,7 +8,6 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const IdFinderPage = lazy(() => import('./pages/IdFinderPage'))
 
 // Admin routes are only imported when the build flag is enabled
-// This means production builds for students won't include admin code at all
 const AdminLoginPage = __ADMIN_ENABLED__
   ? lazy(() => import('./pages/AdminLoginPage'))
   : null

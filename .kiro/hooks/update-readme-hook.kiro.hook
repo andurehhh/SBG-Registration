@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Update README on Changes",
+  "description": "After the agent finishes a task, reviews what changed and updates the README.md if there are notable additions, removals, or modifications that should be documented (e.g., new features, changed commands, updated structure, new environment variables).",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the changes made in this session. If any of the following were added, removed, or modified, update README.md accordingly: new features, new or changed commands, project structure changes, new environment variables, new dependencies, or breaking changes. Only update the README if there's something meaningful to document — don't make trivial edits. Keep the README concise and consistent with its existing style."
+  }
+}

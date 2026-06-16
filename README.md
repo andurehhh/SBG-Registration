@@ -9,8 +9,10 @@ A serverless, cloud-native membership portal for managing registrations, member 
 
 The SBG Registration Portal is a comprehensive membership management system that handles:
 - **Multi-step registration** with document uploads and validation
-- **Digital ID retrieval** for approved members
-- **Admin dashboard** for review, approval, and member management
+- **Returning member renewal** — streamlined re-registration with student number verification
+- **Semester management** — per-semester term resets with school year + semester tracking
+- **Digital ID retrieval** for approved and inactive members (with QR code for event check-in)
+- **Admin dashboard** — bulk approve/reject, CSV export, audit log, announcements
 - **Automated email notifications** for registrations, approvals, and announcements
 - **Data visualization** with member statistics and analytics
 
@@ -33,7 +35,7 @@ Built entirely serverless using **Supabase** backend and **React** frontend.
 | **Backend** | Supabase Edge Functions (Deno) | Serverless backend logic |
 | **Automation** | GitHub Actions (Cron) | Email queue processor |
 | **Charts** | Recharts | Admin analytics |
-| **ID Export** | html-to-image | Digital ID cards |
+| **ID Export** | html-to-image + qrcode.react | Digital ID cards with QR |
 
 ---
 
@@ -163,8 +165,17 @@ supabase functions deploy term-reset
 The database schema is managed via Supabase. Key tables:
 - `Member` — student registrations and membership data
 - `EmailQueue` — queued emails with retry logic
-- `SchoolYear` — academic year tracking
+- `SchoolYear` — academic year + semester tracking (1st/2nd)
 - `AppConfig` — application-level feature flags (registration open/closed)
+- `AuditLog` — admin action history (approvals, announcements, term resets)
+
+SQL migrations are in the `database/` directory (run them in order in the Supabase SQL Editor):
+1. `schema.sql` — base tables
+2. `001_app_config.sql` — feature flags
+3. `002_rls_and_view.sql` — RLS policies + public view
+4. `003_audit_log.sql` — audit log table
+5. `004_semester_management.sql` — redesigned SchoolYear with semester support
+6. `005_renewal_view.sql` — renewal verification view for returning members
 
 ---
 
@@ -206,6 +217,10 @@ SBG-Registration/
 ├── frontend/                    # React + Vite SPA
 │   ├── src/
 │   │   ├── components/          # UI components by feature
+│   │   │   ├── admin/           # Admin dashboard components
+│   │   │   ├── registration/    # Registration + renewal forms
+│   │   │   ├── id-card/         # Digital ID card with QR
+│   │   │   └── ui/              # Reusable primitives
 │   │   ├── pages/               # Route pages
 │   │   ├── store/               # Zustand stores
 │   │   ├── lib/                 # API helpers & utilities

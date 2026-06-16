@@ -25,7 +25,8 @@ DROP POLICY IF EXISTS "Anon insert for registration" ON "Member";
 DROP POLICY IF EXISTS "Anon select denied" ON "Member";
 
 -- ── Step 3: Create member_public_view ─────────────────────────────────────────
--- Exposes only ID_Lookup_Fields for approved members.
+-- Exposes only ID_Lookup_Fields for approved AND inactive members.
+-- Inactive members can still view their ID card (shows as inactive badge).
 -- Excludes: email, scholar_email, gender, why_join, expectations,
 --           cor_url, proof_of_share_url, updated_at
 CREATE OR REPLACE VIEW member_public_view AS
@@ -43,7 +44,7 @@ SELECT
   status,
   created_at
 FROM "Member"
-WHERE status = 'approved';
+WHERE status IN ('approved', 'inactive');
 
 -- ── Step 4: Grant/Revoke permissions ──────────────────────────────────────────
 -- Anon can only SELECT from the view (not the base table)

@@ -82,7 +82,28 @@ What the official AWS Student Builder Group (PUP Biñan) website should contain 
 
 ### Register (`/register`)
 
-Already built — multi-step form with validation, file uploads, and confirmation email.
+Two modes via a toggle at the top of the page:
+
+**[ New Member ] [ Returning Member ]**
+
+#### New Member (existing flow)
+Full multi-step form: personal info, application questions, COR + proof of share upload, confirmation email.
+
+#### Returning Member (renewal flow)
+Minimal form — 3 fields, done in 30 seconds:
+
+1. **SBG ID** — input their existing club ID (e.g., `SBG-PUPBC-2026-0042`)
+   - System verifies the ID exists and member status is `inactive`
+   - If not found or not inactive → show error: "ID not found or membership is already active"
+2. **Upload new COR** — updated Certificate of Registration for the current semester
+3. **Upload proof of share** — screenshot proving they shared the recruitment post
+
+On submit:
+- Updates the existing member record with new COR/proof URLs
+- Sets status back to `pending`
+- Tags with the current active school year + semester
+- Sends confirmation email
+- Admin reviews and approves (same flow as new members)
 
 ---
 
