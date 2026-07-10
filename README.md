@@ -231,6 +231,14 @@ SBG-Registration/
 │   ├── functions/               # Edge Functions (Deno)
 │   └── set-secrets.sh           # Secrets deployment script
 │
+├── docs/                        # Project documentation
+│   ├── ARCHITECTURE.md          # System design & data flows
+│   ├── DATABASE.md              # Schema, migrations, RLS policies
+│   ├── API.md                   # Edge Function & query reference
+│   ├── ADMIN-GUIDE.md           # Admin dashboard usage guide
+│   ├── DEVELOPER.md             # Setup & contribution guide
+│   └── SECURITY.md              # Auth, RLS, known risks
+│
 ├── lambda/
 │   └── email-sender/            # Python Lambda (Gmail SMTP)
 │
