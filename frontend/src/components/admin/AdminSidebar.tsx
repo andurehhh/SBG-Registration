@@ -23,14 +23,14 @@ export function AdminSidebar() {
   return (
     <aside
       style={{ width: '240px', minWidth: '240px' }}
-      className="flex flex-col h-full bg-sbg-black border-r border-white/[0.08]"
+      className="flex flex-col h-full bg-sbg-surface border-r border-white/[0.06]"
     >
       {/* Logo + Title */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.08]">
-        <img src="/sbg-logo.svg" alt="SBG" className="h-8 w-8 flex-shrink-0" />
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.06]">
+        <img src="/sbg-logo-white.svg" alt="SBG" className="h-7 w-7 flex-shrink-0" />
         <div>
-          <p className="font-bold text-white text-sm leading-tight">Student Builder Group</p>
-          <p className="text-sbg-text-muted text-xs">Admin Panel</p>
+          <p className="font-sans font-bold text-white text-sm leading-tight">Student Builder Group</p>
+          <p className="text-sbg-text-muted text-xs font-mono">Admin Panel</p>
         </div>
       </div>
 
@@ -42,9 +42,9 @@ export function AdminSidebar() {
             to={to}
             className={({ isActive }) =>
               [
-                'flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-mono transition-colors',
+                'flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors',
                 isActive
-                  ? 'bg-sbg-purple text-white'
+                  ? 'bg-white text-sbg-black font-semibold'
                   : 'text-sbg-text-muted hover:text-white hover:bg-white/5',
               ].join(' ')
             }
@@ -56,10 +56,10 @@ export function AdminSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-white/[0.08] flex flex-col gap-1">
+      <div className="px-3 py-4 border-t border-white/[0.06] flex flex-col gap-1">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-mono text-sbg-text-muted hover:text-red-400 hover:bg-red-900/10 transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-sbg-text-muted hover:text-red-400 hover:bg-red-900/10 transition-colors w-full"
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           Logout

@@ -12,8 +12,6 @@ interface AuditLogEntryProps {
   entry: AuditLogEntryType
 }
 
-// ─── Badge config per action type ─────────────────────────────────────────────
-
 interface BadgeConfig {
   label: string
   icon: React.ReactNode
@@ -58,8 +56,6 @@ const BADGE_CONFIG: Record<AuditActionType, BadgeConfig> = {
   },
 }
 
-// ─── Relative time formatter ──────────────────────────────────────────────────
-
 function formatRelativeTime(dateStr: string): string {
   const date = new Date(dateStr)
   const now = new Date()
@@ -74,7 +70,6 @@ function formatRelativeTime(dateStr: string): string {
   if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`
   if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`
 
-  // Fallback to absolute format for older entries
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -84,29 +79,23 @@ function formatRelativeTime(dateStr: string): string {
   })
 }
 
-// ─── Details summary helper ───────────────────────────────────────────────────
-
 function getDetailsSummary(details: Record<string, unknown> | null): string | null {
   if (!details) return null
 
-  // Show count if present (bulk operations)
   if ('count' in details && typeof details.count === 'number') {
     return `${details.count} member${details.count !== 1 ? 's' : ''}`
   }
 
-  // Show subject for announcements
   if ('subject' in details && typeof details.subject === 'string') {
     const subject = details.subject
     const recipientCount = 'recipient_count' in details ? ` → ${details.recipient_count} recipients` : ''
     return `"${subject.length > 40 ? subject.slice(0, 40) + '…' : subject}"${recipientCount}`
   }
 
-  // Show new_state for registration toggle
   if ('new_state' in details && typeof details.new_state === 'string') {
     return `Set to ${details.new_state}`
   }
 
-  // Generic: show first key-value pair
   const entries = Object.entries(details)
   if (entries.length > 0) {
     const [key, value] = entries[0]
@@ -116,21 +105,16 @@ function getDetailsSummary(details: Record<string, unknown> | null): string | nu
   return null
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export function AuditLogEntry({ entry }: AuditLogEntryProps) {
   const badge = BADGE_CONFIG[entry.action_type]
   const detailsSummary = getDetailsSummary(entry.details)
 
   return (
     <div className="flex items-start gap-3 px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-      {/* Icon */}
       <div className="mt-0.5 shrink-0">{badge.icon}</div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Action badge */}
           <span
             className={[
               'inline-flex items-center px-2 py-0.5 rounded-[4px]',
@@ -141,7 +125,6 @@ export function AuditLogEntry({ entry }: AuditLogEntryProps) {
             {badge.label}
           </span>
 
-          {/* Target member name */}
           {entry.target_member_name && (
             <span className="text-sm text-white font-medium truncate">
               {entry.target_member_name}
@@ -149,9 +132,8 @@ export function AuditLogEntry({ entry }: AuditLogEntryProps) {
           )}
         </div>
 
-        {/* Actor and details row */}
         <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <span className="text-xs font-mono text-sbg-text-muted">
+          <span className="text-xs text-sbg-text-muted font-mono">
             by {entry.actor_email}
           </span>
           {detailsSummary && (
@@ -165,8 +147,7 @@ export function AuditLogEntry({ entry }: AuditLogEntryProps) {
         </div>
       </div>
 
-      {/* Timestamp */}
-      <span className="text-xs font-mono text-sbg-text-muted shrink-0 mt-0.5">
+      <span className="text-xs text-sbg-text-muted shrink-0 mt-0.5 font-mono">
         {formatRelativeTime(entry.created_at)}
       </span>
     </div>

@@ -17,12 +17,12 @@ export function BackButton({ to = '/', label = 'Back to Home', className = '' }:
       <button
         onClick={() => navigate(to)}
         aria-label={label}
-        className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-sbg-navy border border-white/[0.08] text-sbg-text-muted hover:text-white hover:border-sbg-purple/50 hover:bg-sbg-navy-light transition-all duration-150"
+        className="flex items-center justify-center w-10 h-10 bg-white/[0.03] border border-white/[0.06] text-sbg-text-muted hover:text-sbg-text hover:border-white/20 transition-all duration-150"
       >
         <ArrowLeft className="w-5 h-5" />
       </button>
       {/* Tooltip */}
-      <span className="absolute left-12 top-1/2 -translate-y-1/2 whitespace-nowrap bg-sbg-navy-light border border-white/[0.08] text-white text-xs font-sans px-2.5 py-1 rounded-[6px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50">
+      <span className="absolute left-12 top-1/2 -translate-y-1/2 whitespace-nowrap bg-sbg-surface border border-white/[0.06] text-sbg-text text-xs px-2.5 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50">
         {label}
       </span>
     </div>

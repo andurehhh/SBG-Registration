@@ -36,9 +36,11 @@ export function RegistrationForm() {
   if (isLoadingConfig) {
     return (
       <Card>
-        <div className="flex items-center justify-center py-12">
-          <div className="w-8 h-8 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
-        </div>
+          <div className="flex items-center justify-center py-12">
+            <div className="font-mono text-xs text-sbg-text-muted">
+              <span className="text-sbg-accent">$</span> loading...
+            </div>
+          </div>
       </Card>
     )
   }
@@ -48,11 +50,11 @@ export function RegistrationForm() {
     return (
       <Card>
         <div className="flex flex-col items-center text-center gap-4 py-8">
-          <div className="w-14 h-14 rounded-full bg-sbg-navy-light border border-white/[0.08] flex items-center justify-center">
+          <div className="w-14 h-14 flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <span className="text-2xl">🔒</span>
           </div>
           <div>
-            <h3 className="font-mono text-white text-lg font-bold">Registration Closed</h3>
+            <h3 className="font-sans text-sbg-text text-lg font-bold">Registration Closed</h3>
             <p className="text-sbg-text-muted text-sm mt-2 max-w-xs">
               Applications are not currently being accepted. Please check back later or contact the SBG team.
             </p>
@@ -89,7 +91,7 @@ export function RegistrationForm() {
     <Card>
       <div className="flex flex-col gap-6">
         <div className="text-center">
-          <h2 className="font-mono text-white text-lg font-bold">
+          <h2 className="font-sans text-sbg-text text-lg font-bold">
             {store.currentStep === 1 && 'Personal Information'}
             {store.currentStep === 2 && 'Application Questions'}
             {store.currentStep === 3 && 'Attachments'}

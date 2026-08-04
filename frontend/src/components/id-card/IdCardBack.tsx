@@ -15,28 +15,23 @@ export function IdCardBack({ member, cardRef }: IdCardBackProps) {
   return (
     <div
       ref={cardRef}
-      className="relative w-full aspect-[3.375/2.125] bg-sbg-navy rounded-[12px] border border-white/[0.08]"
+      className="relative w-full aspect-[3.375/2.125] bg-[#161616] rounded-[12px] border border-white/[0.08]"
     >
-      {/* SVG Grid Background */}
       <div className="absolute inset-0 grid-bg opacity-40" aria-hidden="true" />
 
-      {/* Purple bottom bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-sbg-purple" />
+      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#AE5CFF]" />
 
-      {/* Content */}
       <div className="relative z-10 p-6 h-full flex flex-col">
-        {/* Top section: Student number + QR */}
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-[10px] font-mono text-sbg-text-muted uppercase tracking-wider mb-1">
+            <p className="text-[10px] text-sbg-text-muted uppercase tracking-wider mb-1 font-mono">
               Student Number
             </p>
-            <p className="font-mono text-white text-base tracking-widest">
+            <p className="text-white text-base tracking-widest font-mono">
               {member.student_number}
             </p>
           </div>
 
-          {/* QR Code */}
           <div className="bg-white p-1.5 rounded-[6px]">
             <QRCodeSVG
               value={qrValue}
@@ -48,23 +43,22 @@ export function IdCardBack({ member, cardRef }: IdCardBackProps) {
           </div>
         </div>
 
-        {/* AWS Interests */}
         {member.skills.length > 0 && (
           <div className="flex-1">
-            <p className="text-[10px] font-mono text-sbg-text-muted uppercase tracking-wider mb-2">
+            <p className="text-[10px] text-sbg-text-muted uppercase tracking-wider mb-2 font-mono">
               AWS Interests
             </p>
             <div className="flex flex-wrap gap-1.5">
               {member.skills.slice(0, 5).map((skill) => (
                 <span
                   key={skill}
-                  className="px-2 py-0.5 bg-sbg-purple-muted border border-sbg-purple/30 rounded-[4px] text-[10px] font-mono text-sbg-purple-light"
+                  className="px-2 py-0.5 bg-[#AE5CFF]/10 border border-[#AE5CFF]/30 rounded-[4px] text-[10px] text-[#AE5CFF]"
                 >
                   {skill}
                 </span>
               ))}
               {member.skills.length > 5 && (
-                <span className="px-2 py-0.5 text-[10px] font-mono text-sbg-text-muted">
+                <span className="px-2 py-0.5 text-[10px] text-sbg-text-muted font-mono">
                   +{member.skills.length - 5} more
                 </span>
               )}
@@ -72,18 +66,17 @@ export function IdCardBack({ member, cardRef }: IdCardBackProps) {
           </div>
         )}
 
-        {/* Footer */}
         <div className="flex items-end justify-between mt-auto pt-3">
           <div>
-            <p className="font-mono text-sbg-text-muted text-[10px]">
+            <p className="text-sbg-text-muted text-[10px] font-mono">
               AWS Student Builder Group
             </p>
-            <p className="font-mono text-sbg-text-muted text-[9px]">
+            <p className="text-sbg-text-muted text-[9px] font-mono">
               PUP Biñan Campus
             </p>
           </div>
           {member.school_year && (
-            <p className="font-mono text-sbg-text-muted text-[10px]">
+            <p className="text-sbg-text-muted text-[10px] font-mono">
               {member.school_year}
             </p>
           )}

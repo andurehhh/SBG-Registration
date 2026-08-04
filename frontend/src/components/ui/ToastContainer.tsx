@@ -3,7 +3,7 @@ import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from 'lucide-react'
 import { useToastStore, type Toast, type ToastVariant } from '../../store/toast'
 
 const variantStyles: Record<ToastVariant, string> = {
-  success: 'border-l-4 border-l-sbg-purple',
+  success: 'border-l-4 border-l-white',
   error: 'border-l-4 border-l-red-600',
   warning: 'border-l-4 border-l-amber-500',
   info: 'border-l-4 border-l-blue-500',
@@ -17,7 +17,7 @@ const variantIcons: Record<ToastVariant, typeof CheckCircle> = {
 }
 
 const variantIconColors: Record<ToastVariant, string> = {
-  success: 'text-sbg-purple',
+  success: 'text-white',
   error: 'text-red-600',
   warning: 'text-amber-500',
   info: 'text-blue-500',
@@ -28,7 +28,6 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // Trigger entry animation on next frame
     const frame = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(frame)
   }, [])
@@ -36,7 +35,6 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   useEffect(() => {
     timerRef.current = setTimeout(() => {
       setVisible(false)
-      // Wait for exit animation before removing
       setTimeout(() => onDismiss(toast.id), 150)
     }, toast.duration)
 
@@ -61,8 +59,8 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
     <div
       {...ariaProps}
       className={[
-        'flex items-start gap-3 px-4 py-3 rounded-[8px] bg-sbg-navy shadow-lg',
-        'border border-white/[0.08]',
+        'flex items-start gap-3 px-4 py-3 bg-sbg-surface',
+        'border border-white/[0.06]',
         variantStyles[toast.variant],
         'transition-all duration-150 ease-in-out',
         visible
@@ -71,11 +69,11 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
       ].join(' ')}
     >
       <Icon className={`w-5 h-5 shrink-0 mt-0.5 ${variantIconColors[toast.variant]}`} />
-      <p className="flex-1 text-sm text-sbg-text font-sans">{toast.message}</p>
+      <p className="flex-1 text-sm text-white">{toast.message}</p>
       <button
         onClick={handleDismiss}
         aria-label="Dismiss notification"
-        className="shrink-0 p-1 rounded hover:bg-white/10 text-sbg-text-muted hover:text-white transition-colors"
+        className="shrink-0 p-1 hover:bg-white/10 text-sbg-text-muted hover:text-white transition-colors"
       >
         <X className="w-4 h-4" />
       </button>

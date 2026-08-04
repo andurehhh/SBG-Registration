@@ -20,8 +20,8 @@ export function BulkActionToolbar({
   }
 
   return (
-    <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-4 py-3 bg-sbg-navy-light border border-sbg-purple/30 rounded-[8px] mb-4">
-      <span className="text-sm font-mono text-sbg-text">
+    <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-4 py-3 bg-sbg-surface border border-white/[0.06] mb-4">
+      <span className="text-sm text-white font-mono">
         {selectedCount} selected
       </span>
 

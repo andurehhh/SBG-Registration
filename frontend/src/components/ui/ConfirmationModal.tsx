@@ -44,10 +44,10 @@ export function ConfirmationModal({
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-md rounded-[8px] border border-white/[0.08] bg-sbg-navy p-6"
+        className="w-full max-w-md bg-sbg-surface border border-white/[0.06] p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-mono text-lg font-bold text-white">{title}</h2>
+        <h2 className="font-sans text-lg font-bold text-white">{title}</h2>
         <p className="mt-2 text-sm text-sbg-text-muted">{message}</p>
 
         <div className="mt-6 flex justify-end gap-3">

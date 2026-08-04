@@ -179,20 +179,20 @@ export function RenewalForm() {
     return (
       <Card>
         <div className="flex flex-col items-center text-center gap-6 py-8">
-          <div className="w-16 h-16 rounded-full bg-green-900/30 border border-green-700/50 flex items-center justify-center">
-            <CheckCircle className="w-8 h-8 text-green-400" />
+          <div className="w-16 h-16 bg-white/5 border border-white/10 flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-emerald-400" />
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="font-mono text-white text-xl font-bold">
+            <h2 className="font-sans text-sbg-text text-xl font-bold">
               Renewal Submitted!
             </h2>
             <p className="text-sbg-text-muted text-sm">
-              Welcome back, <span className="text-white font-medium">{memberData?.full_name}</span>!
+              Welcome back, <span className="text-sbg-text font-medium">{memberData?.full_name}</span>!
             </p>
             <p className="text-sbg-text-muted text-sm max-w-sm">
               Your renewal application has been submitted. We'll notify you at{' '}
-              <span className="text-sbg-purple font-mono">{memberData?.email}</span>{' '}
+              <span className="text-sbg-text font-mono">{memberData?.email}</span>{' '}
               once it's reviewed.
             </p>
           </div>
@@ -226,7 +226,7 @@ export function RenewalForm() {
           <div className="flex flex-col gap-1">
             <Input
               label="Student Number"
-              placeholder="2024-12345-BN-0"
+              placeholder="2026-12345-BN-0"
               value={sbgId}
               onChange={(e) => {
                 setSbgId(e.target.value)
@@ -242,7 +242,7 @@ export function RenewalForm() {
 
           {/* Verification success message */}
           {memberData && step === 'upload' && (
-            <div className="p-3 rounded-[8px] bg-green-900/20 border border-green-700/50 text-sm text-green-400 font-mono">
+            <div className="p-3 text-sm font-mono" style={{ background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--orange)' }}>
               Welcome back, {memberData.full_name}!
             </div>
           )}
@@ -287,7 +287,7 @@ export function RenewalForm() {
             />
 
             {serverError && (
-              <div className="p-3 rounded-[8px] bg-red-900/20 border border-red-700/50 text-sm text-red-400 font-mono">
+              <div className="p-3 bg-red-900/20 border border-red-700/50 text-sm text-red-400 font-mono">
                 {serverError}
               </div>
             )}

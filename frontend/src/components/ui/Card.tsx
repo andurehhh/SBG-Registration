@@ -17,10 +17,10 @@ export function Card({ children, padding = 'md', className = '', ...props }: Car
   return (
     <div
       className={[
-        'bg-sbg-navy rounded-[8px] border border-white/[0.08]',
         paddingClasses[padding],
         className,
       ].join(' ')}
+      style={{ background: 'var(--card)', border: '1px solid var(--line)' }}
       {...props}
     >
       {children}

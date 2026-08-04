@@ -21,17 +21,14 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
   const headerCheckboxRef = useRef<HTMLInputElement>(null)
   const addToast = useToastStore((state) => state.addToast)
 
-  // Clear selection when members data changes (refresh)
   useEffect(() => {
     setSelectedIds(new Set())
   }, [members])
 
-  // Notify parent whenever selection changes
   useEffect(() => {
     onSelectionChange?.(Array.from(selectedIds))
   }, [selectedIds, onSelectionChange])
 
-  // Update indeterminate state on header checkbox
   useEffect(() => {
     if (headerCheckboxRef.current) {
       const allSelected = members.length > 0 && selectedIds.size === members.length
@@ -42,10 +39,8 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
 
   const handleHeaderCheckboxChange = useCallback(() => {
     if (selectedIds.size === members.length) {
-      // All are selected — deselect all
       setSelectedIds(new Set())
     } else {
-      // Select all visible
       setSelectedIds(new Set(members.map((m) => m.id)))
     }
   }, [members, selectedIds.size])
@@ -68,7 +63,6 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
     try {
       await edgeFn.post(`approve`, { id: member.id })
       addToast(`${member.full_name} has been approved`, 'success')
-      // Insert audit log for single approve
       const { data: sessionData } = await supabase.auth.getSession()
       const user = sessionData.session?.user
       if (user) {
@@ -95,7 +89,6 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
     try {
       await edgeFn.post(`reject`, { id: member.id })
       addToast(`${member.full_name} has been rejected`, 'success')
-      // Insert audit log for single reject
       const { data: sessionData } = await supabase.auth.getSession()
       const user = sessionData.session?.user
       if (user) {
@@ -119,8 +112,8 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
   if (members.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <CheckCircle className="w-12 h-12 text-green-400" />
-        <h3 className="font-mono text-white text-lg font-bold">All Clear!</h3>
+        <CheckCircle className="w-12 h-12 text-emerald-400" />
+        <h3 className="font-sans text-sbg-text text-lg font-bold">All Clear!</h3>
         <p className="text-sbg-text-muted text-sm">No pending applications at this time.</p>
       </div>
     )
@@ -131,19 +124,19 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-white/[0.08]">
+            <tr className="border-b border-white/[0.06]">
               <th className="px-4 py-3 w-10">
                 <input
                   ref={headerCheckboxRef}
                   type="checkbox"
                   checked={members.length > 0 && selectedIds.size === members.length}
                   onChange={handleHeaderCheckboxChange}
-                  className="w-4 h-4 rounded border-white/20 bg-sbg-navy-light text-sbg-purple focus:ring-sbg-purple focus:ring-offset-0 cursor-pointer"
+                  className="w-4 h-4 rounded border-white/20 bg-white/[0.03] text-sbg-accent focus:ring-sbg-accent/40 focus:ring-offset-0 cursor-pointer"
                   aria-label="Select all applicants"
                 />
               </th>
               {['Name', 'Student Number', 'Course', 'Year', 'Submitted', 'Actions'].map((h) => (
-                <th key={h} className="text-left px-4 py-3 text-xs font-mono text-sbg-text-muted uppercase tracking-wider">
+                <th key={h} className="text-left px-4 py-3 text-xs text-sbg-text-muted uppercase tracking-wider font-mono">
                   {h}
                 </th>
               ))}
@@ -162,18 +155,18 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
                     checked={selectedIds.has(member.id)}
                     onChange={() => handleRowCheckboxChange(member.id)}
                     onClick={(e) => e.stopPropagation()}
-                    className="w-4 h-4 rounded border-white/20 bg-sbg-navy-light text-sbg-purple focus:ring-sbg-purple focus:ring-offset-0 cursor-pointer"
+                    className="w-4 h-4 rounded border-white/20 bg-white/[0.03] text-sbg-accent focus:ring-sbg-accent/40 focus:ring-offset-0 cursor-pointer"
                     aria-label={`Select ${member.full_name}`}
                   />
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-white font-medium">{member.full_name}</span>
+                    <span className="text-sm text-sbg-text font-medium">{member.full_name}</span>
                     <ChevronRight className="w-3 h-3 text-sbg-text-muted" />
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="text-sm font-mono text-sbg-text-muted">{member.student_number}</span>
+                  <span className="text-sm text-sbg-text-muted font-mono">{member.student_number}</span>
                 </td>
                 <td className="px-4 py-3">
                   <span className="text-sm text-sbg-text">{member.course ?? '—'}</span>
@@ -182,7 +175,7 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
                   <span className="text-sm text-sbg-text">{member.year_level}</span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="text-xs font-mono text-sbg-text-muted">
+                  <span className="text-xs text-sbg-text-muted font-mono">
                     {new Date(member.created_at).toLocaleDateString()}
                   </span>
                 </td>

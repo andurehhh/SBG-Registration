@@ -17,7 +17,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="text-sm font-mono text-sbg-text-muted"
+            className="text-xs text-sbg-text-secondary font-mono"
           >
             {label}
           </label>
@@ -25,15 +25,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
-          style={{ minHeight, ...style }}
+          style={{ minHeight, background: 'var(--card)', ...style }}
           className={[
-            'w-full px-3 py-2 rounded-[8px] text-sm text-white',
-            'bg-sbg-navy-light border transition-colors duration-150',
-            'placeholder:text-sbg-text-muted resize-y',
-            'focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:ring-offset-0',
+            'w-full px-3 py-2.5 text-sm resize-y transition-colors duration-150',
+            'placeholder:text-sbg-text-muted',
+            'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40',
             error
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-white/10 focus:border-sbg-purple',
+              ? 'border border-red-500 focus:ring-red-500'
+              : 'border border-sbg-line',
             className,
           ].join(' ')}
           {...props}

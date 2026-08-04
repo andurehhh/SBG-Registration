@@ -52,18 +52,18 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-sbg-surface border border-white/[0.06] w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
+        <div className="flex items-center justify-between p-6 border-b border-white/[0.06]">
           <div>
-            <h2 className="font-mono text-white text-lg font-bold">{member.full_name}</h2>
+            <h2 className="font-sans text-white text-lg font-bold">{member.full_name}</h2>
             <p className="text-sbg-text-muted text-sm font-mono">{member.student_number}</p>
           </div>
           <div className="flex items-center gap-3">
             <Badge variant={member.status as MemberStatus}>{member.status}</Badge>
             <button
               onClick={onClose}
-              className="p-1.5 rounded hover:bg-white/10 text-sbg-text-muted hover:text-white transition-colors"
+              className="p-1.5 hover:bg-white/10 text-sbg-text-muted hover:text-white transition-colors"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -75,7 +75,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
         <div className="p-6 flex flex-col gap-6">
           {/* Personal Info */}
           <section>
-            <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-3">Personal Information</h3>
+            <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-3 font-mono">Personal Information</h3>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: 'Course', value: member.course },
@@ -85,8 +85,8 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
                 { label: 'Personal Email', value: member.email },
                 { label: 'Scholar Email', value: member.scholar_email },
               ].map(({ label, value }) => (
-                <div key={label} className="bg-sbg-navy-light rounded-[8px] p-3">
-                  <p className="text-[10px] font-mono text-sbg-text-muted uppercase tracking-wider mb-1">{label}</p>
+                <div key={label} className="bg-white/[0.03] p-3">
+                  <p className="text-[10px] text-sbg-text-muted uppercase tracking-wider mb-1 font-mono">{label}</p>
                   <p className="text-sm text-white font-mono">{value ?? '—'}</p>
                 </div>
               ))}
@@ -96,7 +96,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
           {/* AWS Interests */}
           {member.skills.length > 0 && (
             <section>
-              <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-3">AWS Interests</h3>
+              <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-3 font-mono">AWS Interests</h3>
               <div className="flex flex-wrap gap-2">
                 {member.skills.map((skill) => (
                   <Badge key={skill}>{skill}</Badge>
@@ -108,28 +108,28 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
           {/* Application Questions */}
           {member.why_join && (
             <section>
-              <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-2">Why Join SBG?</h3>
-              <p className="text-sm text-sbg-text bg-sbg-navy-light rounded-[8px] p-3 leading-relaxed">{member.why_join}</p>
+              <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-2 font-mono">Why Join SBG?</h3>
+              <p className="text-sm text-white bg-white/[0.03] p-3 leading-relaxed">{member.why_join}</p>
             </section>
           )}
 
           {member.expectations && (
             <section>
-              <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-2">Expectations</h3>
-              <p className="text-sm text-sbg-text bg-sbg-navy-light rounded-[8px] p-3 leading-relaxed">{member.expectations}</p>
+              <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-2 font-mono">Expectations</h3>
+              <p className="text-sm text-white bg-white/[0.03] p-3 leading-relaxed">{member.expectations}</p>
             </section>
           )}
 
           {/* Documents */}
           <section>
-            <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-3">Documents</h3>
+            <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-3 font-mono">Documents</h3>
             <div className="flex gap-3">
               {member.cor_url && (
                 <a
                   href={member.cor_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-2 bg-sbg-navy-light border border-white/10 rounded-[8px] text-sm font-mono text-sbg-purple hover:border-sbg-purple/50 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 bg-white/[0.03] border border-white/[0.06] text-sm text-white hover:border-white/20 transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   View COR
@@ -140,7 +140,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
                   href={member.proof_of_share_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-2 bg-sbg-navy-light border border-white/10 rounded-[8px] text-sm font-mono text-sbg-purple hover:border-sbg-purple/50 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 bg-white/[0.03] border border-white/[0.06] text-sm text-white hover:border-white/20 transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   View Proof of Share
@@ -159,7 +159,7 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
 
         {/* Actions */}
         {member.status === 'pending' && (
-          <div className="flex gap-3 p-6 border-t border-white/[0.08]">
+          <div className="flex gap-3 p-6 border-t border-white/[0.06]">
             <Button
               variant="danger"
               icon={<XCircle className="w-4 h-4" />}

@@ -34,8 +34,8 @@ function Pagination({ page, totalPages, total, pageSize, onPage }: {
   const from = (page - 1) * pageSize + 1
   const to = Math.min(page * pageSize, total)
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.08]">
-      <p className="text-xs font-mono text-sbg-text-muted">{from}–{to} of {total}</p>
+    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06]">
+      <p className="text-xs text-sbg-text-muted font-mono">{from}–{to} of {total}</p>
       <div className="flex items-center gap-1">
         <button onClick={() => onPage(page - 1)} disabled={page === 1}
           className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
@@ -51,7 +51,7 @@ function Pagination({ page, totalPages, total, pageSize, onPage }: {
           return (
             <button key={p} onClick={() => onPage(p)}
               className={['w-7 h-7 rounded-[8px] text-xs font-mono transition-colors',
-                p === page ? 'bg-sbg-purple text-white' : 'text-sbg-text-muted hover:text-white hover:bg-white/5'].join(' ')}>
+                p === page ? 'bg-white text-white' : 'text-sbg-text-muted hover:text-white hover:bg-white/5'].join(' ')}>
               {p}
             </button>
           )
@@ -244,7 +244,7 @@ export function DashboardTab() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="font-mono text-white text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-white text-2xl font-bold font-mono">Dashboard</h1>
           <p className="text-sbg-text-muted text-sm mt-1">
             {isLoading ? 'Loading...' : `${total} pending application${total !== 1 ? 's' : ''}`}
           </p>
@@ -265,9 +265,9 @@ export function DashboardTab() {
       {/* Controls row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Registration window toggle */}
-        <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-4 flex items-center justify-between gap-4">
+        <div className="bg-sbg-surface border border-white/[0.06] rounded-[8px] p-4 flex items-center justify-between gap-4">
           <div>
-            <p className="font-mono text-white text-sm font-bold">Registration Window</p>
+            <p className="text-white text-sm font-bold font-mono">Registration Window</p>
             <p className="text-sbg-text-muted text-xs mt-0.5">
               {registrationOpen ? 'Open — students can submit applications' : 'Closed — registration form is disabled'}
             </p>
@@ -286,9 +286,9 @@ export function DashboardTab() {
         </div>
 
         {/* Start New Semester */}
-        <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-4 flex items-center justify-between gap-4">
+        <div className="bg-sbg-surface border border-white/[0.06] rounded-[8px] p-4 flex items-center justify-between gap-4">
           <div>
-            <p className="font-mono text-white text-sm font-bold">Start New Semester</p>
+            <p className="text-white text-sm font-bold font-mono">Start New Semester</p>
             <p className="text-sbg-text-muted text-xs mt-0.5">
               Begin a new term — marks all current members as inactive
             </p>
@@ -324,19 +324,19 @@ export function DashboardTab() {
 
       {/* Bulk operation progress */}
       {bulkAction.isRunning && (
-        <div className="flex items-center gap-3 px-4 py-2 bg-sbg-navy-light border border-white/[0.08] rounded-[8px]">
-          <div className="w-4 h-4 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-mono text-sbg-text">
+        <div className="flex items-center gap-3 px-4 py-2 bg-white/[0.03] border border-white/[0.06] rounded-[8px]">
+          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+          <span className="text-sm text-white font-mono">
             Processing {bulkAction.progress.completed} / {bulkAction.progress.total}...
           </span>
         </div>
       )}
 
       {/* Applicant List */}
-      <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] overflow-hidden">
+      <div className="bg-sbg-surface border border-white/[0.06] rounded-[8px] overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-8 h-8 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -374,44 +374,44 @@ export function DashboardTab() {
           onClick={() => !isResetting && setShowResetConfirm(false)}
         >
           <div
-            className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-6 max-w-md w-full"
+            className="bg-sbg-surface border border-white/[0.06] rounded-[8px] p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-sbg-purple-muted border border-sbg-purple/30 flex items-center justify-center flex-shrink-0">
-                <RotateCcw className="w-5 h-5 text-sbg-purple" />
+              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                <RotateCcw className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-mono text-white font-bold">Start New Semester</h3>
+                <h3 className="text-white font-bold font-mono">Start New Semester</h3>
                 <p className="text-sbg-text-muted text-xs mt-0.5">This will mark all current members as inactive</p>
               </div>
             </div>
 
             <div className="flex flex-col gap-4 mb-6">
               <div>
-                <label className="text-xs font-mono text-sbg-text-muted block mb-1.5">School Year</label>
+                <label className="text-xs text-sbg-text-muted block mb-1.5 font-mono">School Year</label>
                 <input
                   type="text"
                   placeholder="e.g. 2026-2027"
                   value={newSchoolYear}
                   onChange={(e) => setNewSchoolYear(e.target.value)}
-                  className="w-full px-3 py-2 rounded-[8px] text-sm text-white bg-sbg-navy-light border border-white/10 focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:border-sbg-purple placeholder:text-sbg-text-muted font-mono"
+                  className="w-full px-3 py-2 rounded-[8px] text-sm text-white bg-white/[0.03] border border-white/[0.06] focus:outline-none focus:ring-2 focus:ring-sbg-accent/40 focus:border-sbg-accent/40 placeholder:text-sbg-text-muted"
                 />
               </div>
               <div>
-                <label className="text-xs font-mono text-sbg-text-muted block mb-1.5">Semester</label>
+                <label className="text-xs text-sbg-text-muted block mb-1.5 font-mono">Semester</label>
                 <select
                   value={newSemester}
                   onChange={(e) => setNewSemester(e.target.value as '1st' | '2nd')}
-                  className="w-full px-3 py-2 rounded-[8px] text-sm text-white bg-sbg-navy-light border border-white/10 focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:border-sbg-purple"
+                  className="w-full px-3 py-2 rounded-[8px] text-sm text-white bg-white/[0.03] border border-white/[0.06] focus:outline-none focus:ring-2 focus:ring-sbg-accent/40 focus:border-sbg-accent/40"
                 >
-                  <option value="1st" className="bg-sbg-navy-light">1st Semester</option>
-                  <option value="2nd" className="bg-sbg-navy-light">2nd Semester</option>
+                  <option value="1st" className="bg-white/[0.03]">1st Semester</option>
+                  <option value="2nd" className="bg-white/[0.03]">2nd Semester</option>
                 </select>
               </div>
             </div>
 
-            <p className="text-sbg-text text-xs mb-4 leading-relaxed bg-red-900/10 border border-red-700/30 rounded-[8px] p-3">
+            <p className="text-white text-xs mb-4 leading-relaxed bg-red-900/10 border border-red-700/30 rounded-[8px] p-3">
               <span className="text-red-400 font-bold">Warning:</span> All currently approved members will be marked as inactive. Registration will open for the new semester. Members will need to re-register with an updated COR.
             </p>
 

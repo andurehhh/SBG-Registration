@@ -7,7 +7,6 @@ const LandingPage = lazy(() => import('./pages/LandingPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const IdFinderPage = lazy(() => import('./pages/IdFinderPage'))
 
-// Admin routes are only imported when the build flag is enabled
 const AdminLoginPage = __ADMIN_ENABLED__
   ? lazy(() => import('./pages/AdminLoginPage'))
   : null
@@ -17,8 +16,10 @@ const AdminPage = __ADMIN_ENABLED__
 
 function LoadingSpinner() {
   return (
-    <div className="min-h-screen bg-sbg-black flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--clr-bg)' }}>
+      <div className="text-xs" style={{ color: 'var(--clr-muted)' }}>
+        <span style={{ color: 'var(--clr-accent)' }}>$</span> loading...
+      </div>
     </div>
   )
 }
@@ -33,7 +34,6 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/id-finder" element={<IdFinderPage />} />
 
-            {/* Admin routes: gated by build flag + obscured path */}
             {__ADMIN_ENABLED__ && AdminLoginPage && (
               <Route path={`/${__ADMIN_PATH__}/login`} element={<AdminLoginPage />} />
             )}

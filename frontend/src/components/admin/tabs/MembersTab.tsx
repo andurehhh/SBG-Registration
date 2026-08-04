@@ -40,15 +40,15 @@ function Pagination({
   const from = (page - 1) * pageSize + 1
   const to = Math.min(page * pageSize, total)
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.08]">
-      <p className="text-xs font-mono text-sbg-text-muted">
+    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06]">
+      <p className="text-xs text-sbg-text-muted font-mono">
         {from}–{to} of {total}
       </p>
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPage(page - 1)}
           disabled={page === 1}
-          className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -64,9 +64,9 @@ function Pagination({
               key={p}
               onClick={() => onPage(p)}
               className={[
-                'w-7 h-7 rounded-[8px] text-xs font-mono transition-colors',
+                'w-7 h-7 text-xs font-mono transition-colors',
                 p === page
-                  ? 'bg-sbg-purple text-white'
+                  ? 'bg-white text-sbg-black'
                   : 'text-sbg-text-muted hover:text-white hover:bg-white/5',
               ].join(' ')}
             >
@@ -77,7 +77,7 @@ function Pagination({
         <button
           onClick={() => onPage(page + 1)}
           disabled={page === totalPages}
-          className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -182,7 +182,7 @@ export function MembersTab() {
     <div className="p-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-mono text-white text-2xl font-bold">Members</h1>
+          <h1 className="font-sans text-white text-2xl font-bold">Members</h1>
           <p className="text-sbg-text-muted text-sm mt-1">
             {isLoading ? 'Loading...' : `${total} member${total !== 1 ? 's' : ''}`}
           </p>
@@ -236,10 +236,10 @@ export function MembersTab() {
       </div>
 
       {/* Members Table */}
-      <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] overflow-hidden">
+      <div className="bg-sbg-surface border border-white/[0.06] overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-8 h-8 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
           </div>
         ) : (
           <>

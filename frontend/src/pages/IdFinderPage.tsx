@@ -56,35 +56,32 @@ export default function IdFinderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sbg-black grid-bg">
-      {/* Top bar with back button */}
+    <div className="min-h-screen bg-sbg-black">
       <div className="relative z-10 px-6 py-4">
         <BackButton to="/" label="Back to Home" />
       </div>
 
-      {/* Hero section */}
       <div className="relative px-4 pb-12">
         <div className="relative z-10 text-center max-w-2xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <img src="/sbg-logo.svg" alt="SBG Logo" className="h-10 w-10" />
+            <img src="/sbg-logo-white.svg" alt="SBG Logo" className="h-10 w-10" />
             <div className="text-left">
-              <h1 className="font-bold text-white text-lg leading-tight">
+              <h1 className="font-bold text-sbg-text text-lg leading-tight">
                 Student Builder Group
               </h1>
               <p className="text-sbg-text-muted text-xs">PUP Biñan Campus</p>
             </div>
           </div>
 
-          <h2 className="font-bold text-white text-3xl mb-3">ID Finder</h2>
+          <h2 className="font-bold text-sbg-text text-3xl mb-3">ID Finder</h2>
           <p className="text-sbg-text-muted text-sm mb-8">
             Enter your student number to view your official AWS digital membership ID card.
           </p>
 
-          {/* Search Form */}
           <form onSubmit={handleSearch} className="flex gap-2">
             <div className="flex-1">
               <Input
-                placeholder="2024-12345-BN-0"
+                placeholder="2026-12345-BN-0"
                 value={studentNumber}
                 onChange={(e) => setStudentNumber(e.target.value)}
                 aria-label="Student number"
@@ -99,13 +96,8 @@ export default function IdFinderPage() {
             </Button>
           </form>
         </div>
-
-        {/* Decorative accents */}
-        <div className="absolute top-4 right-8 w-3 h-3 bg-sbg-purple opacity-60" aria-hidden="true" />
-        <div className="absolute bottom-8 left-8 w-2 h-2 bg-sbg-purple opacity-50" aria-hidden="true" />
       </div>
 
-      {/* Results */}
       <div className="px-4 py-12">
         <div className="max-w-2xl mx-auto">
           {searchState.status === 'found' && (
@@ -113,7 +105,7 @@ export default function IdFinderPage() {
               <div className="text-center">
                 <p className="text-sbg-text-muted text-sm font-mono">
                   Membership ID for{' '}
-                  <span className="text-white">{searchState.member.full_name}</span>
+                  <span className="text-sbg-text">{searchState.member.full_name}</span>
                 </p>
               </div>
               <IdCard member={searchState.member} stickerId={searchState.stickerId} />
@@ -123,18 +115,18 @@ export default function IdFinderPage() {
           {searchState.status === 'not_found' && (
             <div className="flex flex-col items-center gap-3 text-center py-8">
               <UserX className="w-12 h-12 text-sbg-text-muted" />
-              <h3 className="font-mono text-white text-lg font-bold">Not Found</h3>
+              <h3 className="font-sans text-sbg-text text-lg font-bold">Not Found</h3>
               <p className="text-sbg-text-muted text-sm">
                 No membership record found for student number{' '}
-                <span className="font-mono text-white">{studentNumber}</span>.
+                <span className="text-sbg-text font-mono">{studentNumber}</span>.
               </p>
             </div>
           )}
 
           {searchState.status === 'not_approved' && (
             <div className="flex flex-col items-center gap-3 text-center py-8">
-              <AlertCircle className="w-12 h-12 text-sbg-orange" />
-              <h3 className="font-mono text-white text-lg font-bold">Application Pending</h3>
+              <AlertCircle className="w-12 h-12 text-sbg-accent" />
+              <h3 className="font-sans text-sbg-text text-lg font-bold">Application Pending</h3>
               <p className="text-sbg-text-muted text-sm">
                 {searchState.memberStatus === 'pending' &&
                   'Your application is currently under review. You will be notified once it is processed.'}
@@ -153,7 +145,7 @@ export default function IdFinderPage() {
           {searchState.status === 'rate_limited' && (
             <div className="flex flex-col items-center gap-3 text-center py-8">
               <Clock className="w-12 h-12 text-sbg-text-muted" />
-              <h3 className="font-mono text-white text-lg font-bold">Too Many Requests</h3>
+              <h3 className="font-sans text-sbg-text text-lg font-bold">Too Many Requests</h3>
               <p className="text-sbg-text-muted text-sm">
                 You have made too many search requests. Please wait a minute and try again.
               </p>
@@ -163,7 +155,7 @@ export default function IdFinderPage() {
           {searchState.status === 'error' && (
             <div className="flex flex-col items-center gap-3 text-center py-8">
               <AlertCircle className="w-12 h-12 text-red-400" />
-              <h3 className="font-mono text-white text-lg font-bold">Error</h3>
+              <h3 className="font-sans text-sbg-text text-lg font-bold">Error</h3>
               <p className="text-sbg-text-muted text-sm">{searchState.message}</p>
             </div>
           )}

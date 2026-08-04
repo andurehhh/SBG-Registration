@@ -14,15 +14,15 @@ interface StatCardProps {
   bg?: string
 }
 
-function StatCard({ label, value, icon, accent = 'text-sbg-purple', bg = 'bg-sbg-purple/10 border-sbg-purple/30' }: StatCardProps) {
+function StatCard({ label, value, icon, accent = 'text-white', bg = 'bg-white/5 border-white/10' }: StatCardProps) {
   return (
-    <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-5 flex items-center gap-4">
-      <div className={`w-10 h-10 rounded-full border flex items-center justify-center shrink-0 ${bg}`}>
+    <div className="bg-sbg-surface border border-white/[0.06] p-5 flex items-center gap-4">
+      <div className={`w-10 h-10 border flex items-center justify-center shrink-0 ${bg}`}>
         <span className={accent}>{icon}</span>
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-mono text-sbg-text-muted uppercase tracking-wider truncate">{label}</p>
-        <p className="font-mono text-white text-2xl font-bold leading-tight">{value}</p>
+        <p className="text-xs text-sbg-text-muted uppercase tracking-wider truncate font-mono">{label}</p>
+        <p className="text-white text-2xl font-bold leading-tight font-mono">{value}</p>
       </div>
     </div>
   )
@@ -30,8 +30,8 @@ function StatCard({ label, value, icon, accent = 'text-sbg-purple', bg = 'bg-sbg
 
 function StatCardSkeleton() {
   return (
-    <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-5 flex items-center gap-4 animate-pulse">
-      <div className="w-10 h-10 rounded-full bg-white/5 shrink-0" />
+    <div className="bg-sbg-surface border border-white/[0.06] p-5 flex items-center gap-4 animate-pulse">
+      <div className="w-10 h-10 bg-white/5 shrink-0" />
       <div className="flex flex-col gap-2 flex-1">
         <div className="h-3 bg-white/5 rounded w-24" />
         <div className="h-7 bg-white/5 rounded w-16" />
@@ -42,7 +42,7 @@ function StatCardSkeleton() {
 
 function ChartSkeleton() {
   return (
-    <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-5 animate-pulse">
+    <div className="bg-sbg-surface border border-white/[0.06] p-5 animate-pulse">
       <div className="h-4 bg-white/5 rounded w-32 mb-4" />
       <div className="h-[220px] bg-white/5 rounded" />
     </div>
@@ -54,11 +54,9 @@ export function DataVizTab() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // School year filter
   const [schoolYears, setSchoolYears] = useState<string[]>([])
-  const [selectedYear, setSelectedYear] = useState<string>('') // '' = all time
+  const [selectedYear, setSelectedYear] = useState<string>('')
 
-  // Fetch available school years on mount
   useEffect(() => {
     supabase
       .from('Member')
@@ -71,7 +69,6 @@ export function DataVizTab() {
       })
   }, [])
 
-  // Fetch stats whenever selected year changes
   useEffect(() => {
     setIsLoading(true)
     setError(null)
@@ -139,25 +136,23 @@ export function DataVizTab() {
 
   return (
     <div className="p-6 flex flex-col gap-6">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="font-mono text-white text-2xl font-bold">Data Visualization</h1>
+          <h1 className="font-sans text-white text-2xl font-bold">Data Visualization</h1>
           <p className="text-sbg-text-muted text-sm mt-1">
             {selectedYear ? `School Year ${selectedYear}` : 'All-time membership statistics'}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {/* School year selector */}
           <div className="flex items-center gap-2">
-            <label className="text-xs font-mono text-sbg-text-muted whitespace-nowrap">School Year</label>
+            <label className="text-xs text-sbg-text-muted whitespace-nowrap font-mono">School Year</label>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="bg-sbg-navy-light border border-white/10 text-white text-sm font-mono rounded-[8px] px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:border-sbg-purple appearance-none cursor-pointer"
+              className="bg-white/[0.03] border border-white/[0.06] text-white text-sm px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-sbg-accent/40 focus:border-sbg-accent/40 appearance-none cursor-pointer"
             >
               {yearOptions.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-sbg-navy-light">
+                <option key={opt.value} value={opt.value} className="bg-sbg-surface">
                   {opt.label}
                 </option>
               ))}
@@ -167,7 +162,7 @@ export function DataVizTab() {
             variant="ghost"
             size="sm"
             icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
-            onClick={() => setSelectedYear((y) => y)} // re-trigger effect
+            onClick={() => setSelectedYear((y) => y)}
             disabled={isLoading}
           >
             Refresh
@@ -175,7 +170,6 @@ export function DataVizTab() {
         </div>
       </div>
 
-      {/* Stats Summary Row */}
       {isLoading ? (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -186,19 +180,18 @@ export function DataVizTab() {
           </div>
         </>
       ) : error ? (
-        <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-8 text-center">
-          <p className="font-mono text-sbg-text-muted text-sm">{error}</p>
+        <div className="bg-sbg-surface border border-white/[0.06] p-8 text-center">
+          <p className="text-sbg-text-muted text-sm font-mono">{error}</p>
         </div>
       ) : stats ? (
         <>
-          {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               label="Total"
               value={stats.total}
               icon={<Users className="w-5 h-5" />}
-              accent="text-sbg-purple"
-              bg="bg-sbg-purple/10 border-sbg-purple/30"
+              accent="text-white"
+              bg="bg-white/5 border-white/10"
             />
             <StatCard
               label="Approved"
@@ -223,7 +216,6 @@ export function DataVizTab() {
             />
           </div>
 
-          {/* Charts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {acceptedVsRejectedData.length > 0 && (
               <PieChartCard
@@ -252,8 +244,8 @@ export function DataVizTab() {
               />
             )}
             {courseData.length === 0 && yearData.length === 0 && genderData.length === 0 && (
-              <div className="col-span-2 bg-sbg-navy border border-white/[0.08] rounded-[8px] p-8 text-center">
-                <p className="font-mono text-sbg-text-muted text-sm">
+              <div className="col-span-2 bg-sbg-surface border border-white/[0.06] p-8 text-center">
+                <p className="text-sbg-text-muted text-sm font-mono">
                   No approved member data for {selectedYear || 'this period'}.
                 </p>
               </div>
