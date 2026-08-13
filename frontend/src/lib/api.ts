@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import type { ActionResult } from "../types";
+import type { ActionResult, AppSettings } from "../types";
 
 const FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
@@ -37,3 +37,37 @@ export const edgeFn = {
 };
 
 export { ApiError, supabase };
+
+// --- App Settings ---
+
+export async function fetchAppSettings(): Promise<AppSettings> {
+  const { data, error } = await supabase
+    .from("app_settings")
+    .select("*")
+    .eq("id", "default")
+    .single();
+
+  if (error || !data) {
+    // Safe fallback: COR not required
+    return { id: "default", cor_required: false, updated_at: new Date().toISOString() };
+  }
+
+  return data as AppSettings;
+}
+
+export async function updateAppSettings(
+  settings: Partial<Pick<AppSettings, "cor_required">>
+): Promise<AppSettings> {
+  const { data, error } = await supabase
+    .from("app_settings")
+    .update({ ...settings, updated_at: new Date().toISOString() })
+    .eq("id", "default")
+    .select()
+    .single();
+
+  if (error) {
+    throw new ApiError(500, error.message);
+  }
+
+  return data as AppSettings;
+}

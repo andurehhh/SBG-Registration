@@ -75,6 +75,25 @@ export const registrationStep3Schema = z.object({
     ),
 });
 
+export const registrationStep3SchemaOptionalCor = z.object({
+  cor_file: z
+    .instanceof(File)
+    .refine((f) => f.size <= 1_048_576, "COR file must be 1 MB or less")
+    .refine(
+      (f) => ["image/jpeg", "image/png", "application/pdf"].includes(f.type),
+      "COR file must be JPEG, PNG, or PDF"
+    )
+    .optional()
+    .nullable(),
+  proof_of_share_file: z
+    .instanceof(File, { message: "Proof of Share file is required" })
+    .refine((f) => f.size <= 1_048_576, "Proof of Share file must be 1 MB or less")
+    .refine(
+      (f) => ["image/jpeg", "image/png", "application/pdf"].includes(f.type),
+      "Proof of Share file must be JPEG, PNG, or PDF"
+    ),
+});
+
 export const loginSchema = z.object({
   secret: z.string().min(1, "Secret is required"),
 });
@@ -82,4 +101,5 @@ export const loginSchema = z.object({
 export type RegistrationStep1Data = z.infer<typeof registrationStep1Schema>;
 export type RegistrationStep2Data = z.infer<typeof registrationStep2Schema>;
 export type RegistrationStep3Data = z.infer<typeof registrationStep3Schema>;
+export type RegistrationStep3DataOptionalCor = z.infer<typeof registrationStep3SchemaOptionalCor>;
 export type LoginData = z.infer<typeof loginSchema>;

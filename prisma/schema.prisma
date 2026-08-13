@@ -58,6 +58,14 @@ model SchoolYear {
   created_at DateTime @default(now())
 }
 
+model AppSettings {
+  id             String   @id @default("default")
+  cor_required   Boolean  @default(false)
+  updated_at     DateTime @updatedAt
+
+  @@map("app_settings")
+}
+
 enum EmailQueueStatus {
   pending
   sent

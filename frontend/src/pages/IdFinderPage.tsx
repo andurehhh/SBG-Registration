@@ -47,6 +47,12 @@ export default function IdFinderPage() {
 
       const stickerId = member.sticker_id ?? assignSticker(member.id)
       setSearchState({ status: 'found', member, stickerId })
+    } catch (err) {
+      setSearchState({
+        status: 'error',
+        message: err instanceof Error ? err.message : 'An unexpected error occurred',
+      })
+    }
   }
 
   return (

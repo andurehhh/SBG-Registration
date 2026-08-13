@@ -6,6 +6,9 @@ import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "application/pdf"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
+// Update this to your production frontend URL
+const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://sbg-pupbinan.vercel.app";
+
 function sanitize(str: string): string {
   return str
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -16,20 +19,18 @@ async function uploadToCloudinary(fileBuffer: ArrayBuffer, mimeType: string, pub
   const cloudName = Deno.env.get("CLOUDINARY_CLOUD_NAME")!;
   const apiKey = Deno.env.get("CLOUDINARY_API_KEY")!;
   const apiSecret = Deno.env.get("CLOUDINARY_API_SECRET")!;
-  
+
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const resourceType = mimeType === "application/pdf" ? "raw" : "image";
-  
-  // Cloudinary signature format: SHA-1("public_id=X&timestamp=Y" + api_secret)
+
   const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
-  
-  // Calculate SHA-1 digest (NOT HMAC)
+
   const encoder = new TextEncoder();
   const data = encoder.encode(paramsToSign);
   const hashBuffer = await crypto.subtle.digest("SHA-1", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const signature = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-  
+
   const form = new FormData();
   form.append("file", new Blob([fileBuffer], { type: mimeType }));
   form.append("public_id", publicId);
@@ -37,7 +38,7 @@ async function uploadToCloudinary(fileBuffer: ArrayBuffer, mimeType: string, pub
   form.append("api_key", apiKey);
   form.append("resource_type", resourceType);
   form.append("signature", signature);
-  
+
   const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, { method: "POST", body: form });
   if (!res.ok) throw new Error(`Cloudinary upload failed: ${await res.text()}`);
   return (await res.json()).secure_url as string;
@@ -55,10 +56,33 @@ Deno.serve(async (req) => {
     const corFile = formData.get("cor_file") as File | null;
     const proofFile = formData.get("proof_of_share_file") as File | null;
 
-    if (!corFile) return Response.json({ success: false, error: "COR file is required" }, { status: 400, headers: CORS_HEADERS });
-    if (!proofFile) return Response.json({ success: false, error: "Proof of Share file is required" }, { status: 400, headers: CORS_HEADERS });
+    // Check if COR is required from app_settings
+    const { data: appSettings } = await supabase
+      .from("app_settings")
+      .select("cor_required")
+      .eq("id", "default")
+      .single();
 
-    for (const file of [corFile, proofFile]) {
+    const corRequired = appSettings?.cor_required ?? false;
+
+    if (corRequired && !corFile) {
+      return Response.json(
+        { success: false, error: "COR file is required" },
+        { status: 400, headers: CORS_HEADERS }
+      );
+    }
+    if (!proofFile) {
+      return Response.json(
+        { success: false, error: "Proof of Share file is required" },
+        { status: 400, headers: CORS_HEADERS }
+      );
+    }
+
+    // Validate file types/sizes for files that exist
+    const filesToValidate: File[] = [proofFile];
+    if (corFile) filesToValidate.unshift(corFile);
+
+    for (const file of filesToValidate) {
       if (!ALLOWED_MIME_TYPES.includes(file.type)) return Response.json({ success: false, error: `Invalid file type: ${file.type}` }, { status: 400, headers: CORS_HEADERS });
       if (file.size > MAX_FILE_SIZE) return Response.json({ success: false, error: "File size must be under 1MB" }, { status: 400, headers: CORS_HEADERS });
     }
@@ -78,8 +102,12 @@ Deno.serve(async (req) => {
 
     const safeStudentNumber = studentNumber.replace(/[^a-zA-Z0-9]/g, "_");
     const timestamp = Date.now();
+
+    // Upload files — COR only if provided
     const [corUrl, proofUrl] = await Promise.all([
-      uploadToCloudinary(await corFile.arrayBuffer(), corFile.type, `sbg_uploads/${safeStudentNumber}_cor_${timestamp}`),
+      corFile
+        ? uploadToCloudinary(await corFile.arrayBuffer(), corFile.type, `sbg_uploads/${safeStudentNumber}_cor_${timestamp}`)
+        : Promise.resolve(null),
       uploadToCloudinary(await proofFile.arrayBuffer(), proofFile.type, `sbg_uploads/${safeStudentNumber}_proof_${timestamp}`),
     ]);
 
@@ -102,14 +130,32 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
+    // Build email body — include COR submission link if COR was not provided
+    const fullName = sanitize(formData.get("full_name") as string);
+    let emailBody = `Thank you for your application to the Student Builder Group (SBG)!
+
+We have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.`;
+
+    if (!corFile) {
+      emailBody += `
+
+<strong>Important: Submit your COR</strong>
+
+We noticed you registered without uploading your Certificate of Registration (COR). Once you have your COR available, please submit it using the link below:
+
+<a href="${FRONTEND_URL}/submit-cor" style="display:inline-block;padding:10px 20px;background:#7C3AED;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Submit Your COR</a>
+
+You will need your student number (<strong>${sanitize(studentNumber)}</strong>) to submit.`;
+    }
+
+    emailBody += `
+
+In the meantime, if you have any questions, feel free to reach out to us.`;
+
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
     const html = generateEmailHTML({
-      recipientName: sanitize(formData.get("full_name") as string),
-      body: `Thank you for your application to the Student Builder Group (SBG)!
-
-We have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.
-
-In the meantime, if you have any questions, feel free to reach out to us.`,
+      recipientName: fullName,
+      body: emailBody,
       signature: "Best regards,\nStudent Builder Group\nPUP Biñan Campus",
     });
 

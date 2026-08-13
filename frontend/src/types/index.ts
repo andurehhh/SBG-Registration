@@ -67,3 +67,9 @@ export interface AnnouncementPayload {
   signature: string;
   recipients: AnnouncementRecipients;
 }
+
+export interface AppSettings {
+  id: string;
+  cor_required: boolean;
+  updated_at: string;
+}

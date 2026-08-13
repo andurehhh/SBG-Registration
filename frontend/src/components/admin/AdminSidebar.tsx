@@ -1,6 +1,6 @@
 // frontend/src/components/admin/AdminSidebar.tsx
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, BarChart2, Megaphone, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, BarChart2, Megaphone, Settings as SettingsIcon, LogOut } from 'lucide-react'
 import { useAdminStore } from '../../store/admin'
 
 const NAV_ITEMS = [
@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { to: '/admin/members', label: 'Members', icon: Users },
   { to: '/admin/data-viz', label: 'Data Visualization', icon: BarChart2 },
   { to: '/admin/announcements', label: 'Announcements', icon: Megaphone },
+  { to: '/admin/settings', label: 'Settings', icon: SettingsIcon },
 ]
 
 export function AdminSidebar() {

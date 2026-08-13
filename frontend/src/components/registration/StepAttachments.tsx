@@ -1,9 +1,9 @@
 // frontend/src/components/registration/StepAttachments.tsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FileUpload } from '../ui/FileUpload'
 import { Button } from '../ui/Button'
 import { useRegistrationStore } from '../../store/registration'
-import { edgeFn, ApiError } from '../../lib/api'
+import { edgeFn, ApiError, fetchAppSettings } from '../../lib/api'
 
 interface StepAttachmentsProps {
   onBack: () => void
@@ -13,13 +13,22 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
   const store = useRegistrationStore()
   const [corError, setCorError] = useState<string | null>(null)
   const [proofError, setProofError] = useState<string | null>(null)
+  const [corRequired, setCorRequired] = useState(false)
+  const [settingsLoaded, setSettingsLoaded] = useState(false)
+
+  useEffect(() => {
+    fetchAppSettings().then((settings) => {
+      setCorRequired(settings.cor_required)
+      setSettingsLoaded(true)
+    })
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     // Validate files present
     let hasError = false
-    if (!store.cor_file) {
+    if (corRequired && !store.cor_file) {
       setCorError('COR file is required')
       hasError = true
     }
@@ -45,7 +54,9 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
       store.skills.forEach((skill) => formData.append('skills', skill))
       formData.append('why_join', store.why_join)
       formData.append('expectations', store.expectations)
-      formData.append('cor_file', store.cor_file!)
+      if (store.cor_file) {
+        formData.append('cor_file', store.cor_file)
+      }
       formData.append('proof_of_share_file', store.proof_of_share_file!)
 
       await edgeFn.postForm('register', formData)
@@ -64,14 +75,18 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <FileUpload
-          label="Certificate of Registration (COR)"
+          label={`Certificate of Registration (COR)${!corRequired && settingsLoaded ? ' — Optional' : ''}`}
           value={store.cor_file}
           onChange={(file) => {
             store.setField('cor_file', file)
             if (file) setCorError(null)
           }}
           error={corError ?? undefined}
-          hint="Upload your COR from the PUP student portal"
+          hint={
+            corRequired
+              ? 'Upload your COR from the PUP student portal'
+              : "Optional — you can submit your COR later if you don't have it yet"
+          }
         />
 
         <FileUpload

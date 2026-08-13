@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const IdFinderPage = lazy(() => import('./pages/IdFinderPage'))
+const SubmitCorPage = lazy(() => import('./pages/SubmitCorPage'))
 const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/id-finder" element={<IdFinderPage />} />
+            <Route path="/submit-cor" element={<SubmitCorPage />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/*" element={<AdminPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
