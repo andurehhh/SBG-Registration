@@ -5,7 +5,7 @@ import { MembersTable } from '../MembersTable'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase } from '../../../lib/api'
-import type { Member, MemberStatus, PaginatedResponse } from '../../../types'
+import type { Member, MemberStatus } from '../../../types'
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },

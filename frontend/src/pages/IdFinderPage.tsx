@@ -46,7 +46,7 @@ export default function IdFinderPage() {
       }
 
       const stickerId = member.sticker_id ?? assignSticker(member.id)
-      setSearchState({ status: 'found', member, stickerId })
+      setSearchState({ status: 'found', member: member as Member, stickerId })
     } catch (err) {
       setSearchState({
         status: 'error',

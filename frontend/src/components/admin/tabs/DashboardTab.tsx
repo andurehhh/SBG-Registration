@@ -5,7 +5,7 @@ import { PendingApplicantList } from '../PendingApplicantList'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase, edgeFn } from '../../../lib/api'
-import type { Member, PaginatedResponse } from '../../../types'
+import type { Member } from '../../../types'
 
 const COURSE_OPTIONS = [
   { value: '', label: 'All Courses' },

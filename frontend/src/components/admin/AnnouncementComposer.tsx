@@ -7,7 +7,7 @@ import { Select } from '../ui/Select'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
 import { supabase, edgeFn, ApiError } from '../../lib/api'
-import type { Member, AnnouncementPayload, MemberStatus, PaginatedResponse } from '../../types'
+import type { AnnouncementPayload, MemberStatus } from '../../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -174,7 +174,7 @@ interface MemberSelectorProps {
 }
 
 function MemberSelector({ selectedIds, onToggle }: MemberSelectorProps) {
-  const [members, setMembers] = useState<Member[]>([])
+  const [members, setMembers] = useState<{ id: string; email: string; full_name: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
@@ -204,7 +204,6 @@ function MemberSelector({ selectedIds, onToggle }: MemberSelectorProps) {
     const q = search.toLowerCase()
     return (
       m.full_name.toLowerCase().includes(q) ||
-      m.student_number.toLowerCase().includes(q) ||
       m.email.toLowerCase().includes(q)
     )
   })
@@ -276,7 +275,7 @@ function MemberSelector({ selectedIds, onToggle }: MemberSelectorProps) {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white truncate">{member.full_name}</p>
-                    <p className="text-xs font-mono text-sbg-text-muted">{member.student_number}</p>
+                    <p className="text-xs font-mono text-sbg-text-muted">{member.email}</p>
                   </div>
                   <span className="text-xs text-sbg-text-muted truncate max-w-[140px]">
                     {member.email}

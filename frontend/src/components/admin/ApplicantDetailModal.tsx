@@ -25,8 +25,8 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
     try {
       const result = await edgeFn.post<{ emailSent: boolean; emailError?: string }>(`approve`, { id: member.id })
       onAction()
-      if (result.data.emailSent) onClose()
-      else setActionWarning(result.data.emailError || 'Approved, but the email could not be sent.')
+      if (result.success && result.data.emailSent) onClose()
+      else if (result.success) setActionWarning(result.data.emailError || 'Approved, but the email could not be sent.')
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : 'Failed to approve')
     } finally {
