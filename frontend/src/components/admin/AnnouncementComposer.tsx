@@ -1,6 +1,6 @@
 // frontend/src/components/admin/AnnouncementComposer.tsx
 import { useState, useEffect, useCallback } from 'react'
-import { Send, Eye, X, Search, Users } from 'lucide-react'
+import { Send, Eye, X, Search, Users, FileText, Plus, Trash2, ChevronDown } from 'lucide-react'
 import { Input } from '../ui/Input'
 import { Textarea } from '../ui/Textarea'
 import { Select } from '../ui/Select'
@@ -10,6 +10,54 @@ import { supabase, edgeFn, ApiError } from '../../lib/api'
 import type { Member, AnnouncementPayload, MemberStatus, PaginatedResponse } from '../../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+
+const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
+
+const STORAGE_KEY = 'sbg_email_templates';
+
+interface EmailTemplate {
+  id: string
+  label: string
+  subject: string
+  body: string
+  signature: string
+  builtIn?: boolean
+}
+
+const DEFAULT_TEMPLATES: EmailTemplate[] = [
+  {
+    id: 'cor-submission',
+    label: 'COR Submission Reminder',
+    subject: 'Submit Your COR – SBG PUP Biñan',
+    body: `We noticed you haven't submitted your Certificate of Registration (COR) yet.
+
+Once you have your COR available, please submit it using the link below:
+
+${FRONTEND_URL}/submit-cor
+
+You will need your student number to complete the submission.
+
+Please submit as soon as possible so we can finalize your membership application.`,
+    signature: 'Best regards,\nStudent Builder Group\nPUP Biñan Campus',
+    builtIn: true,
+  },
+]
+
+function loadTemplates(): EmailTemplate[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const custom: EmailTemplate[] = JSON.parse(saved)
+      return [...DEFAULT_TEMPLATES, ...custom]
+    }
+  } catch { /* ignore */ }
+  return [...DEFAULT_TEMPLATES]
+}
+
+function saveCustomTemplates(templates: EmailTemplate[]) {
+  const custom = templates.filter((t) => !t.builtIn)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(custom))
+}
 
 const RECIPIENT_OPTIONS = [
   { value: 'all', label: 'All Members' },
@@ -264,6 +312,42 @@ export function AnnouncementComposer() {
   const [sendResult, setSendResult] = useState<SendResult | null>(null)
   const [sendError, setSendError] = useState<string | null>(null)
 
+  // Templates state
+  const [templates, setTemplates] = useState<EmailTemplate[]>(loadTemplates)
+  const [showTemplates, setShowTemplates] = useState(false)
+  const [showSaveInput, setShowSaveInput] = useState(false)
+  const [newTemplateName, setNewTemplateName] = useState('')
+
+  // Close templates menu when clicking outside
+  useEffect(() => {
+    if (!showTemplates) {
+      setShowSaveInput(false)
+      setNewTemplateName('')
+    }
+  }, [showTemplates])
+
+  function handleSaveTemplate() {
+    if (!newTemplateName.trim() || (!subject.trim() && !body.trim())) return
+    const newTemplate: EmailTemplate = {
+      id: `custom-${Date.now()}`,
+      label: newTemplateName.trim(),
+      subject,
+      body,
+      signature,
+    }
+    const updated = [...templates, newTemplate]
+    setTemplates(updated)
+    saveCustomTemplates(updated)
+    setNewTemplateName('')
+    setShowSaveInput(false)
+  }
+
+  function handleDeleteTemplate(id: string) {
+    const updated = templates.filter((t) => t.id !== id)
+    setTemplates(updated)
+    saveCustomTemplates(updated)
+  }
+
   const toggleMember = useCallback((id: string) => {
     setSelectedMemberIds((prev) => {
       const next = new Set(prev)
@@ -350,11 +434,105 @@ export function AnnouncementComposer() {
         <Card>
           <div className="flex flex-col gap-0">
             {/* Header */}
-            <div className="pb-4 border-b border-white/[0.08] mb-4">
-              <h2 className="font-mono text-white text-lg font-bold">Compose Announcement</h2>
-              <p className="text-xs text-sbg-text-muted mt-1">
-                Send email announcements to SBG members
-              </p>
+            <div className="pb-4 border-b border-white/[0.08] mb-4 flex items-start justify-between">
+              <div>
+                <h2 className="font-mono text-white text-lg font-bold">Compose Announcement</h2>
+                <p className="text-xs text-sbg-text-muted mt-1">
+                  Send email announcements to SBG members
+                </p>
+              </div>
+
+              {/* Templates menu */}
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  icon={<FileText className="w-4 h-4" />}
+                  onClick={() => setShowTemplates((v) => !v)}
+                >
+                  Templates
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+
+                {showTemplates && (
+                  <div className="absolute right-0 top-full mt-2 w-72 z-40 bg-sbg-navy border border-white/[0.08] rounded-[8px] shadow-2xl overflow-hidden">
+                    {/* Template list */}
+                    <div className="max-h-64 overflow-y-auto">
+                      {templates.length === 0 ? (
+                        <p className="text-xs text-sbg-text-muted font-mono p-4 text-center">
+                          No templates saved yet
+                        </p>
+                      ) : (
+                        templates.map((tpl) => (
+                          <div
+                            key={tpl.id}
+                            className="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/[0.04] last:border-b-0"
+                          >
+                            <button
+                              className="flex-1 text-left"
+                              onClick={() => {
+                                setSubject(tpl.subject)
+                                setBody(tpl.body)
+                                setSignature(tpl.signature)
+                                setShowTemplates(false)
+                              }}
+                            >
+                              <p className="text-sm text-white font-mono truncate">{tpl.label}</p>
+                              <p className="text-xs text-sbg-text-muted truncate mt-0.5">{tpl.subject}</p>
+                            </button>
+                            {!tpl.builtIn && (
+                              <button
+                                onClick={() => handleDeleteTemplate(tpl.id)}
+                                className="p-1 text-sbg-text-muted hover:text-red-400 transition-colors rounded flex-shrink-0"
+                                aria-label={`Delete template: ${tpl.label}`}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            {tpl.builtIn && (
+                              <span className="text-[10px] font-mono text-sbg-purple-light bg-sbg-purple-muted px-1.5 py-0.5 rounded flex-shrink-0">
+                                built-in
+                              </span>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    {/* Save current as template */}
+                    <div className="border-t border-white/[0.08] p-3">
+                      {showSaveInput ? (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Template name..."
+                            value={newTemplateName}
+                            onChange={(e) => setNewTemplateName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleSaveTemplate() }}
+                            autoFocus
+                            className="flex-1 px-2 py-1.5 rounded-[8px] text-xs text-white bg-sbg-navy-light border border-white/10 placeholder:text-sbg-text-muted focus:outline-none focus:ring-1 focus:ring-sbg-purple"
+                          />
+                          <button
+                            onClick={handleSaveTemplate}
+                            disabled={!newTemplateName.trim() || !subject.trim()}
+                            className="px-2 py-1.5 rounded-[8px] text-xs font-mono bg-sbg-purple text-white hover:bg-sbg-purple-light disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setShowSaveInput(true)}
+                          disabled={!subject.trim() && !body.trim()}
+                          className="flex items-center gap-2 w-full px-2 py-1.5 rounded-[8px] text-xs font-mono text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Save current as template
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Message section */}
@@ -485,7 +663,7 @@ export function AnnouncementComposer() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-3 flex-wrap items-center">
               <Button
                 variant="outline"
                 icon={<Eye className="w-4 h-4" />}
