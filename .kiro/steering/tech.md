@@ -2,9 +2,17 @@
 
 ## Core Framework
 
-- **Next.js 14/15** (App Router) with **TypeScript**
-- Server Actions for backend logic (approval flow, DB mutations)
+- **React 18** + **TypeScript** + **Vite** — Single-page application with HMR
+- **React Router v6** — Client-side routing
 - Mobile-first, responsive design
+
+## Backend
+
+- **Supabase** (Backend-as-a-Service)
+  - PostgreSQL database (hosted)
+  - Edge Functions (Deno/TypeScript) — serverless backend logic
+  - Auth (JWT) — admin authentication
+  - Supabase JS client — direct DB queries from frontend (with RLS)
 
 ## Styling
 
@@ -12,18 +20,16 @@
 - 8px border radius convention throughout
 - High-contrast typography, heavy white space
 
-## Database
-
-- **Neon** (Serverless Postgres)
-- Use Neon branching for staging/testing the approval flow before pushing to production
-
-## ORM
-
-- **Prisma** or **Drizzle ORM** (project choice — pick one and stay consistent)
-
 ## Email
 
-- **AWS SDK for JavaScript (SES)** — automated transactional emails (welcome email on approval)
+- **AWS Lambda** (Python) + **Gmail SMTP** (App Password) — transactional emails
+- **Email Queue** table with retry logic — batch processing via GitHub Actions cron
+- Lambda invoked from Edge Functions via API Gateway
+
+## File Uploads
+
+- **Cloudinary** — signed uploads (SHA-1) for COR documents and proof-of-share files
+- Handled server-side in the `register` Edge Function
 
 ## Forms & Validation
 
@@ -32,11 +38,11 @@
 
 ## State Management
 
-- **Zustand** — lightweight global state if registration form complexity grows
+- **Zustand** — lightweight global state for registration form and admin session
 
 ## Charts & Data Visualization
 
-- **Recharts** or **Chart.js** — admin dashboard charts (bar charts, pie charts)
+- **Recharts** — admin dashboard charts (bar charts, pie charts)
 
 ## Image Export
 
@@ -44,13 +50,13 @@
 
 ## Icons
 
-- **Lucide React** — thin-line icons consistent with AWS/Builder aesthetic
+- **Lucide React** — thin-line icons consistent with the builder aesthetic
 
 ## Common Commands
 
 ```bash
-# Install dependencies
-npm install
+# Install frontend dependencies
+cd frontend && npm install
 
 # Run development server
 npm run dev
@@ -58,34 +64,47 @@ npm run dev
 # Build for production
 npm run build
 
-# Start production server
-npm start
+# Run tests
+npm run test
 
-# Run Prisma migrations
-npx prisma migrate dev
+# Run tests with coverage
+npm run test:coverage
 
-# Generate Prisma client
-npx prisma generate
+# Lint
+npm run lint
 
-# Open Prisma Studio
-npx prisma studio
+# Deploy Supabase Edge Functions
+supabase functions deploy <function-name>
 
-# Push schema changes (Drizzle)
-npx drizzle-kit push
-
-# Generate Drizzle migrations
-npx drizzle-kit generate
+# Link Supabase project
+supabase link --project-id <project-id>
 ```
 
 ## Environment Variables
 
-Required in `.env.local`:
+### Frontend (`frontend/.env.local`)
 
 ```
-DATABASE_URL=          # Neon Postgres connection string
-AWS_REGION=            # e.g. ap-southeast-1
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-SES_FROM_EMAIL=        # Verified SES sender address
-ADMIN_SECRET=          # Secret for protecting the admin route
+VITE_SUPABASE_URL=           # Supabase project URL
+VITE_SUPABASE_ANON_KEY=      # Supabase anon/public key
+VITE_APP_URL=                # Deployed frontend URL
+```
+
+### Supabase Secrets (via `supabase/set-secrets.sh`)
+
+```
+CLOUDINARY_CLOUD_NAME=       # Cloudinary account
+CLOUDINARY_API_KEY=          # Cloudinary API key
+CLOUDINARY_API_SECRET=       # Cloudinary API secret
+GMAIL_ADDRESS=               # Gmail sender address
+GMAIL_APP_PASSWORD=          # Gmail app password (16-char token)
+LAMBDA_EMAIL_ENDPOINT=       # AWS API Gateway endpoint for email Lambda
+LAMBDA_API_KEY=              # API key for Lambda endpoint
+APP_URL=                     # Frontend URL (used in email templates)
+```
+
+### GitHub Actions Secrets
+
+```
+SUPABASE_SERVICE_ROLE_KEY=   # Service role key for email queue processing
 ```

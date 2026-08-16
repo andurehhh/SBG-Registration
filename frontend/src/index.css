@@ -1,131 +1,121 @@
-/* Google Fonts — Plus Jakarta Sans (closest to Amazon Ember) + Space Mono for code/IDs */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-
-/* Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Dark-only CSS Variables */
 :root {
-  --color-bg: #0f1117;
-  --color-surface: #1a1f2e;
-  --color-surface-raised: #252b3b;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-subtle: rgba(255, 255, 255, 0.12);
-  --color-text-primary: #E2E8F0;
-  --color-text-secondary: #94A3B8;
-  --color-purple: #7C3AED;
-  --color-purple-light: #8B5CF6;
-  --color-purple-muted: #3b2f6e;
-  --color-orange: #FF9900;
+  --orange: #44b3fe;
+  --blue: #44b3fe;
+  --font: 'IBM Plex Mono', monospace;
 }
 
-/* Base Styles */
-@layer base {
-  * {
-    box-sizing: border-box;
-  }
+[data-theme="dark"],
+:root:not([data-theme]) {
+  --bg: #0c0f14;
+  --text: #e8e6e3;
+  --muted: #7a7f8a;
+  --line: rgba(255,255,255,0.06);
+  --line-bright: rgba(255,255,255,0.1);
+  --card: #111419;
+  --overlay: rgba(0,0,0,0.4);
+}
 
-  html {
-    color-scheme: dark;
-  }
+[data-theme="light"] {
+  --bg: #f4f5f7;
+  --text: #14171c;
+  --muted: #6b717d;
+  --line: rgba(0,0,0,0.06);
+  --line-bright: rgba(0,0,0,0.12);
+  --card: #ffffff;
+  --overlay: rgba(0,0,0,0.03);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
 
   body {
-    background-color: #0f1117;
-    color: #E2E8F0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #ffffff;
-  }
-
-  code, pre, .font-mono {
-    font-family: 'Space Mono', monospace;
-  }
+  ::selection { background: var(--blue); color: #0c0f14; }
 }
 
-/* Utility Classes */
-@layer utilities {
-  /* SVG Grid Background Pattern */
-  .grid-bg {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='32' height='32' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 32 0 L 0 0 0 32' fill='none' stroke='white' stroke-width='0.5' opacity='0.15'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)'/%3E%3C/svg%3E");
-  }
-
-  /* Scrollbar Styling */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #3b2f6e #1a1f2e;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: #1a1f2e;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #3b2f6e;
-    border-radius: 3px;
-  }
+.theme-btn {
+  width: 34px; height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
 }
+.theme-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
 
-/* Component Classes */
-@layer components {
-  /* Carousel slide animations */
-  @keyframes slideInRight {
-    from {
-      transform: translateX(40px);
-      opacity: 0.4;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  white-space: nowrap;
+}
+.btn--primary { background: var(--orange); color: #0c0f14; border-color: var(--orange); }
+.btn--primary:hover { opacity: 0.85; }
+.btn--outline { background: transparent; color: var(--muted); border-color: var(--line); }
+.btn--outline:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 
-  @keyframes slideInLeft {
-    from {
-      transform: translateX(-40px);
-      opacity: 0.4;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
+/* Pixel / Dotted decorations */
+.pixel-dot {
+  width: 4px; height: 4px;
+  background: var(--muted);
+  display: inline-block;
+}
+.pixel-line {
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--line) 0px,
+    var(--line) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+.pixel-border {
+  border: 1px solid var(--line);
+}
+.pixel-border-t { border-top: 1px solid var(--line); }
+.pixel-border-b { border-bottom: 1px solid var(--line); }
+.pixel-border-l { border-left: 1px solid var(--line); }
+.pixel-border-r { border-right: 1px solid var(--line); }
 
-  /* Card base */
-  .card {
-    background-color: #1a1f2e;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-  }
-
-  /* Input base */
-  .input-base {
-    background-color: #252b3b;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    color: #ffffff;
-    padding: 0.5rem 0.75rem;
-    width: 100%;
-    transition: border-color 0.15s ease;
-  }
-
-  .input-base:focus {
-    outline: none;
-    border-color: #7C3AED;
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
-  }
-
-  .input-base::placeholder {
-    color: #94A3B8;
-  }
+/* Auto-scrolling gallery */
+@keyframes gallery-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.gallery-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: gallery-scroll 60s linear infinite;
+}
+.gallery-track:hover {
+  animation-play-state: paused;
 }

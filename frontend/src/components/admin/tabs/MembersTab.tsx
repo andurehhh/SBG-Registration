@@ -1,10 +1,12 @@
 // frontend/src/components/admin/tabs/MembersTab.tsx
 import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RefreshCw, ChevronLeft, ChevronRight, Download } from 'lucide-react'
 import { MembersTable } from '../MembersTable'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase } from '../../../lib/api'
+import { generateCsv, triggerDownload } from '../../../lib/csvExporter'
+import { useToastStore } from '../../../store/toast'
 import type { Member, MemberStatus } from '../../../types'
 
 const STATUS_OPTIONS = [
@@ -38,15 +40,15 @@ function Pagination({
   const from = (page - 1) * pageSize + 1
   const to = Math.min(page * pageSize, total)
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.08]">
-      <p className="text-xs font-mono text-sbg-text-muted">
+    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06]">
+      <p className="text-xs text-sbg-text-muted font-mono">
         {from}–{to} of {total}
       </p>
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPage(page - 1)}
           disabled={page === 1}
-          className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -62,9 +64,9 @@ function Pagination({
               key={p}
               onClick={() => onPage(p)}
               className={[
-                'w-7 h-7 rounded-[8px] text-xs font-mono transition-colors',
+                'w-7 h-7 text-xs font-mono transition-colors',
                 p === page
-                  ? 'bg-sbg-purple text-white'
+                  ? 'bg-white text-sbg-black'
                   : 'text-sbg-text-muted hover:text-white hover:bg-white/5',
               ].join(' ')}
             >
@@ -75,7 +77,7 @@ function Pagination({
         <button
           onClick={() => onPage(page + 1)}
           disabled={page === totalPages}
-          className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -89,9 +91,11 @@ export function MembersTab() {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isExporting, setIsExporting] = useState(false)
   const [filterStatus, setFilterStatus] = useState<MemberStatus | ''>('approved')
   const [filterCourse, setFilterCourse] = useState('')
   const [sort, setSort] = useState('created_at_desc')
+  const addToast = useToastStore((state) => state.addToast)
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -129,24 +133,81 @@ export function MembersTab() {
 
   useEffect(() => { void fetchMembers(1) }, [fetchMembers])
 
+  const handleExportCsv = useCallback(async () => {
+    setIsExporting(true)
+    try {
+      let query = supabase
+        .from('Member')
+        .select('*')
+
+      const statusFilter = filterStatus || 'approved'
+      query = query.eq('status', statusFilter)
+      if (filterCourse) query = query.eq('course', filterCourse)
+
+      const orderMap: Record<string, { col: string; asc: boolean }> = {
+        created_at_desc: { col: 'created_at', asc: false },
+        created_at_asc: { col: 'created_at', asc: true },
+        status: { col: 'status', asc: true },
+        year_level: { col: 'year_level', asc: true },
+      }
+      const order = orderMap[sort] ?? { col: 'created_at', asc: false }
+      query = query.order(order.col, { ascending: order.asc })
+
+      // Bypass pagination — fetch all matching members
+      query = query.range(0, 9999)
+
+      const { data, error } = await query
+
+      if (error) {
+        addToast('Failed to export members', 'error')
+        return
+      }
+
+      if (!data || data.length === 0) {
+        addToast('No members to export', 'info')
+        return
+      }
+
+      const csv = generateCsv(data as Member[])
+      const today = new Date().toISOString().split('T')[0]
+      triggerDownload(csv, `sbg-members-${today}.csv`)
+    } catch {
+      addToast('Failed to export members', 'error')
+    } finally {
+      setIsExporting(false)
+    }
+  }, [filterStatus, filterCourse, sort, addToast])
+
   return (
     <div className="p-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-mono text-white text-2xl font-bold">Members</h1>
+          <h1 className="font-sans text-white text-2xl font-bold">Members</h1>
           <p className="text-sbg-text-muted text-sm mt-1">
             {isLoading ? 'Loading...' : `${total} member${total !== 1 ? 's' : ''}`}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
-          onClick={() => fetchMembers(page)}
-          disabled={isLoading}
-        >
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<Download className="w-4 h-4" />}
+            onClick={handleExportCsv}
+            loading={isExporting}
+            disabled={isExporting || isLoading}
+          >
+            Export CSV
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
+            onClick={() => fetchMembers(page)}
+            disabled={isLoading}
+          >
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -175,10 +236,10 @@ export function MembersTab() {
       </div>
 
       {/* Members Table */}
-      <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] overflow-hidden">
+      <div className="bg-sbg-surface border border-white/[0.06] overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-8 h-8 border-2 border-sbg-purple border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
           </div>
         ) : (
           <>

@@ -23,7 +23,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="text-sm font-mono text-sbg-text-muted"
+            className="text-xs text-sbg-text-secondary font-mono"
           >
             {label}
           </label>
@@ -32,15 +32,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={[
-            'w-full px-3 py-2 rounded-[8px] text-sm text-white',
-            'bg-sbg-navy-light border transition-colors duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-sbg-purple focus:ring-offset-0',
+            'w-full px-3 py-2.5 text-sm transition-colors duration-150',
+            'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40',
             'appearance-none cursor-pointer',
             error
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-white/10 focus:border-sbg-purple',
+              ? 'border border-red-500 focus:ring-red-500'
+              : 'border border-sbg-line',
             className,
           ].join(' ')}
+          style={{ background: 'var(--card)', color: 'var(--text)' }}
           {...props}
         >
           {placeholder && (
@@ -49,7 +49,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           )}
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-sbg-navy-light">
+            <option key={opt.value} value={opt.value} style={{ background: 'var(--card)', color: 'var(--text)' }}>
               {opt.label}
             </option>
           ))}

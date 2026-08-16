@@ -2,7 +2,7 @@
 
 ## SBG Membership & ID Management Portal
 
-A high-performance, serverless membership portal for the **Student Builder Group (SBG) - PUP Biñan** (AWS Student Builder Group rebranding).
+A serverless, cloud-native membership portal for the **AWS Student Builder Group (SBG) — PUP Biñan Campus**.
 
 ## Purpose
 
@@ -15,14 +15,16 @@ Streamline student membership registration, approval, and digital ID issuance fo
 
 ## Core Features
 
-1. **Multi-step Registration Portal** — Student form with validation, technical interest selection, and submission confirmation.
+1. **Multi-step Registration Portal** — Student form with validation, file uploads (COR + proof of share), and submission confirmation email.
 2. **ID Finder & Visual Membership Card** — Search by student number; display a downloadable digital ID card for approved members.
-3. **Admin Dashboard** — Protected route with member stats, charts, approval workflow, and automated email notifications via AWS SES.
+3. **Admin Dashboard** — Protected route (Supabase Auth) with member stats, charts, approval workflow, term reset, and announcement broadcasting.
+4. **Email System** — Queue-based email delivery with retry logic (Gmail SMTP via AWS Lambda).
+5. **Registration Window Control** — Database-backed feature flag to open/close registration globally.
 
 ## Brand Guidelines
 
-- **Primary**: `#FF9900` (Amazon Orange) — buttons, accents, active states
-- **Secondary**: `#232F3E` (Deep Navy) — navigation, footers, card backgrounds
-- **Accent**: `#00A1C1` (Sky Blue) — links, secondary buttons, data visualizations
-- **Neutral**: `#F2F3F3` (Light Gray) and `#FFFFFF` (White)
-- **UI Style**: Modern "Builder" aesthetic — sharp edges with slight rounding (8px), heavy white space, high-contrast typography, thin-line or AWS-style icons
+Refer to `ui.md` for the full design system. Key points:
+- **Primary accent**: `#7C3AED` (Purple) — buttons, active states, focus rings
+- **Dark-first UI**: `#0f1117` page backgrounds, `#1a1f2e` card surfaces
+- **Monospace headings**: Space Mono for the "builder" aesthetic
+- **Grid motif**: Subtle SVG grid pattern on hero sections

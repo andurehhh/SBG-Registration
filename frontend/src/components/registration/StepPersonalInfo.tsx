@@ -91,7 +91,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
 
         <Input
           label="Student Number"
-          placeholder="2024-12345-BN-0"
+          placeholder="2026-12345-BN-0"
           error={errors.student_number?.message}
           {...register('student_number')}
         />
@@ -184,7 +184,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
 
         {/* AWS Interests multi-select */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-mono text-sbg-text-muted">
+          <label className="text-xs text-sbg-text-muted font-mono">
             AWS Interests <span className="text-red-400">*</span>
           </label>
           <Controller
@@ -204,12 +204,13 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
                           : [...field.value, interest]
                         field.onChange(next)
                       }}
-                      className={[
-                        'px-3 py-1.5 rounded-[8px] text-xs font-mono border transition-colors',
-                        isSelected
-                          ? 'bg-sbg-purple border-sbg-purple text-white'
-                          : 'bg-sbg-navy-light border-white/10 text-sbg-text-muted hover:border-sbg-purple/50',
-                      ].join(' ')}
+                      className="px-3 py-1.5 rounded text-xs border transition-colors"
+                      style={{
+                        background: isSelected ? 'var(--orange)' : 'var(--card)',
+                        borderColor: isSelected ? 'var(--orange)' : 'var(--line)',
+                        color: isSelected ? '#0c0f14' : 'var(--muted)',
+                        fontWeight: isSelected ? 600 : 400,
+                      }}
                     >
                       {interest}
                     </button>

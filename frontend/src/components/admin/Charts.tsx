@@ -12,28 +12,25 @@ import {
   Legend,
 } from 'recharts'
 
-// Purple, green, orange palette — varied so charts aren't all violet
 const PIE_COLORS = [
-  '#7C3AED', // sbg-purple
-  '#22C55E', // green-500
-  '#FF9900', // sbg-orange / AWS orange
-  '#8B5CF6', // purple-500
-  '#16A34A', // green-600
-  '#F59E0B', // amber-400
-  '#A78BFA', // purple-400
-  '#4ADE80', // green-400
+  '#ffffff',
+  '#22C55E',
+  '#FF9900',
+  '#8B5CF6',
+  '#16A34A',
+  '#F59E0B',
+  '#A78BFA',
+  '#4ADE80',
 ]
 
-// Bar chart uses a single color per chart — passed as prop
-const DEFAULT_BAR_COLOR = '#7C3AED'
+const DEFAULT_BAR_COLOR = '#ffffff'
 
 const TOOLTIP_STYLE: React.CSSProperties = {
-  backgroundColor: '#252b3b',
-  border: '1px solid rgba(255,255,255,0.12)',
-  borderRadius: '8px',
-  fontFamily: 'Space Mono, monospace',
+  backgroundColor: '#111111',
+  border: '1px solid rgba(255,255,255,0.06)',
+  fontFamily: 'JetBrains Mono, monospace',
   fontSize: '12px',
-  color: '#ffffff',
+  color: '#e0e0e0',
 }
 
 interface ChartData {
@@ -49,20 +46,20 @@ interface BarChartCardProps {
 
 export function BarChartCard({ title, data, color = DEFAULT_BAR_COLOR }: BarChartCardProps) {
   return (
-    <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-5">
-      <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-4">
+    <div className="bg-sbg-surface border border-white/[0.06] p-5">
+      <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-4 font-mono">
         {title}
       </h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
           <XAxis
             dataKey="name"
-            tick={{ fill: '#94A3B8', fontSize: 11, fontFamily: 'Space Mono, monospace' }}
+            tick={{ fill: '#888888', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fill: '#94A3B8', fontSize: 11, fontFamily: 'Space Mono, monospace' }}
+            tick={{ fill: '#888888', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}
             axisLine={false}
             tickLine={false}
             allowDecimals={false}
@@ -70,8 +67,8 @@ export function BarChartCard({ title, data, color = DEFAULT_BAR_COLOR }: BarChar
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
             cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-            itemStyle={{ color: '#ffffff' }}
-            labelStyle={{ color: '#94A3B8' }}
+            itemStyle={{ color: '#e0e0e0' }}
+            labelStyle={{ color: '#888888' }}
           />
           <Bar dataKey="value" fill={color} radius={[4, 4, 0, 0]} />
         </BarChart>
@@ -87,8 +84,8 @@ interface PieChartCardProps {
 
 export function PieChartCard({ title, data }: PieChartCardProps) {
   return (
-    <div className="bg-sbg-navy border border-white/[0.08] rounded-[8px] p-5">
-      <h3 className="font-mono text-sbg-text-muted text-xs uppercase tracking-wider mb-4">
+    <div className="bg-sbg-surface border border-white/[0.06] p-5">
+      <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-4 font-mono">
         {title}
       </h3>
       <ResponsiveContainer width="100%" height={220}>
@@ -108,12 +105,12 @@ export function PieChartCard({ title, data }: PieChartCardProps) {
           </Pie>
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
-            itemStyle={{ color: '#ffffff' }}
-            labelStyle={{ color: '#94A3B8' }}
+            itemStyle={{ color: '#e0e0e0' }}
+            labelStyle={{ color: '#888888' }}
           />
           <Legend
             formatter={(value) => (
-              <span style={{ color: '#94A3B8', fontFamily: 'Space Mono, monospace', fontSize: '11px' }}>
+              <span style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
                 {value}
               </span>
             )}

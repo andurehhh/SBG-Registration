@@ -32,26 +32,25 @@ export default function AdminLoginPage() {
     }
 
     setAuth(data.user.id, data.session.access_token)
-    navigate('/admin/dashboard', { replace: true })
+    navigate(`/${__ADMIN_PATH__}/dashboard`, { replace: true })
     setIsLoading(false)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen bg-sbg-black flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="flex flex-col items-center gap-3 mb-8">
-          <img src="/sbg-logo.svg" alt="SBG Logo" className="h-12 w-12" />
+          <img src="/sbg-logo-white.svg" alt="SBG Logo" className="h-12 w-12" />
           <div className="text-center">
-            <h1 className="font-bold text-white text-xl">SBG Admin</h1>
-            <p className="text-sbg-text-muted text-xs">Student Builder Group</p>
+          <h1 className="font-bold text-white text-xl">SBG Admin</h1>
+          <p className="text-sbg-text-muted text-xs">AWS Student Builder Group</p>
           </div>
         </div>
 
         <Card>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <h2 className="font-mono text-white text-lg font-bold">Sign In</h2>
+              <h2 className="font-sans text-white text-lg font-bold">Sign In</h2>
               <p className="text-sbg-text-muted text-sm">Enter your admin secret to continue.</p>
             </div>
 
@@ -84,7 +83,7 @@ export default function AdminLoginPage() {
           </form>
         </Card>
 
-        <p className="text-center text-sbg-text-muted text-xs font-mono mt-6">
+        <p className="text-center text-sbg-text-muted text-xs mt-6 font-mono">
           SBG Portal Admin Panel
         </p>
       </div>

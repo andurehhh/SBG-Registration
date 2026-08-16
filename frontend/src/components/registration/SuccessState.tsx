@@ -10,27 +10,27 @@ export function SuccessState() {
 
   return (
     <div className="flex flex-col items-center text-center gap-6 py-8">
-      <div className="w-16 h-16 rounded-full bg-green-900/30 border border-green-700/50 flex items-center justify-center">
-        <CheckCircle className="w-8 h-8 text-green-400" />
+      <div className="w-16 h-16 flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+        <CheckCircle className="w-8 h-8" style={{ color: 'var(--orange)' }} />
       </div>
 
       <div className="flex flex-col gap-2">
-        <h2 className="font-mono text-white text-xl font-bold">
+        <h2 className="text-xl font-bold" style={{ color: 'var(--text)' }}>
           Application Submitted!
         </h2>
-        <p className="text-sbg-text-muted text-sm">
-          Thank you, <span className="text-white font-medium">{store.full_name}</span>!
+        <p className="text-sm" style={{ color: 'var(--muted)' }}>
+          Thank you, <span style={{ color: 'var(--text)' }} className="font-medium">{store.full_name}</span>!
         </p>
-        <p className="text-sbg-text-muted text-sm max-w-sm">
+        <p className="text-sm max-w-sm" style={{ color: 'var(--muted)' }}>
           We'll notify you at{' '}
-          <span className="text-sbg-purple font-mono">{store.email}</span>{' '}
+          <span className="font-mono" style={{ color: 'var(--text)' }}>{store.email}</span>{' '}
           once your application is reviewed.
         </p>
       </div>
 
-      <div className="p-4 rounded-[8px] bg-sbg-navy-light border border-white/[0.08] w-full max-w-xs">
-        <p className="text-xs font-mono text-sbg-text-muted mb-1">STUDENT NUMBER</p>
-        <p className="font-mono text-white text-sm">{store.student_number}</p>
+      <div className="p-4 w-full max-w-xs" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+        <p className="text-xs mb-1 font-mono" style={{ color: 'var(--muted)' }}>STUDENT NUMBER</p>
+        <p className="text-sm font-mono" style={{ color: 'var(--text)' }}>{store.student_number}</p>
       </div>
 
       <div className="flex flex-col gap-3 w-full max-w-xs">

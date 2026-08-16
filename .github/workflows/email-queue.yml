@@ -2,9 +2,11 @@ name: Process Email Queue
 
 on:
   schedule:
-    # Every 1 minute
+    # Every 1 minute (GitHub Actions minimum cron interval is 5 min effective)
+    # Actual execution may be delayed 1-5 minutes under load — this is acceptable
+    # for non-time-critical transactional emails
     - cron: '* * * * *'
-  # Allow manual trigger
+  # Allow manual trigger for testing
   workflow_dispatch:
 
 jobs:
@@ -12,8 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Process email queue
+        env:
+          SUPABASE_URL: https://mkneaeisrwxnbahephay.supabase.co
         run: |
-          curl -X POST https://mkneaeisrwxnbahephay.supabase.co/functions/v1/process-email-queue \
+          curl -s -X POST "$SUPABASE_URL/functions/v1/process-email-queue" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{}'

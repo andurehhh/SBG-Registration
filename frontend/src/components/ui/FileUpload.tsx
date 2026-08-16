@@ -89,21 +89,22 @@ export function FileUpload({
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label className="text-sm font-mono text-sbg-text-muted">{label}</label>
+        <label className="text-xs text-sbg-text-muted font-mono">{label}</label>
       )}
 
       {value ? (
         // File selected state
-        <div className="flex items-center gap-3 p-3 rounded-[8px] bg-sbg-navy-light border border-sbg-purple/30">
-          <File className="w-5 h-5 text-sbg-purple flex-shrink-0" />
+        <div className="flex items-center gap-3 p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+          <File className="w-5 h-5 shrink-0" style={{ color: 'var(--muted)' }} />
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-white truncate font-mono">{value.name}</p>
-            <p className="text-xs text-sbg-text-muted">{formatFileSize(value.size)}</p>
+            <p className="text-sm truncate font-mono" style={{ color: 'var(--text)' }}>{value.name}</p>
+            <p className="text-xs" style={{ color: 'var(--muted)' }}>{formatFileSize(value.size)}</p>
           </div>
           <button
             type="button"
             onClick={handleRemove}
-            className="p-1 rounded hover:bg-white/10 text-sbg-text-muted hover:text-white transition-colors"
+            className="p-1 transition-colors"
+            style={{ color: 'var(--muted)' }}
             aria-label="Remove file"
           >
             <X className="w-4 h-4" />
@@ -119,23 +120,19 @@ export function FileUpload({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={[
-            'flex flex-col items-center justify-center gap-2 p-6 rounded-[8px]',
-            'border-2 border-dashed cursor-pointer transition-colors duration-150',
-            isDragging
-              ? 'border-sbg-purple bg-sbg-purple/10'
-              : displayError
-              ? 'border-red-500/50 bg-red-900/10'
-              : 'border-white/10 hover:border-sbg-purple/50 hover:bg-sbg-purple/5',
-          ].join(' ')}
+          className="flex flex-col items-center justify-center gap-2 p-6 border border-dashed cursor-pointer transition-colors duration-150"
+          style={{
+            borderColor: isDragging ? 'var(--text)' : displayError ? '#ef4444' : 'var(--line)',
+            background: isDragging ? 'var(--card)' : displayError ? 'rgba(239,68,68,0.05)' : 'transparent',
+          }}
         >
-          <Upload className={`w-6 h-6 ${isDragging ? 'text-sbg-purple' : 'text-sbg-text-muted'}`} />
+          <Upload className="w-6 h-6" style={{ color: 'var(--muted)' }} />
           <div className="text-center">
-            <p className="text-sm text-sbg-text font-mono">
+            <p className="text-sm" style={{ color: 'var(--muted)' }}>
               Drop file here or{' '}
-              <span className="text-sbg-purple underline">browse</span>
+              <span className="underline" style={{ color: 'var(--text)' }}>browse</span>
             </p>
-            <p className="text-xs text-sbg-text-muted mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
               JPEG, PNG, or PDF — max 1 MB
             </p>
           </div>

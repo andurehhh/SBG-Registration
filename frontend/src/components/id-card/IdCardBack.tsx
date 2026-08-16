@@ -1,65 +1,85 @@
 // frontend/src/components/id-card/IdCardBack.tsx
 import { type RefObject } from 'react'
-import type { Member } from '../../types'
+import { QRCodeSVG } from 'qrcode.react'
+import type { PublicMember } from '../../types'
 
 interface IdCardBackProps {
-  member: Member
+  member: PublicMember
   stickerId: string
   cardRef?: RefObject<HTMLDivElement>
 }
 
 export function IdCardBack({ member, cardRef }: IdCardBackProps) {
+  const qrValue = member.sbg_id ?? member.student_number
+
   return (
     <div
       ref={cardRef}
-      className="relative w-full min-h-[300px] bg-sbg-navy rounded-[12px] overflow-hidden border border-white/[0.08]"
+      className="relative w-full aspect-[3.375/2.125] bg-[#161616] rounded-[12px] border border-white/[0.08]"
     >
-      {/* SVG Grid Background */}
-      <div className="absolute inset-0 grid-bg opacity-50" aria-hidden="true" />
+      <div className="absolute inset-0 grid-bg opacity-40" aria-hidden="true" />
 
-      {/* Purple bottom bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-sbg-purple" />
+      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#AE5CFF]" />
 
-      {/* Content */}
-      <div className="relative z-10 p-7">
-        {/* Student Number */}
-        <div className="mb-5">
-          <p className="text-xs font-mono text-sbg-text-muted uppercase tracking-wider mb-1">
-            Student Number
-          </p>
-          <p className="font-mono text-white text-lg tracking-widest">
-            {member.student_number}
-          </p>
+      <div className="relative z-10 p-6 h-full flex flex-col">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <p className="text-[10px] text-sbg-text-muted uppercase tracking-wider mb-1 font-mono">
+              Student Number
+            </p>
+            <p className="text-white text-base tracking-widest font-mono">
+              {member.student_number}
+            </p>
+          </div>
+
+          <div className="bg-white p-1.5 rounded-[6px]">
+            <QRCodeSVG
+              value={qrValue}
+              size={64}
+              level="M"
+              bgColor="#ffffff"
+              fgColor="#0f1117"
+            />
+          </div>
         </div>
 
-        {/* AWS Interests */}
         {member.skills.length > 0 && (
-          <div className="mb-5">
-            <p className="text-xs font-mono text-sbg-text-muted uppercase tracking-wider mb-2">
+          <div className="flex-1">
+            <p className="text-[10px] text-sbg-text-muted uppercase tracking-wider mb-2 font-mono">
               AWS Interests
             </p>
-            <div className="flex flex-wrap gap-2">
-              {member.skills.map((skill) => (
+            <div className="flex flex-wrap gap-1.5">
+              {member.skills.slice(0, 5).map((skill) => (
                 <span
                   key={skill}
-                  className="px-2.5 py-1 bg-sbg-purple-muted border border-sbg-purple/30 rounded-[6px] text-xs font-mono text-sbg-purple-light"
+                  className="px-2 py-0.5 bg-[#AE5CFF]/10 border border-[#AE5CFF]/30 rounded-[4px] text-[10px] text-[#AE5CFF]"
                 >
                   {skill}
                 </span>
               ))}
+              {member.skills.length > 5 && (
+                <span className="px-2 py-0.5 text-[10px] text-sbg-text-muted font-mono">
+                  +{member.skills.length - 5} more
+                </span>
+              )}
             </div>
           </div>
         )}
 
-        {/* QR Code Placeholder / Decorative Grid */}
-        <div className="flex items-end justify-between">
-          <div
-            className="w-16 h-16 border border-sbg-purple/30 rounded-[6px] grid-bg opacity-60"
-            aria-label="QR code placeholder"
-          />
-          <p className="font-mono text-sbg-text-muted text-xs text-right">
-            AWS Student Builder
-          </p>
+        <div className="flex items-end justify-between mt-auto pt-3">
+          <div>
+            <p className="text-sbg-text-muted text-[10px] font-mono">
+              AWS Student Builder Group
+            </p>
+            <p className="text-sbg-text-muted text-[9px] font-mono">
+              PUP Biñan Campus
+            </p>
+          </div>
+          {member.school_year && (
+            <p className="text-sbg-text-muted text-[10px] font-mono">
+              {member.school_year}
+            </p>
+          )}
         </div>
       </div>
     </div>

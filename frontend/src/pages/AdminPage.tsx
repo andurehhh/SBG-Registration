@@ -5,7 +5,7 @@ import { DashboardTab } from '../components/admin/tabs/DashboardTab'
 import { MembersTab } from '../components/admin/tabs/MembersTab'
 import { DataVizTab } from '../components/admin/tabs/DataVizTab'
 import { AnnouncementsTab } from '../components/admin/tabs/AnnouncementsTab'
-import { SettingsTab } from '../components/admin/tabs/SettingsTab'
+import { AuditLogTab } from '../components/admin/tabs/AuditLogTab'
 
 export default function AdminPage() {
   return (
@@ -16,7 +16,7 @@ export default function AdminPage() {
         <Route path="members" element={<MembersTab />} />
         <Route path="data-viz" element={<DataVizTab />} />
         <Route path="announcements" element={<AnnouncementsTab />} />
-        <Route path="settings" element={<SettingsTab />} />
+        <Route path="audit-log" element={<AuditLogTab />} />
         <Route path="*" element={<Navigate to="dashboard" replace />} />
       </Route>
     </Routes>

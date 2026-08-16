@@ -1,23 +1,20 @@
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
 
-# Next.js
-.next/
-out/
+# Build output
+dist/
 build/
 
 # Environment variables — NEVER commit these
 .env
 .env.local
-.env.development.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
-# Prisma
-prisma/migrations/
+# Supabase local
+supabase/.temp/
+
+# Python virtual env
+.venv/
 
 # Misc
 .DS_Store
@@ -28,4 +25,7 @@ yarn-error.log*
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
+
+# IDE
+.vscode/
+.idea/

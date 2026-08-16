@@ -1,93 +1,126 @@
-// frontend/src/pages/RegisterPage.tsx
-import { BackButton } from '../components/ui/BackButton'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
-import { SbgLogoDecor } from '../components/ui/SbgLogoDecor'
+import { RenewalForm } from '../components/registration/RenewalForm'
+
+type FormTab = 'new' | 'returning'
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark')
+  useEffect(() => {
+    const obs = new MutationObserver(() => setTheme(document.documentElement.getAttribute('data-theme') || 'dark'))
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+  return (
+    <button onClick={() => { const n = theme === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('sbg-theme', n) }}
+      className="theme-btn" aria-label="Toggle theme">
+      {theme === 'light' ? <MoonSVG /> : <SunSVG />}
+    </button>
+  )
+}
+const SunSVG = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+const MoonSVG = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
 
 export default function RegisterPage() {
+  const [activeTab, setActiveTab] = useState<FormTab>('new')
+  const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div style={{ background: 'var(--bg)' }}>
 
-      {/* ── Left panel: branding / hero ── */}
-      <div className="relative lg:flex-1 flex flex-col justify-between p-8 lg:p-12 min-h-[280px] lg:min-h-screen overflow-hidden">
-        {/* Decorative logos */}
-        <div className="absolute -top-6 -right-6">
-          <SbgLogoDecor size={130} color="#4ADE80" />
-        </div>
-        <div className="absolute top-16 left-6 opacity-20">
-          <SbgLogoDecor size={40} color="#AE5CFF" />
-        </div>
-        <div className="absolute bottom-24 right-8">
-          <SbgLogoDecor size={26} color="#38BDF8" />
-        </div>
-        <div className="absolute bottom-10 left-12 opacity-30">
-          <SbgLogoDecor size={48} color="#FB923C" />
-        </div>
-        <div className="absolute top-1/2 right-6 opacity-15">
-          <SbgLogoDecor size={52} color="#AE5CFF" />
-        </div>
-        <div className="absolute -bottom-8 -left-8">
-          <SbgLogoDecor size={110} color="#F87171" />
-        </div>
-
-        {/* Back button + Logo */}
-        <div className="relative z-10 flex items-center justify-between">
-          <BackButton to="/" label="Back to Home" />
-          <div className="flex items-center gap-2">
-            <img src="/sbg-logo.svg" alt="SBG Logo" className="h-8 w-8 flex-shrink-0" />
-            <p className="font-bold text-white text-xs hidden sm:block">Student Builder Group</p>
+      {/* ── NAV ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: 'var(--bg)', borderBottom: '1px solid var(--line)' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-14">
+          <button onClick={() => navigate('/')} className="flex items-center gap-2">
+            <img src="/sbg-logo-white.svg" alt="" className="w-5 h-5" />
+            <span className="text-xs font-semibold" style={{ color: 'var(--text)' }}>AWS Student Builder Group - PUP Biñan</span>
+          </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <button onClick={() => navigate('/')}
+              className="btn btn--outline" style={{ fontSize: '11px', padding: '7px 14px' }}>
+              <ArrowLeft size={12} /> Back
+            </button>
           </div>
         </div>
+      </nav>
 
-        {/* Hero copy */}
-        <div className="relative z-10 flex flex-col gap-6 my-auto py-12 lg:py-0">
-          <div className="flex flex-col gap-3">
-            <span className="text-sbg-purple font-mono text-xs uppercase tracking-widest">
-              Membership Registration
-            </span>
-            <h1 className="font-bold text-white text-3xl lg:text-4xl xl:text-5xl leading-tight">
-              Join the<br />Builder<br />Community
-            </h1>
+      {/* ── Main Content ── */}
+      <div style={{ paddingTop: '3.5rem' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+          <div className="grid lg:grid-cols-12" style={{ border: '1px solid var(--line)' }}>
+
+            {/* ── Left Panel: Info ── */}
+            <div className="lg:col-span-5 p-8 lg:p-10" style={{ background: 'var(--card)', borderRight: '1px solid var(--line)' }}>
+              <p className="text-[10px] font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--orange)' }}>Registration</p>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight" style={{ color: 'var(--text)' }}>
+                Join the Builder Community
+              </h1>
+              <p className="text-sm mt-4 leading-relaxed" style={{ color: 'var(--muted)' }}>
+                Apply for SBG membership and get your official digital membership ID card. Build, learn, and grow with AWS.
+              </p>
+              <ul className="space-y-3 mt-8">
+                {[
+                  'Official digital membership ID card',
+                  'Access to AWS learning resources',
+                  'Community events and workshops',
+                  'Builder network at PUP Biñan',
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm" style={{ color: 'var(--muted)' }}>
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'var(--orange)' }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-12 pt-6" style={{ borderTop: '1px solid var(--line)' }}>
+                <p className="text-[10px]" style={{ color: 'var(--muted)' }}>Powered by AWS. PUP Biñan Campus.</p>
+              </div>
+            </div>
+
+            {/* ── Right Panel: Form ── */}
+            <div className="lg:col-span-7 p-8 lg:p-10 lg:py-12">
+              <div className="inline-flex w-full mb-8" style={{ border: '1px solid var(--line)' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('new')}
+                  className="flex-1 px-4 py-2.5 text-xs font-semibold transition-all"
+                  style={{
+                    background: activeTab === 'new' ? 'var(--orange)' : 'transparent',
+                    color: activeTab === 'new' ? '#0c0f14' : 'var(--muted)',
+                  }}
+                >
+                  New Member
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('returning')}
+                  className="flex-1 px-4 py-2.5 text-xs font-semibold transition-all"
+                  style={{
+                    background: activeTab === 'returning' ? 'var(--blue)' : 'transparent',
+                    color: activeTab === 'returning' ? '#0c0f14' : 'var(--muted)',
+                  }}
+                >
+                  Returning Member
+                </button>
+              </div>
+
+              <h2 className="text-sm font-bold mb-1" style={{ color: 'var(--text)' }}>
+                {activeTab === 'new' ? 'Create your application' : 'Renew your membership'}
+              </h2>
+              <p className="text-xs mb-8" style={{ color: 'var(--muted)' }}>
+                {activeTab === 'new'
+                  ? 'Fill out all three steps to complete your membership application.'
+                  : 'Enter your SBG ID and upload your updated documents.'}
+              </p>
+
+              {activeTab === 'new' ? <RegistrationForm /> : <RenewalForm />}
+            </div>
+
           </div>
-          <p className="text-sbg-text-muted text-sm lg:text-base max-w-sm leading-relaxed">
-            Apply for SBG membership and get your official digital membership ID card. Build, learn, and grow with AWS.
-          </p>
-
-          <ul className="flex flex-col gap-3 mt-2">
-            {[
-              'Official digital membership ID card',
-              'Access to AWS learning resources',
-              'Community events and workshops',
-              'Builder network at PUP Biñan',
-            ].map((item) => (
-              <li key={item} className="flex items-center gap-2 text-sm text-sbg-text">
-                <span className="w-1.5 h-1.5 rounded-full bg-sbg-purple flex-shrink-0" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="relative z-10">
-          <p className="text-sbg-text-muted text-xs">
-            Powered by AWS · PUP Biñan Campus
-          </p>
         </div>
       </div>
-
-      {/* ── Right panel: registration form ── */}
-      <div className="lg:flex-1 flex flex-col justify-center px-6 py-10 lg:px-12 lg:py-12 bg-sbg-black lg:overflow-y-auto">
-        <div className="w-full max-w-lg mx-auto">
-          <div className="mb-8">
-            <h2 className="font-bold text-white text-2xl">Create your application</h2>
-            <p className="text-sbg-text-muted text-sm mt-1">
-              Fill out all three steps to complete your membership application.
-            </p>
-          </div>
-          <RegistrationForm />
-        </div>
-      </div>
-
     </div>
   )
 }

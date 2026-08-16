@@ -8,26 +8,20 @@ import { StepAttachments } from './StepAttachments'
 import { SuccessState } from './SuccessState'
 import { Card } from '../ui/Card'
 import { useRegistrationStore } from '../../store/registration'
-
-const STORAGE_KEY = 'sbg_registration_open'
+import { getRegistrationOpen } from '../../lib/appConfig'
 
 export function RegistrationForm() {
   const store = useRegistrationStore()
   const [isFlipped, setIsFlipped] = useState(false)
   const [pendingStep, setPendingStep] = useState<1 | 2 | 3 | null>(null)
-  const [registrationOpen, setRegistrationOpen] = useState<boolean>(() => {
-    return localStorage.getItem(STORAGE_KEY) !== 'false'
-  })
+  const [registrationOpen, setRegistrationOpen] = useState<boolean | null>(null)
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true)
 
-  // Listen for admin toggling registration open/close in another tab
+  // Fetch registration open/closed status from database
   useEffect(() => {
-    function handleStorage(e: StorageEvent) {
-      if (e.key === STORAGE_KEY) {
-        setRegistrationOpen(e.newValue !== 'false')
-      }
-    }
-    window.addEventListener('storage', handleStorage)
-    return () => window.removeEventListener('storage', handleStorage)
+    getRegistrationOpen()
+      .then(setRegistrationOpen)
+      .finally(() => setIsLoadingConfig(false))
   }, [])
 
   if (store.submissionStatus === 'success') {
@@ -38,16 +32,29 @@ export function RegistrationForm() {
     )
   }
 
+  // Loading config state
+  if (isLoadingConfig) {
+    return (
+      <Card>
+          <div className="flex items-center justify-center py-12">
+            <div className="font-mono text-xs text-sbg-text-muted">
+              <span className="text-sbg-accent">$</span> loading...
+            </div>
+          </div>
+      </Card>
+    )
+  }
+
   // Registration closed state
   if (!registrationOpen) {
     return (
       <Card>
         <div className="flex flex-col items-center text-center gap-4 py-8">
-          <div className="w-14 h-14 rounded-full bg-sbg-navy-light border border-white/[0.08] flex items-center justify-center">
+          <div className="w-14 h-14 flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <span className="text-2xl">🔒</span>
           </div>
           <div>
-            <h3 className="font-mono text-white text-lg font-bold">Registration Closed</h3>
+            <h3 className="font-sans text-sbg-text text-lg font-bold">Registration Closed</h3>
             <p className="text-sbg-text-muted text-sm mt-2 max-w-xs">
               Applications are not currently being accepted. Please check back later or contact the SBG team.
             </p>
@@ -84,7 +91,7 @@ export function RegistrationForm() {
     <Card>
       <div className="flex flex-col gap-6">
         <div className="text-center">
-          <h2 className="font-mono text-white text-lg font-bold">
+          <h2 className="font-sans text-sbg-text text-lg font-bold">
             {store.currentStep === 1 && 'Personal Information'}
             {store.currentStep === 2 && 'Application Questions'}
             {store.currentStep === 3 && 'Attachments'}

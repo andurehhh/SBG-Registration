@@ -19,19 +19,19 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.error) {
       return (
         <div className="min-h-screen bg-sbg-black flex items-center justify-center p-8">
-          <div className="bg-sbg-navy border border-red-500/30 rounded-[8px] p-8 max-w-2xl w-full">
-            <h1 className="font-mono text-red-400 text-xl font-bold mb-2">Something went wrong</h1>
+          <div className="bg-sbg-surface border border-red-500/30 p-8 max-w-2xl w-full">
+            <h1 className="font-sans text-red-400 text-xl font-bold mb-2">Something went wrong</h1>
             <p className="text-sbg-text-muted text-sm mb-4">
               A component crashed. Check the browser console for details.
             </p>
-            <pre className="bg-sbg-black rounded-[8px] p-4 text-xs text-red-300 overflow-auto whitespace-pre-wrap border border-white/[0.08]">
+            <pre className="bg-white/[0.03] p-4 text-xs text-red-300 overflow-auto whitespace-pre-wrap border border-white/[0.06]">
               {this.state.error.message}
               {'\n\n'}
               {this.state.error.stack}
             </pre>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-sbg-purple text-white font-mono text-sm rounded-[8px] hover:bg-sbg-purple-light transition-colors"
+              className="mt-4 px-4 py-2 bg-white text-sbg-black text-sm font-medium hover:bg-white/90 transition-colors"
             >
               Reload page
             </button>

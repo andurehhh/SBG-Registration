@@ -1,287 +1,120 @@
 # SBG Membership & ID Management Portal
 
-**Student Builder Group – PUP Biñan Campus**  
+**Student Builder Group – PUP Biñan Campus**
 A serverless, cloud-native membership portal for managing registrations, member approvals, and digital ID retrieval.
 
 ---
 
-## 📋 Overview
+## Overview
 
 The SBG Registration Portal is a comprehensive membership management system that handles:
 - **Multi-step registration** with document uploads and validation
-- **Digital ID retrieval** for approved members
-- **Admin dashboard** for review, approval, and member management
+- **Returning member renewal** — streamlined re-registration with student number verification
+- **Semester management** — per-semester term resets with school year + semester tracking
+- **Digital ID retrieval** for approved and inactive members (with QR code for event check-in)
+- **Admin dashboard** — bulk approve/reject, CSV export, audit log, announcements
 - **Automated email notifications** for registrations, approvals, and announcements
 - **Data visualization** with member statistics and analytics
 
-Built entirely serverless using **Supabase** backend and **React** frontend, deployed on **AWS** infrastructure.
+Built entirely serverless using **Supabase** backend and **React** frontend.
 
 ---
 
-## 🏗️ System Architecture
-
-```mermaid
-graph TB
-    subgraph Frontend["📱 Frontend (React/Vite)"]
-        Website["Web Application"]
-        Pages["Registration | ID Finder | Admin Dashboard"]
-    end
-    
-    subgraph Supabase["🔐 Supabase (Backend-as-a-Service)"]
-        Auth["Authentication"]
-        DB[(PostgreSQL Database)]
-        EdgeFns["Edge Functions"]
-        Storage["File Storage"]
-    end
-    
-    subgraph AWS["☁️ AWS Services"]
-        Lambda["Lambda Function<br/>(Email Sender)"]
-        APIGw["API Gateway"]
-        S3["S3 (Optional)"]
-    end
-    
-    subgraph External["🔗 External Services"]
-        Gmail["Gmail SMTP<br/>(App Password)"]
-        Cloudinary["Cloudinary CDN<br/>(File Uploads)"]
-    end
-    
-    subgraph GitHub["🔄 Automation"]
-        Actions["GitHub Actions<br/>(Email Queue Processor)"]
-    end
-    
-    Website -->|Auth & Data| Auth
-    Pages -->|CRUD Operations| DB
-    Pages -->|File Upload| Cloudinary
-    
-    EdgeFns -->|Triggers| Lambda
-    EdgeFns -->|Query/Insert| DB
-    EdgeFns -->|Template| Cloudinary
-    
-    Lambda -->|POST /send-email| APIGw
-    APIGw -->|Lambda| Lambda
-    Lambda -->|SMTP| Gmail
-    
-    DB -->|EmailQueue Table| Actions
-    Actions -->|Process Queue| Lambda
-    
-    EdgeFns -->|Stores| Storage
-```
-
-### Data Flow Diagram
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant EdgeFn as Edge Functions
-    participant DB as PostgreSQL
-    participant Queue as Email Queue
-    participant GHA as GitHub Actions
-    participant Lambda as AWS Lambda
-    participant Gmail
-
-    User->>Frontend: Submit Registration
-    Frontend->>EdgeFn: POST /register
-    EdgeFn->>Cloudinary: Upload Files (SHA-1 Signature)
-    EdgeFn->>DB: Insert Member Record
-    EdgeFn->>EdgeFn: Trigger registration-confirmation
-    
-    EdgeFn->>Queue: Insert Email (status=pending)
-    
-    rect rgb(200, 220, 255)
-    Note over Queue,Gmail: Email Processing (every 10 seconds)
-    end
-    
-    GHA->>GHA: Cron Job (*/10 * * * *)
-    GHA->>EdgeFn: POST /process-email-queue
-    EdgeFn->>DB: Get pending emails (max 5)
-    EdgeFn->>Lambda: Send email via SMTP
-    Lambda->>Gmail: SMTP connection
-    Lambda->>User: Email delivered ✓
-    Lambda->>DB: Update queue status (sent/failed)
-```
-
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |---|---|---|
 | **Frontend** | React 18 + TypeScript + Vite | SPA with HMR |
 | **Styling** | Tailwind CSS + PostCSS | Responsive UI |
-| **State Management** | Zustand | Global state |
+| **State** | Zustand | Global state management |
 | **Forms** | React Hook Form + Zod | Form validation |
-| **Database** | Supabase (PostgreSQL) | Member data, email queue |
+| **Database** | Supabase (PostgreSQL) | Member data, email queue, feature flags |
 | **Auth** | Supabase Auth (JWT) | Admin authentication |
 | **Email** | AWS Lambda + Gmail SMTP | Transactional emails |
-| **File Upload** | Cloudinary (CDN) | Document storage |
-| **Edge Computing** | Supabase Edge Functions (Deno) | Backend logic |
+| **File Upload** | Cloudinary (CDN) | Document storage (signed uploads) |
+| **Backend** | Supabase Edge Functions (Deno) | Serverless backend logic |
 | **Automation** | GitHub Actions (Cron) | Email queue processor |
 | **Charts** | Recharts | Admin analytics |
-| **ID Export** | html-to-image + jsPDF | Digital ID cards |
+| **ID Export** | html-to-image + qrcode.react | Digital ID cards with QR |
 
 ---
 
-## ☁️ Cloud Architecture
+## System Architecture
 
-### **Supabase (Backend Platform)**
-- **PostgreSQL Database**: Stores members, applications, email queue
-- **Edge Functions**: TypeScript/Deno serverless runtime
-  - `register/` — Handle new registrations + file uploads
-  - `send-announcement/` — Queue announcement emails
-  - `registration-confirmation/` — Trigger on member creation
-  - `send-approval-email/` — Trigger on approval
-  - `process-email-queue/` — Batch process pending emails
-  - `approve/` / `reject/` — Admin actions
-- **Authentication**: JWT-based with built-in session management
-- **File Storage**: Direct Cloudinary integration for secure uploads
+```mermaid
+graph TB
+    subgraph Frontend["Frontend (React/Vite)"]
+        Website["Web Application"]
+        Pages["Registration | ID Finder | Admin Dashboard"]
+    end
 
-### **AWS Lambda & API Gateway**
-- **Lambda Function**: `email-sender` (Python)
-  - Receives email requests via API Gateway
-  - Connects to Gmail SMTP server (smtp.gmail.com:465)
-  - Sends emails with AWS VPC timeout (900s)
-  - Returns success/error to Edge Function
-- **API Gateway**: POST /send-email endpoint with API key protection
-- **Secrets Manager** (optional): Store Gmail credentials
+    subgraph Supabase["Supabase (Backend-as-a-Service)"]
+        Auth["Authentication"]
+        DB[(PostgreSQL Database)]
+        EdgeFns["Edge Functions"]
+    end
 
-### **Cloudinary (File CDN)**
-- Secure signed uploads with SHA-1 signatures
-- Automatic image optimization and delivery
-- Support for images, PDFs, and documents
-- Public URLs for member file retrieval
+    subgraph AWS["AWS Services"]
+        Lambda["Lambda Function (Email Sender)"]
+        APIGw["API Gateway"]
+    end
 
-### **GitHub Actions (Automation)**
-- Cron job: `*/10 * * * *` (every 10 seconds)
-- Calls `process-email-queue` edge function
-- Uses Supabase service role key for elevated permissions
-- Processes max 5 emails per execution to prevent overload
+    subgraph External["External Services"]
+        Gmail["Gmail SMTP"]
+        Cloudinary["Cloudinary CDN"]
+    end
 
-### **Gmail SMTP**
-- Standard SMTP authentication with **App Password** (16-char token)
-- No Google Cloud Platform setup required
-- Throttles to prevent rate limits
-- Used by Lambda function for message sending
+    subgraph GitHub["Automation"]
+        Actions["GitHub Actions (Email Queue)"]
+    end
 
----
+    Website -->|Auth & Data| Auth
+    Pages -->|CRUD via RLS| DB
+    Pages -->|Edge Function calls| EdgeFns
 
-## 📊 Database Schema
+    EdgeFns -->|File Upload| Cloudinary
+    EdgeFns -->|Query/Insert| DB
+    EdgeFns -->|Send Email| Lambda
 
-```sql
--- Members table
-CREATE TABLE "Member" (
-  id UUID PRIMARY KEY,
-  student_number VARCHAR UNIQUE NOT NULL,
-  full_name VARCHAR NOT NULL,
-  email VARCHAR NOT NULL,
-  course VARCHAR,
-  year_level INTEGER,
-  technical_interests TEXT[] DEFAULT '{}',
-  status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-  resume_url VARCHAR,
-  id_photo_url VARCHAR,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Email queue for batch processing
-CREATE TABLE "EmailQueue" (
-  id UUID PRIMARY KEY,
-  to VARCHAR NOT NULL,
-  subject VARCHAR NOT NULL,
-  html TEXT NOT NULL,
-  from_email VARCHAR NOT NULL,
-  status ENUM('pending', 'sent', 'failed') DEFAULT 'pending',
-  error TEXT,
-  retry_count INTEGER DEFAULT 0,
-  max_retries INTEGER DEFAULT 3,
-  created_at TIMESTAMP DEFAULT NOW(),
-  sent_at TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Indexes for performance
-CREATE INDEX idx_email_queue_status ON "EmailQueue"(status);
-CREATE INDEX idx_email_queue_created_at ON "EmailQueue"(created_at);
-CREATE INDEX idx_member_status ON "Member"(status);
+    Lambda -->|SMTP| Gmail
+    Actions -->|Process Queue| EdgeFns
 ```
-
----
-
-## 🔐 Authentication & Security
-
-### Frontend
-- JWT tokens stored in secure HTTP-only cookies (Supabase Auth)
-- Protected routes with token validation
-- Admin-only pages behind authentication gate
-
-### Backend
-- Edge Functions validate bearer tokens before processing
-- Service role key used only in GitHub Actions (restricted secrets)
-- Cloudinary uploads require signed SHA-1 signatures
-- AWS Lambda API key required for email sending
-- Rate limiting on public endpoints (10 announcements/IP/hour)
-
-### Email Security
-- Gmail app password (16-char token) ≠ actual Gmail password
-- No credentials stored in Deno runtime
-- Secrets stored in Supabase Secrets Manager
-- Lambda has isolated execution environment
-
----
-
-## 📧 Email System
-
-### Email Processing Flow
-1. **Trigger**: User action (register, approve, send announcement)
-2. **Queue**: Email inserted into `EmailQueue` table with `status='pending'`
-3. **Processing**: GitHub Actions runs every 10 seconds
-4. **Sending**: Edge function retrieves pending emails and calls Lambda
-5. **Lambda**: Connects via SMTP and sends email
-6. **Update**: Queue status updated to `'sent'` or `'failed'`
-7. **Retry**: Failed emails retry up to 3 times
-
-### Email Templates
-All emails use consistent template with:
-- **Header Image**: Cloudinary-hosted SBG branding
-- **Recipient Name**: Personalized greeting
-- **Body Content**: Custom message per email type
-- **Signature**: SBG footer with contact info
-- **Footer Image**: Cloudinary-hosted SBG footer
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Supabase project
-- AWS Lambda function deployed
+- Node.js 20+ and npm
+- Supabase CLI (`npm i -g supabase`)
+- A Supabase project
+- AWS Lambda function deployed (for emails)
 - Gmail account with app password
 - Cloudinary account
 
-### 1. Clone the repository
+### 1. Clone and install
 
 ```bash
 git clone <repository-url>
 cd SBG-Registration/frontend
+npm install
 ```
 
-### 2. Create environment file
+### 2. Configure environment
 
-Copy the template:
 ```bash
 cp .env.example .env.local
 ```
 
-Or create `.env.local` manually with the values from `.env.example`
+Edit `.env.local` with your Supabase project credentials:
 
-### 3. Install dependencies
-
-```bash
-npm install
+```env
+VITE_SUPABASE_URL=https://<your-project>.supabase.co
+VITE_SUPABASE_ANON_KEY=<your-anon-key>
+VITE_APP_URL=http://localhost:5173
 ```
 
-### 4. Run development server
+### 3. Run development server
 
 ```bash
 npm run dev
@@ -293,261 +126,219 @@ Visit http://localhost:5173
 
 ## Supabase Backend Setup
 
-For backend development or deployment:
+### Link your project
 
 ```bash
-# Initialize Supabase (if not already done)
-supabase init
+supabase link --project-id <your-project-id>
+```
 
-# Link to your Supabase project
-supabase link --project-id [your-project-id]
+### Set secrets
 
-# Set environment secrets
+Edit `supabase/set-secrets.sh` with your actual values, then:
+
+```bash
+chmod +x supabase/set-secrets.sh
 ./supabase/set-secrets.sh
-
-# Deploy edge functions
-supabase functions deploy register send-announcement process-email-queue \
-  registration-confirmation send-approval-email
 ```
 
-### 5. Create EmailQueue table
+Required secrets:
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`
+- `LAMBDA_EMAIL_ENDPOINT`, `LAMBDA_API_KEY`
+- `APP_URL`
 
-In Supabase Dashboard → SQL Editor, run:
-
-```sql
-CREATE TYPE "EmailQueueStatus" AS ENUM ('pending', 'sent', 'failed');
-
-CREATE TABLE "EmailQueue" (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  to TEXT NOT NULL,
-  subject TEXT NOT NULL,
-  html TEXT NOT NULL,
-  from_email TEXT NOT NULL,
-  status "EmailQueueStatus" DEFAULT 'pending',
-  error TEXT,
-  retry_count INTEGER DEFAULT 0,
-  max_retries INTEGER DEFAULT 3,
-  created_at TIMESTAMP DEFAULT NOW(),
-  sent_at TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE INDEX idx_email_queue_status ON "EmailQueue"(status);
-CREATE INDEX idx_email_queue_created_at ON "EmailQueue"(created_at DESC);
-```
-
-### 6. Set up GitHub Actions
-
-1. Commit `.github/workflows/email-queue.yml` to your repository
-2. Add `SUPABASE_SERVICE_ROLE_KEY` secret to GitHub repository settings
-3. GitHub Actions will automatically process emails every 10 seconds
-
-### 7. Run development server
+### Deploy Edge Functions
 
 ```bash
-npm run dev
+supabase functions deploy register
+supabase functions deploy approve
+supabase functions deploy reject
+supabase functions deploy send-announcement
+supabase functions deploy send-approval-email
+supabase functions deploy registration-confirmation
+supabase functions deploy process-email-queue
+supabase functions deploy term-reset
 ```
 
-Open [http://localhost:5173](http://localhost:5173)
+### Database setup
+
+The database schema is managed via Supabase. Key tables:
+- `Member` — student registrations and membership data
+- `EmailQueue` — queued emails with retry logic
+- `SchoolYear` — academic year + semester tracking (1st/2nd)
+- `AppConfig` — application-level feature flags (registration open/closed)
+- `AuditLog` — admin action history (approvals, announcements, term resets)
+
+SQL migrations are in the `database/` directory (run them in order in the Supabase SQL Editor):
+1. `schema.sql` — base tables
+2. `001_app_config.sql` — feature flags
+3. `002_rls_and_view.sql` — RLS policies + public view
+4. `003_audit_log.sql` — audit log table
+5. `004_semester_management.sql` — redesigned SchoolYear with semester support
+6. `005_renewal_view.sql` — renewal verification view for returning members
 
 ---
 
-## 📍 Project Structure
+## Email System
+
+### How it works
+
+1. **Trigger**: User action (register, approve, send announcement)
+2. **Queue**: Email inserted into `EmailQueue` table with `status='pending'`
+3. **Processing**: GitHub Actions cron runs every 1 minute
+4. **Sending**: Edge function retrieves pending emails and calls AWS Lambda
+5. **Lambda**: Connects via Gmail SMTP and sends email
+6. **Update**: Queue status updated to `'sent'` or `'failed'`
+7. **Retry**: Failed emails retry up to 3 times
+
+### GitHub Actions setup
+
+1. Add `SUPABASE_SERVICE_ROLE_KEY` to your repository's Actions secrets
+2. The `.github/workflows/email-queue.yml` cron triggers every minute
+
+> **Note**: GitHub Actions cron has no SLA on exact timing — jobs may be delayed by 1–5 minutes under load. This is acceptable for non-time-critical transactional emails.
+
+---
+
+## CI Pipeline
+
+The `.github/workflows/ci.yml` runs on every PR and push to main:
+- Lint (ESLint)
+- Type check (TypeScript)
+- Tests (Vitest)
+- Build verification
+
+---
+
+## Project Structure
 
 ```
 SBG-Registration/
 ├── frontend/                    # React + Vite SPA
 │   ├── src/
-│   │   ├── components/
+│   │   ├── components/          # UI components by feature
 │   │   │   ├── admin/           # Admin dashboard components
-│   │   │   ├── registration/    # Registration form
-│   │   │   ├── id-card/         # Digital ID card
-│   │   │   └── ui/              # Reusable UI components
+│   │   │   ├── registration/    # Registration + renewal forms
+│   │   │   ├── id-card/         # Digital ID card with QR
+│   │   │   └── ui/              # Reusable primitives
 │   │   ├── pages/               # Route pages
-│   │   ├── store/               # Zustand state management
-│   │   ├── lib/                 # Utilities & API helpers
+│   │   ├── store/               # Zustand stores
+│   │   ├── lib/                 # API helpers & utilities
 │   │   └── types/               # TypeScript types
 │   └── vite.config.ts
 │
 ├── supabase/
-│   ├── functions/
-│   │   ├── register/            # Handle new registrations
-│   │   ├── send-announcement/   # Queue announcements
-│   │   ├── registration-confirmation/  # Confirm registration email
-│   │   ├── send-approval-email/        # Approval email
-│   │   ├── process-email-queue/        # Batch email processor
-│   │   ├── approve/              # Approve applicant
-│   │   ├── reject/               # Reject applicant
-│   │   └── _shared/              # Shared utilities
-│   │       ├── emailTemplate.ts  # Email HTML template
-│   │       └── rateLimiter.ts    # Rate limiting
-│   └── set-secrets.sh            # Deploy secrets script
+│   ├── functions/               # Edge Functions (Deno)
+│   └── set-secrets.sh           # Secrets deployment script
+│
+├── docs/                        # Project documentation
+│   ├── ARCHITECTURE.md          # System design & data flows
+│   ├── DATABASE.md              # Schema, migrations, RLS policies
+│   ├── API.md                   # Edge Function & query reference
+│   ├── ADMIN-GUIDE.md           # Admin dashboard usage guide
+│   ├── DEVELOPER.md             # Setup & contribution guide
+│   └── SECURITY.md              # Auth, RLS, known risks
 │
 ├── lambda/
-│   └── email-sender/             # Python Lambda function
-│       ├── lambda_function.py
-│       └── requirements.txt
+│   └── email-sender/            # Python Lambda (Gmail SMTP)
 │
-├── prisma/
-│   ├── schema.prisma             # Database schema
-│   └── seed.sql                  # Sample data
-│
-└── .github/
-    └── workflows/
-        └── email-queue.yml       # GitHub Actions cron job
+└── .github/workflows/
+    ├── email-queue.yml          # Email queue cron
+    └── ci.yml                   # Lint, test, build
 ```
 
 ---
 
-## 🔑 Environment Variables
+## Environment Variables
 
-### Frontend (`.env.local`)
-```env
-VITE_SUPABASE_URL=https://mkneaeisrwxnbahephay.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...
-VITE_APP_URL=https://sbg-registration.app
-```
+### Frontend (`frontend/.env.local`)
 
-### Supabase Secrets (via `set-secrets.sh`)
-```
-CLOUDINARY_CLOUD_NAME=dkue2jyea
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-GMAIL_ADDRESS=sbg.pupbinan@gmail.com
-GMAIL_APP_PASSWORD=qixk kmwx ejcs tqkn
-LAMBDA_EMAIL_ENDPOINT=https://fjab67fcm2.execute-api.ap-southeast-1.amazonaws.com/prod/send-email
-LAMBDA_API_KEY=...
-APP_URL=https://sbg-registration.app
-```
+| Variable | Description |
+|---|---|
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous/public key |
+| `VITE_APP_URL` | Frontend deployment URL |
+
+### Supabase Secrets
+
+| Secret | Description |
+|---|---|
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary account name |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `GMAIL_ADDRESS` | Gmail sender address |
+| `GMAIL_APP_PASSWORD` | Gmail app password (16-char token) |
+| `LAMBDA_EMAIL_ENDPOINT` | AWS API Gateway URL for email Lambda |
+| `LAMBDA_API_KEY` | API key for Lambda endpoint |
+| `APP_URL` | Frontend URL (used in email links) |
 
 ### GitHub Actions Secrets
-```
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-```
+
+| Secret | Description |
+|---|---|
+| `SUPABASE_SERVICE_ROLE_KEY` | Elevated key for email queue processing |
+
+> **Never commit actual secret values.** Use `.env.example` as a template.
 
 ---
 
-## 🚢 Deployment
-
-### Frontend Deployment (AWS Amplify)
-```bash
-amplify init
-amplify add hosting
-amplify publish
-```
-
-### Supabase Edge Functions
-Functions auto-deploy when you run:
-```bash
-supabase functions deploy [function-name]
-```
-
-### AWS Lambda
-```bash
-cd lambda/email-sender
-zip -r function.zip .
-aws lambda update-function-code --function-name sbg-email-sender \
-  --zip-file fileb://function.zip --region ap-southeast-1
-```
-
----
-
-## 📡 API Endpoints
-
-### Edge Functions (Supabase)
-
-#### Register Member
-```
-POST /functions/v1/register
-Content-Type: multipart/form-data
-
-Form Data:
-- student_number: string
-- full_name: string
-- email: string
-- course: string
-- year_level: number
-- technical_interests: string[]
-- resume: File
-- id_photo: File
-```
-
-#### Send Announcement
-```
-POST /functions/v1/send-announcement
-Authorization: Bearer [JWT_TOKEN]
-Content-Type: application/json
-
-{
-  "subject": "Community Announcement",
-  "body": "Message content",
-  "signature": "SBG Team",
-  "recipients": {
-    "type": "group",
-    "filters": {
-      "course": "BSCS",
-      "year_level": 3,
-      "status": "approved"
-    }
-  }
-}
-```
-
-#### Send Approval Email
-```
-POST /functions/v1/send-approval-email
-Authorization: Bearer [JWT_TOKEN]
-Content-Type: application/json
-
-{
-  "memberId": "uuid-of-member"
-}
-```
-
-#### Process Email Queue
-```
-POST /functions/v1/process-email-queue
-Authorization: Bearer [SERVICE_ROLE_KEY]
-
-# Automatically called by GitHub Actions every 10 seconds
-```
-
----
-
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Emails not sending?
-1. Check `EmailQueue` table for pending emails: `SELECT * FROM "EmailQueue" WHERE status='failed'`
+1. Check `EmailQueue` table for failed entries: `SELECT * FROM "EmailQueue" WHERE status='failed'`
 2. Verify Lambda function has correct Gmail credentials
 3. Check GitHub Actions logs for cron job execution
-4. Ensure SUPABASE_SERVICE_ROLE_KEY is set in GitHub Secrets
+4. Ensure `SUPABASE_SERVICE_ROLE_KEY` is set in GitHub Secrets
 
 ### File upload failing?
 1. Verify Cloudinary credentials in Supabase Secrets
-2. Check SHA-1 signature calculation in register function
-3. Ensure file MIME type is supported
+2. Check SHA-1 signature calculation in the register function
+3. Ensure file MIME type is `image/jpeg`, `image/png`, or `application/pdf`
 
 ### Admin dashboard not loading?
-1. Verify Supabase Auth JWT token is valid
+1. Verify Supabase Auth session is valid
 2. Check browser console for CORS errors
 3. Ensure admin user exists in Supabase Auth
 
-### Lambda timeout?
-1. Check AWS Lambda timeout setting (default: 3s, need 30-60s)
-2. Verify Gmail SMTP connection from Lambda VPC
-3. Check Lambda CloudWatch logs for errors
+---
+
+## Roadmap
+
+### Event Management (Planned)
+
+A lightweight event system for organizing SBG meetups, workshops, and community events.
+
+**How it works:**
+1. Admin creates an event (title, date, venue, description, capacity)
+2. Approved members can RSVP / register for the event
+3. Upon registration approval, member receives a unique **QR code** via email
+4. At the event, admin scans QR codes for check-in
+5. Admin can view and export the **attendee list** (CSV with name, student number, check-in time)
+
+**Planned features:**
+- Event creation and management in the admin dashboard
+- Member-facing event list with RSVP button
+- QR code generation per attendee (unique, scannable)
+- QR-based check-in (admin scans via camera or manual code entry)
+- Attendee list with real-time check-in status
+- CSV export of attendees (name, student number, course, check-in timestamp)
+- Event capacity tracking and waitlist
+
+### Official Club Website (Planned)
+
+Expand the portal into the official SBG website — single domain, one cohesive experience.
+
+**Planned pages:**
+- `/` — Home (hero, mission, vision, what we do)
+- `/about` — About page (team, advisors, history, departments)
+- `/events` — Public event listing
+- `/register` — Membership registration (existing)
+- `/id-finder` — Digital ID lookup (existing)
+
+**Approach:** No separate website — just add public-facing pages to the existing app with a proper navbar (Home, About, Events, Register, Find ID). Static content (mission, vision, team photos) lives directly in the components.
 
 ---
 
-## 📞 Support
-
-For issues or questions:
-1. Check the [Troubleshooting](#troubleshooting) section
-2. Review [Supabase Edge Functions docs](https://supabase.com/docs/guides/functions)
-3. Review [AWS Lambda docs](https://docs.aws.amazon.com/lambda/)
-
----
-
-## 📝 License
+## License
 
 This project is part of the Student Builder Group initiative at PUP Biñan Campus.
