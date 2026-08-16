@@ -23,6 +23,7 @@ const config: Config = {
       fontFamily: {
         mono: ['"Space Mono"', 'monospace'],
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        display: ['"Nunito"', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '8px',

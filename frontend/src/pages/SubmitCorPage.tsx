@@ -65,7 +65,7 @@ export default function SubmitCorPage() {
 
   if (submitState.status === 'success') {
     return (
-      <div className="min-h-screen bg-sbg-black grid-bg flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <div className="relative z-10 px-6 py-4">
           <BackButton to="/" label="Back to Home" />
         </div>

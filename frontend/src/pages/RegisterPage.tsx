@@ -1,19 +1,34 @@
 // frontend/src/pages/RegisterPage.tsx
 import { BackButton } from '../components/ui/BackButton'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
+import { SbgLogoDecor } from '../components/ui/SbgLogoDecor'
 
 export default function RegisterPage() {
 
   return (
-    <div className="min-h-screen bg-sbg-black flex flex-col lg:flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row">
 
       {/* ── Left panel: branding / hero ── */}
-      <div className="relative lg:flex-1 grid-bg flex flex-col justify-between p-8 lg:p-12 min-h-[280px] lg:min-h-screen">
-        {/* Purple accent squares */}
-        <div className="absolute top-6 right-10 w-4 h-4 bg-sbg-purple opacity-60" />
-        <div className="absolute top-16 right-20 w-2 h-2 bg-sbg-purple-light opacity-40" />
-        <div className="absolute bottom-20 left-10 w-3 h-3 bg-sbg-purple opacity-50" />
-        <div className="absolute bottom-10 right-16 w-2 h-2 bg-sbg-purple-light opacity-30" />
+      <div className="relative lg:flex-1 flex flex-col justify-between p-8 lg:p-12 min-h-[280px] lg:min-h-screen overflow-hidden">
+        {/* Decorative logos */}
+        <div className="absolute -top-6 -right-6">
+          <SbgLogoDecor size={130} color="#4ADE80" />
+        </div>
+        <div className="absolute top-16 left-6 opacity-20">
+          <SbgLogoDecor size={40} color="#AE5CFF" />
+        </div>
+        <div className="absolute bottom-24 right-8">
+          <SbgLogoDecor size={26} color="#38BDF8" />
+        </div>
+        <div className="absolute bottom-10 left-12 opacity-30">
+          <SbgLogoDecor size={48} color="#FB923C" />
+        </div>
+        <div className="absolute top-1/2 right-6 opacity-15">
+          <SbgLogoDecor size={52} color="#AE5CFF" />
+        </div>
+        <div className="absolute -bottom-8 -left-8">
+          <SbgLogoDecor size={110} color="#F87171" />
+        </div>
 
         {/* Back button + Logo */}
         <div className="relative z-10 flex items-center justify-between">

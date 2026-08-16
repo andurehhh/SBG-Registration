@@ -1,5 +1,5 @@
 /* Google Fonts — Plus Jakarta Sans (closest to Amazon Ember) + Space Mono for code/IDs */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 /* Tailwind CSS */
 @tailwind base;
@@ -78,6 +78,29 @@
 
 /* Component Classes */
 @layer components {
+  /* Carousel slide animations */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(40px);
+      opacity: 0.4;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-40px);
+      opacity: 0.4;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
   /* Card base */
   .card {
     background-color: #1a1f2e;

@@ -5,6 +5,7 @@ import { IdCard } from '../components/id-card/IdCard'
 import { BackButton } from '../components/ui/BackButton'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
+import { SbgLogoDecor } from '../components/ui/SbgLogoDecor'
 import { supabase } from '../lib/api'
 import { assignSticker } from '../lib/utils'
 import type { Member } from '../types'
@@ -56,7 +57,27 @@ export default function IdFinderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sbg-black grid-bg">
+    <div className="min-h-screen overflow-hidden relative">
+      {/* Decorative logos */}
+      <div className="absolute -top-8 -right-8">
+        <SbgLogoDecor size={150} color="#38BDF8" />
+      </div>
+      <div className="absolute top-20 left-6 opacity-20">
+        <SbgLogoDecor size={44} color="#AE5CFF" />
+      </div>
+      <div className="absolute bottom-16 right-10">
+        <SbgLogoDecor size={28} color="#4ADE80" />
+      </div>
+      <div className="absolute top-1/2 right-4 opacity-15">
+        <SbgLogoDecor size={56} color="#FB923C" />
+      </div>
+      <div className="absolute bottom-1/4 left-4 opacity-25">
+        <SbgLogoDecor size={36} color="#AE5CFF" />
+      </div>
+      <div className="absolute -bottom-10 -left-6">
+        <SbgLogoDecor size={120} color="#F87171" />
+      </div>
+
       {/* Top bar with back button */}
       <div className="relative z-10 px-6 py-4">
         <BackButton to="/" label="Back to Home" />
@@ -99,10 +120,6 @@ export default function IdFinderPage() {
             </Button>
           </form>
         </div>
-
-        {/* Decorative accents */}
-        <div className="absolute top-4 right-8 w-3 h-3 bg-sbg-purple opacity-60" aria-hidden="true" />
-        <div className="absolute bottom-8 left-8 w-2 h-2 bg-sbg-purple opacity-50" aria-hidden="true" />
       </div>
 
       {/* Results */}
