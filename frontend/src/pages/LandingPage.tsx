@@ -22,9 +22,20 @@ const EVENTS: [string, string, string, string, string, number, number, string][]
 
 const PAST_EVENTS = [
   //Talk, Hackathon, Workshop,Study
-  { title: 'Cloud Kickstart 2026: Navigating Your Way into the Cloud', date: 'March 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1786964581/cloud_kickstart_xm9qo3.jpg' },
+  { title: 'Cloud Kickstart 2026: Navigating Your Way into the Cloud', date: 'March 2026', type: 'Seminar', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1786964581/cloud_kickstart_xm9qo3.jpg' },
   { title: 'Prompt.Spec.Deploy.', date: 'April 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1786964582/Promptspecdeploy_noxion.jpg' },
-  ]
+  { title: 'Cloud Kickstart 2026: Navigating Your Way into the Cloud', date: 'March 2026', type: 'Seminar', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1787006504/4_12_sd3gki.png' },
+  { title: 'Prompt.Spec.Deploy.', date: 'April 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1787006830/prompt_eio9dm.jpg' },
+  { title: 'Cloud Kickstart 2026: Navigating Your Way into the Cloud', date: 'March 2026', type: 'Seminar', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1787006505/Happening_now_post_event_highlights_posting_template_8_mixbml.png' },
+  { title: 'Prompt.Spec.Deploy.', date: 'April 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1787006830/prompt1_yzcv9l.jpg' },
+  { title: 'Cloud Kickstart 2026: Navigating Your Way into the Cloud', date: 'March 2026', type: 'Seminar', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1787006504/Happening_now_post_event_highlights_posting_template_20_yljntc.png' },
+  { title: 'Prompt.Spec.Deploy.', date: 'April 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1787006830/prompt3_nbszjs.jpg' },
+
+  
+
+
+
+]
 
 const FAQS = [
   // ['What\'s the time commitment?', 'Workshops are 1-2 hours weekly. Build nights and study groups are optional. You decide your level.'],
@@ -34,6 +45,12 @@ const FAQS = [
 ]
 
 const NAV = ['About', 'Gallery', 'FAQ']
+
+const SOCIALS = [
+  { name: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61584279257151' },
+  { name: 'Instagram', url: 'https://www.instagram.com/_awsccfrizz' },
+  // { name: 'GitHub', url: '#' },
+]
 
 // @ts-expect-error Kept for future use when team section is re-enabled
 const TEAM_TERMS = [
@@ -190,7 +207,7 @@ export default function LandingPage() {
             <div className="relative">
               <div className="aspect-[4/3] overflow-hidden" style={{ border: '1px solid rgba(12,15,20,0.15)' }}>
                 <img
-                  src="/group-picture.jpg"
+                  src="https://res.cloudinary.com/dkue2jyea/image/upload/v1787009884/copy_of_merch_mmm7wv.jpg"
                   alt="SBG Group Photo"
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -211,22 +228,36 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ TERMINAL STATS ══ */}
+      {/* ══ TERMINAL ══ */}
       <section className="max-w-7xl mx-auto px-5 sm:px-8 -mt-8 relative z-10">
         <div style={{ border: '1px solid var(--line)', background: 'var(--card)' }}>
           <div className="flex items-center gap-1.5 px-4 py-2.5 border-b" style={{ borderColor: 'var(--line)' }}>
-            <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--orange)' }} />
-            <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--blue)' }} />
-            <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--line)' }} />
-            <span className="text-[10px] ml-2" style={{ color: 'var(--muted)' }}>sbg@status:~$</span>
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f56' }} />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }} />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27c93f' }} />
+            <span className="text-[10px] ml-3 font-mono" style={{ color: 'var(--muted)' }}>sbg@pup-binan ~ </span>
           </div>
-          <div className="px-4 py-3.5 sm:px-6 sm:py-4 font-mono text-xs sm:text-sm leading-relaxed" style={{ color: 'var(--text)' }}>
-            <span style={{ color: 'var(--orange)' }}>$</span> ./club --status<br />
-            <span style={{ color: 'var(--muted)' }}>  &gt; members:  <span style={{ color: 'var(--orange)' }}>63</span></span><br />
-            <span style={{ color: 'var(--muted)' }}>  &gt; events:   <span style={{ color: 'var(--orange)' }}>12</span> /year</span><br />
-            {/* <span style={{ color: 'var(--muted)' }}>  &gt; projects: <span style={{ color: 'var(--blue)' }}>8</span> shipped</span><br /> */}
-            <span style={{ color: 'var(--muted)' }}>  &gt; founded:  <span style={{ color: 'var(--blue)' }}>2026</span></span><br />
-            <span style={{ color: 'var(--orange)' }}>$</span> <span className="animate-pulse">_</span>
+          <div className="px-4 py-4 sm:px-6 sm:py-5 font-mono text-xs sm:text-sm leading-[2.2]" style={{ color: 'var(--text)' }}>
+            <span style={{ color: 'var(--blue)' }}>sbg@cloud</span><span style={{ color: 'var(--muted)' }}>:</span><span style={{ color: 'var(--blue)' }}>~</span><span style={{ color: 'var(--muted)' }}>$ </span><span style={{ color: 'var(--text)' }}>sudo apt-get install ambition</span><br />
+            <span style={{ color: 'var(--muted)' }}>Reading package lists... Done</span><br />
+            <span style={{ color: 'var(--muted)' }}>Piquing interests, stimulating curiousity... Done</span><br />
+            <span style={{ color: 'var(--muted)' }}>Igniting the passion to learn... Done</span><br />
+            <span style={{ color: 'var(--muted)' }}>Fabricating the mindset to build... Done</span><br />
+            <span style={{ color: '#27c93f' }}>ambition installed successfully. Builders come pre-loaded.</span><br />
+            <br />
+            <span style={{ color: 'var(--blue)' }}>sbg@cloud</span><span style={{ color: 'var(--muted)' }}>:</span><span style={{ color: 'var(--blue)' }}>~</span><span style={{ color: 'var(--muted)' }}>$ </span><span style={{ color: 'var(--text)' }}>git commit -m "first deploy"</span><br />
+            <span style={{ color: '#ffbd2e' }}>[main 1a2b3c4]</span> <span style={{ color: 'var(--muted)' }}>first deploy</span><br />
+            <span style={{ color: 'var(--muted)' }}> 3 files changed, </span><span style={{ color: '#27c93f' }}>142 insertions(+)</span><span style={{ color: 'var(--muted)' }}>, </span><span style={{ color: '#ff5f56' }}>0 deletions(-)</span><br />
+            <br />
+            <span style={{ color: 'var(--blue)' }}>sbg@cloud</span><span style={{ color: 'var(--muted)' }}>:</span><span style={{ color: 'var(--blue)' }}>~</span><span style={{ color: 'var(--muted)' }}>$ </span><span style={{ color: 'var(--text)' }}>aws s3 cp ./dreams s3://the-cloud --recursive</span><br />
+            <span style={{ color: 'var(--muted)' }}>upload: ./dreams/build-something </span><span style={{ color: '#27c93f' }}>✓</span><br />
+            <span style={{ color: 'var(--muted)' }}>upload: ./dreams/break-something </span><span style={{ color: '#27c93f' }}>✓</span><br />
+            <span style={{ color: 'var(--muted)' }}>upload: ./dreams/ship-it-anyway </span><span style={{ color: '#27c93f' }}>✓</span><br />
+            <br />
+            <span style={{ color: 'var(--blue)' }}>sbg@cloud</span><span style={{ color: 'var(--muted)' }}>:</span><span style={{ color: 'var(--blue)' }}>~</span><span style={{ color: 'var(--muted)' }}>$ </span><span style={{ color: 'var(--text)' }}>echo <span style={{ color: 'var(--text)'}}>showMotto</span></span><br />
+            <span style={{ color: '#ffbd2e' }}>"Learn.Build.Connect.Grow."</span><br />
+            <br />
+            <span style={{ color: 'var(--blue)' }}>sbg@cloud</span><span style={{ color: 'var(--muted)' }}>:</span><span style={{ color: 'var(--blue)' }}>~</span><span style={{ color: 'var(--muted)' }}>$ </span><span className="animate-pulse" style={{ color: 'var(--text)' }}>_</span>
           </div>
         </div>
       </section>
@@ -399,7 +430,7 @@ export default function LandingPage() {
       <section id="gallery" className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
         <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--blue)' }}>Gallery</p>
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8" style={{ color: 'var(--text)' }}>Past events captured.</h2>
-        <div style={{ overflow: 'visible' }}>
+        <div style={{ overflowX: 'hidden', overflowY: 'visible' }}>
           <div className="gallery-track" style={{ padding: '40px 0' }}>
             {[...PAST_EVENTS, ...PAST_EVENTS].map((ev, i) => {
               const colorMap: Record<string, [string, string, string]> = {
@@ -622,21 +653,21 @@ export default function LandingPage() {
               <div>
                 <p className="text-[9px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--muted)' }}>Connect</p>
                 <div className="flex flex-col gap-2">
-                  {['GitHub', 'Discord', 'Facebook'].map(l => (
-                    <a key={l} href="#" className="text-[10px] transition-colors" style={{ color: 'var(--muted)' }}
+                  {SOCIALS.map(s => (
+                    <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-[10px] transition-colors" style={{ color: 'var(--muted)' }}
                       onMouseEnter={e => e.currentTarget.style.color = 'var(--text)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--muted)'}>{l}</a>
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--muted)'}>{s.name}</a>
                   ))}
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <p className="text-[9px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--muted)' }}>Info</p>
                 <div className="flex flex-col gap-2 text-[10px]" style={{ color: 'var(--muted)' }}>
                   <span>members: 63</span>
                   <span>events: 12/yr</span>
                   <span>projects: 8</span>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex items-center gap-3 mt-8 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
