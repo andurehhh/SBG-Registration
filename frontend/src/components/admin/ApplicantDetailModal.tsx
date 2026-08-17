@@ -109,14 +109,14 @@ export function ApplicantDetailModal({ member, onClose, onAction }: ApplicantDet
           {member.why_join && (
             <section>
               <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-2 font-mono">Why Join SBG?</h3>
-              <p className="text-sm text-white bg-white/[0.03] p-3 leading-relaxed">{member.why_join}</p>
+              <p className="text-sm text-white bg-white/[0.03] p-3 leading-relaxed whitespace-pre-wrap break-words">{member.why_join}</p>
             </section>
           )}
 
           {member.expectations && (
             <section>
               <h3 className="text-sbg-text-muted text-xs uppercase tracking-wider mb-2 font-mono">Expectations</h3>
-              <p className="text-sm text-white bg-white/[0.03] p-3 leading-relaxed">{member.expectations}</p>
+              <p className="text-sm text-white bg-white/[0.03] p-3 leading-relaxed whitespace-pre-wrap break-words">{member.expectations}</p>
             </section>
           )}
 
