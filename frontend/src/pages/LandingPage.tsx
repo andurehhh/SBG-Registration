@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, X, ArrowUpRight, ChevronDown } from 'lucide-react'
+import { Menu, X, ArrowUpRight } from 'lucide-react'
 
 // @ts-expect-error Sections are commented out but data is kept for future use
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,6 +35,7 @@ const FAQS = [
 
 const NAV = ['About', 'Gallery', 'FAQ']
 
+// @ts-expect-error Kept for future use when team section is re-enabled
 const TEAM_TERMS = [
   { label: 'AY 2026-2027 — 1st Sem', value: '26-27-1' },
   { label: 'AY 2026-2027 — 2nd Sem', value: '26-27-2' },
@@ -50,6 +51,7 @@ interface TeamMember {
   socials: { github?: string; linkedin?: string; facebook?: string }
 }
 
+// @ts-expect-error Kept for future use when team section is re-enabled
 const TEAM_MEMBERS: Record<string, TeamMember[]> = {
   '25-26': [
     { name: 'John Lexter Reyes', role: 'Founder & President', initials: 'JR', image: '/My picture.jpg', description: 'Founded SBG to bring hands-on AWS experience to PUP Biñan. Passionate about cloud infrastructure and building developer communities.', socials: { github: '#', linkedin: '#', facebook: '#' } },
@@ -90,8 +92,11 @@ export default function LandingPage() {
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
+  // @ts-expect-error Kept for future use when team section is re-enabled
   const [selectedTerm, setSelectedTerm] = useState('24-25-1')
+  // @ts-expect-error Kept for future use when team section is re-enabled
   const [termOpen, setTermOpen] = useState(false)
+  // @ts-expect-error Kept for future use when team section is re-enabled
   const [highlightedMember, setHighlightedMember] = useState<TeamMember | null>(null)
 
   // Cycle accent color every 10 seconds
@@ -664,6 +669,7 @@ function AWSSmile({ className, style }: { className?: string; style?: React.CSSP
   )
 }
 
+// @ts-expect-error Kept for future use when team section is re-enabled
 function SocialIcon({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer"
