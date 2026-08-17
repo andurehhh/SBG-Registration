@@ -11,19 +11,21 @@ interface FlipCardProps {
 export function FlipCard({ front, back, isFlipped, onFlipEnd }: FlipCardProps) {
   const [showBack, setShowBack] = useState(isFlipped)
   const [animating, setAnimating] = useState(false)
+  const onFlipEndRef = { current: onFlipEnd }
+  onFlipEndRef.current = onFlipEnd
 
   useEffect(() => {
     if (isFlipped !== showBack) {
       setAnimating(true)
-      // Wait for scale-down, then swap content, then scale-up
       const timer = setTimeout(() => {
         setShowBack(isFlipped)
         setAnimating(false)
-        onFlipEnd?.()
+        onFlipEndRef.current?.()
       }, 200)
       return () => clearTimeout(timer)
     }
-  }, [isFlipped, showBack, onFlipEnd])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFlipped])
 
   return (
     <div className="w-full">

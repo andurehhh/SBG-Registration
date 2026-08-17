@@ -21,24 +21,19 @@ const EVENTS: [string, string, string, string, string, number, number, string][]
 ]
 
 const PAST_EVENTS = [
-  { title: 'AWSome Day Workshop', date: 'Aug 2026', type: 'Workshop' },
-  { title: 'Cloud Career Talk', date: 'Sep 2026', type: 'Talk' },
-  { title: 'Build Night: Serverless', date: 'Oct 2026', type: 'Hackathon' },
-  { title: 'Cert Study Group', date: 'Nov 2026', type: 'Study' },
-  { title: 'AWS re:Invent Watch', date: 'Dec 2026', type: 'Workshop' },
-  { title: 'Serverless Workshop', date: 'Jan 2027', type: 'Workshop' },
-  { title: 'Industry Panel', date: 'Feb 2027', type: 'Talk' },
-  { title: 'Hackathon Finale', date: 'Mar 2027', type: 'Hackathon' },
-]
+  //Talk, Hackathon, Workshop,Study
+  { title: 'Cloud Kickstart 2026: Navigating Your Way into the Cloud', date: 'March 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1786964581/cloud_kickstart_xm9qo3.jpg' },
+  { title: 'Prompt.Spec.Deploy.', date: 'April 2026', type: 'Workshop', image: 'https://res.cloudinary.com/dkue2jyea/image/upload/v1786964582/Promptspecdeploy_noxion.jpg' },
+  ]
 
 const FAQS = [
-  ['What\'s the time commitment?', 'Workshops are 1-2 hours weekly. Build nights and study groups are optional. You decide your level.'],
+  // ['What\'s the time commitment?', 'Workshops are 1-2 hours weekly. Build nights and study groups are optional. You decide your level.'],
   ['Do I need AWS experience?', 'Zero. Most members start as beginners. Workshops are built for first-timers.'],
   ['Is it free?', 'Yes. AWS provides credits through our partnership. Some events may have minimal fees for food.'],
   ['How do I join?', 'Fill out the form (5 min). Get approved. Get your digital ID card. Join Discord.'],
 ]
 
-const NAV = ['About', 'Projects', 'Events', 'FAQ']
+const NAV = ['About', 'Gallery', 'FAQ']
 
 const TEAM_TERMS = [
   { label: 'AY 2026-2027 — 1st Sem', value: '26-27-1' },
@@ -56,9 +51,9 @@ interface TeamMember {
 }
 
 const TEAM_MEMBERS: Record<string, TeamMember[]> = {
-  '24-25-1': [
+  '25-26': [
     { name: 'John Lexter Reyes', role: 'Founder & President', initials: 'JR', image: '/My picture.jpg', description: 'Founded SBG to bring hands-on AWS experience to PUP Biñan. Passionate about cloud infrastructure and building developer communities.', socials: { github: '#', linkedin: '#', facebook: '#' } },
-    { name: 'Aldrin Joshua S.', role: 'Vice President', initials: 'AJ', description: 'Drives club operations and strategic direction. Focused on scaling SBG through industry partnerships and member growth.', socials: { github: '#', linkedin: '#', facebook: '#' } },
+    { name: 'Renae Chloe Bautista', role: 'Vice President', initials: 'AJ', description: 'Drives club operations and strategic direction. Focused on scaling SBG through industry partnerships and member growth.', socials: { github: '#', linkedin: '#', facebook: '#' } },
     { name: 'Maria Santos', role: 'Secretary', initials: 'MS', description: 'Keeps everything organized. Manages documentation, meeting notes, and club communications.', socials: { github: '#', linkedin: '#' } },
     { name: 'Juan Dela Cruz', role: 'Treasurer', initials: 'JC', description: 'Manages club funds and AWS credit allocation. Ensures resources are maximized for member benefit.', socials: { linkedin: '#', facebook: '#' } },
     { name: 'Ana Reyes', role: 'Auditor', initials: 'AR', description: 'Ensures transparency and compliance in all club financial and operational processes.', socials: { github: '#', facebook: '#' } },
@@ -71,15 +66,6 @@ const TEAM_MEMBERS: Record<string, TeamMember[]> = {
     { name: 'Ana Reyes', role: 'Treasurer', initials: 'AR', description: 'Handles budget planning and AWS credit distribution for workshops and events.', socials: { github: '#', facebook: '#' } },
     { name: 'Carlos M.', role: 'Dev Team Lead', initials: 'CM', description: 'Shipping club tools and mentoring new dev team members.', socials: { github: '#', linkedin: '#' } },
     { name: 'Rosa D.', role: 'Skill Builder Lead', initials: 'RD', description: 'Designs workshop curricula and certification study paths for members.', socials: { linkedin: '#', facebook: '#' } },
-  ],
-  '25-26-1': [
-    { name: 'Maria Santos', role: 'President', initials: 'MS', description: 'Leading SBG into its third year with a focus on AI workshops and industry collaborations.', socials: { github: '#', linkedin: '#', facebook: '#' } },
-    { name: 'Juan Dela Cruz', role: 'Vice President', initials: 'JC', description: 'Driving membership growth and external partnerships.', socials: { linkedin: '#', facebook: '#' } },
-    { name: 'Rosa D.', role: 'Secretary', initials: 'RD', description: 'Streamlining club operations and documentation for the growing org.', socials: { linkedin: '#', facebook: '#' } },
-    { name: 'Carlos M.', role: 'Treasurer', initials: 'CM', description: 'Managing expanded budget for bigger events and more AWS credits.', socials: { github: '#', linkedin: '#' } },
-    { name: 'Jake R.', role: 'Dev Team Lead', initials: 'JR', description: 'Building the next generation of club tools and leading the dev team.', socials: { github: '#', linkedin: '#', facebook: '#' } },
-    { name: 'Lina T.', role: 'Outreach Lead', initials: 'LT', description: 'Connecting SBG with industry partners, speakers, and other AWS clubs.', socials: { linkedin: '#', facebook: '#' } },
-    { name: 'Paolo G.', role: 'Creative Lead', initials: 'PG', description: 'Designing all club materials — from event graphics to the SBG brand identity.', socials: { github: '#', facebook: '#' } },
   ],
 }
 
@@ -405,7 +391,7 @@ export default function LandingPage() {
       </section> */}
 
       {/* ══ GALLERY ══ */}
-      <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
+      <section id="gallery" className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
         <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--blue)' }}>Gallery</p>
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8" style={{ color: 'var(--text)' }}>Past events captured.</h2>
         <div style={{ overflow: 'visible' }}>
@@ -422,7 +408,10 @@ export default function LandingPage() {
               return (
                 <div key={`${ev.title}-${i}`} className="gallery-item shrink-0 w-[280px] sm:w-[320px] overflow-hidden cursor-pointer"
                   style={{ border: '1px solid var(--line)' }}>
-                  <div style={{ background: gradient, height: '200px' }} className="relative flex flex-col justify-end p-4">
+                  <div style={{ background: ev.image ? undefined : gradient, height: '200px' }} className="relative flex flex-col justify-end p-4">
+                    {ev.image && (
+                      <img src={ev.image} alt={ev.title} className="absolute inset-0 w-full h-full object-cover" />
+                    )}
                     <div className="absolute top-3 left-3">
                       <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5" style={{ background: 'rgba(0,0,0,0.3)', color: '#fff' }}>{ev.type}</span>
                     </div>
@@ -440,7 +429,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ MEET THE TEAM ══ */}
-      <section id="team" className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
+      {/* <section id="team" className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--orange)' }}>Leadership</p>
@@ -555,7 +544,7 @@ export default function LandingPage() {
             )
           })}
         </div>
-      </section>
+      </section> */}
 
       {/* ══ QUOTE ══ */}
       <section style={{ background: 'var(--blue)' }}>

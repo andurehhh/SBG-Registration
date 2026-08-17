@@ -22,15 +22,15 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
     body {
       margin: 0;
       padding: 0;
-      background: #0f1117;
-      color: #E2E8F0;
+      background: #f4f4f4;
+      color: #1a1a1a;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
       border-radius: 8px;
       overflow: hidden;
     }
@@ -42,30 +42,38 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
     }
     .content {
       padding: 32px;
+      color: #1a1a1a;
     }
     .footer {
       width: 100%;
       display: block;
       max-width: 600px;
       height: auto;
-      margin-top: 20px;
     }
     p {
       margin: 0 0 16px 0;
       line-height: 1.6;
+      color: #1a1a1a;
     }
     .body-text {
       white-space: pre-wrap;
       word-wrap: break-word;
+      color: #333333;
     }
     hr {
       border: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid #e0e0e0;
       margin: 24px 0;
     }
     .signature {
       font-size: 14px;
-      color: #a0aec0;
+      color: #666666;
+    }
+    strong {
+      color: #0c0f14;
+    }
+    a {
+      color: #44b3fe;
     }
   </style>
 </head>

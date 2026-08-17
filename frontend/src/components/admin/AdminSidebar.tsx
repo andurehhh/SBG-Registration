@@ -56,8 +56,22 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
+      {/* Theme Toggle + Logout */}
       <div className="px-3 py-4 border-t border-white/[0.06] flex flex-col gap-1">
+        <button
+          onClick={() => {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark'
+            const next = current === 'light' ? 'dark' : 'light'
+            document.documentElement.setAttribute('data-theme', next)
+            localStorage.setItem('sbg-theme', next)
+          }}
+          className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-sbg-text-muted hover:text-white hover:bg-white/5 transition-colors w-full"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 flex-shrink-0">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          Toggle Theme
+        </button>
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-sbg-text-muted hover:text-red-400 hover:bg-red-900/10 transition-colors w-full"

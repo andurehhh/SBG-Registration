@@ -25,7 +25,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
-          style={{ minHeight, background: 'var(--card)', ...style }}
+          style={{ minHeight, background: 'var(--card)', color: 'var(--text)', ...style }}
           className={[
             'w-full px-3 py-2.5 text-sm resize-y transition-colors duration-150',
             'placeholder:text-sbg-text-muted',

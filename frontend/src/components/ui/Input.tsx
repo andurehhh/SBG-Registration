@@ -25,15 +25,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={[
-            'w-full px-3 py-2.5 rounded text-sm text-sbg-text',
-            'bg-white/[0.03] border transition-colors duration-150',
+            'w-full px-3 py-2.5 rounded text-sm',
+            'transition-colors duration-150',
             'placeholder:text-sbg-text-muted',
             'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40 focus:border-sbg-accent/40',
             error
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-white/[0.06]',
+              : '',
             className,
           ].join(' ')}
+          style={{
+            background: 'var(--card)',
+            border: error ? undefined : '1px solid var(--line)',
+            color: 'var(--text)',
+          }}
           {...props}
         />
         {error && (
