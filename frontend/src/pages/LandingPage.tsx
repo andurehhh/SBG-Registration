@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, X, ArrowUpRight, Users, ChevronDown } from 'lucide-react'
+import { Menu, X, ArrowUpRight, ChevronDown } from 'lucide-react'
 
+// @ts-expect-error Sections are commented out but data is kept for future use
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PROJECTS: { title: string; status: string }[] = [
   { title: 'SBG Registration System', status: 'Details coming soon' },
   { title: 'Cloud Cost Calculator', status: 'Details coming soon' },
@@ -9,6 +11,8 @@ const PROJECTS: { title: string; status: string }[] = [
   { title: 'AWS Workshop Portal', status: 'Details coming soon' },
 ]
 
+// @ts-expect-error Sections are commented out but data is kept for future use
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EVENTS: [string, string, string, string, string, number, number, string][] = [
   ['AWSome Day Workshop', 'Aug 15', '1:00 PM', 'CICT Lab', 'Hands-on intro to AWS core services. Deploy your first EC2 instance and S3 bucket with guided labs.', 28, 40, 'Workshop'],
   ['Cloud Career Talk', 'Aug 22', '2:00 PM', 'Online via Zoom', 'Industry panel with AWS engineers. Learn what cloud roles actually look like day-to-day.', 67, 100, 'Talk'],
@@ -103,6 +107,20 @@ export default function LandingPage() {
   const [selectedTerm, setSelectedTerm] = useState('24-25-1')
   const [termOpen, setTermOpen] = useState(false)
   const [highlightedMember, setHighlightedMember] = useState<TeamMember | null>(null)
+
+  // Cycle accent color every 10 seconds
+  useEffect(() => {
+    const colors = ['#44b3fe', '#4ADE80', '#AE5CFF', '#FF9900']
+    let index = 0
+    const interval = setInterval(() => {
+      index = (index + 1) % colors.length
+      document.documentElement.style.setProperty('--blue', colors[index])
+    }, 10000)
+    return () => {
+      clearInterval(interval)
+      document.documentElement.style.setProperty('--blue', '#44b3fe')
+    }
+  }, [])
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -215,7 +233,7 @@ export default function LandingPage() {
             <span style={{ color: 'var(--orange)' }}>$</span> ./club --status<br />
             <span style={{ color: 'var(--muted)' }}>  &gt; members:  <span style={{ color: 'var(--orange)' }}>63</span></span><br />
             <span style={{ color: 'var(--muted)' }}>  &gt; events:   <span style={{ color: 'var(--orange)' }}>12</span> /year</span><br />
-            <span style={{ color: 'var(--muted)' }}>  &gt; projects: <span style={{ color: 'var(--blue)' }}>8</span> shipped</span><br />
+            {/* <span style={{ color: 'var(--muted)' }}>  &gt; projects: <span style={{ color: 'var(--blue)' }}>8</span> shipped</span><br /> */}
             <span style={{ color: 'var(--muted)' }}>  &gt; founded:  <span style={{ color: 'var(--blue)' }}>2026</span></span><br />
             <span style={{ color: 'var(--orange)' }}>$</span> <span className="animate-pulse">_</span>
           </div>
@@ -312,7 +330,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ PROJECTS ══ */}
-      <section id="projects">
+      {/* <section id="projects">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
           <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--orange)' }}>Projects</p>
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8" style={{ color: 'var(--text)' }}>What we've shipped.</h2>
@@ -338,10 +356,10 @@ export default function LandingPage() {
             })}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ══ EVENTS ══ */}
-      <section id="events" style={{ background: 'var(--card)' }}>
+      {/* <section id="events" style={{ background: 'var(--card)' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
           <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--orange)' }}>Events</p>
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8" style={{ color: 'var(--text)' }}>Upcoming.</h2>
@@ -384,21 +402,25 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ══ GALLERY ══ */}
       <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
         <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--blue)' }}>Gallery</p>
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8" style={{ color: 'var(--text)' }}>Past events captured.</h2>
-        <div className="overflow-hidden" style={{ maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)' }}>
-          <div className="gallery-track">
+        <div style={{ overflow: 'visible' }}>
+          <div className="gallery-track" style={{ padding: '40px 0' }}>
             {[...PAST_EVENTS, ...PAST_EVENTS].map((ev, i) => {
-              const isOrange = ev.type === 'Workshop' || ev.type === 'Hackathon'
-              const gradient = isOrange
-                ? 'linear-gradient(135deg, #fc9907 0%, #cc7a00 50%, #8a5200 100%)'
-                : 'linear-gradient(135deg, #44b3fe 0%, #1a8cd8 50%, #0d5a8a 100%)'
+              const colorMap: Record<string, [string, string, string]> = {
+                Workshop: ['#FF9900', '#cc7a00', '#8a5200'],
+                Talk: ['#44b3fe', '#1a8cd8', '#0d5a8a'],
+                Hackathon: ['#AE5CFF', '#8B3FCC', '#5C2A88'],
+                Study: ['#4ADE80', '#2EBE60', '#1A8A42'],
+              }
+              const [c1, c2, c3] = colorMap[ev.type] || colorMap.Talk
+              const gradient = `linear-gradient(135deg, ${c1} 0%, ${c2} 50%, ${c3} 100%)`
               return (
-                <div key={`${ev.title}-${i}`} className="shrink-0 w-[280px] sm:w-[320px] overflow-hidden"
+                <div key={`${ev.title}-${i}`} className="gallery-item shrink-0 w-[280px] sm:w-[320px] overflow-hidden cursor-pointer"
                   style={{ border: '1px solid var(--line)' }}>
                   <div style={{ background: gradient, height: '200px' }} className="relative flex flex-col justify-end p-4">
                     <div className="absolute top-3 left-3">

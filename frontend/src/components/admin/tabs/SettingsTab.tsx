@@ -51,7 +51,7 @@ export function SettingsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 text-sbg-purple animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--clr-accent)' }} />
       </div>
     )
   }
@@ -66,26 +66,26 @@ export function SettingsTab() {
       </div>
 
       {error && (
-        <div className="p-3 rounded-[8px] bg-red-900/20 border border-red-700/50 text-sm text-red-400 font-mono">
+        <div className="p-3 rounded bg-red-900/20 border border-red-700/50 text-sm text-red-400 font-mono">
           {error}
         </div>
       )}
 
       {successMsg && (
-        <div className="p-3 rounded-[8px] bg-green-900/20 border border-green-700/50 text-sm text-green-400 font-mono">
+        <div className="p-3 rounded bg-green-900/20 border border-green-700/50 text-sm text-green-400 font-mono">
           {successMsg}
         </div>
       )}
 
       {/* Registration Requirements Section */}
-      <div className="rounded-[8px] bg-sbg-navy border border-white/[0.08] p-6">
+      <div className="rounded bg-sbg-surface border border-white/[0.06] p-6">
         <h2 className="font-mono text-white text-lg font-bold mb-4">Registration Requirements</h2>
 
         {/* COR Toggle */}
-        <div className="flex items-center justify-between gap-4 py-4 border-b border-white/[0.06] last:border-b-0">
+        <div className="flex items-center justify-between gap-4 py-4 border-b border-white/[0.04] last:border-b-0">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-[8px] bg-sbg-navy-light border border-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5">
-              <FileText className="w-4 h-4 text-sbg-purple-light" />
+            <div className="w-9 h-9 rounded bg-white/5 border border-white/[0.06] flex items-center justify-center flex-shrink-0 mt-0.5">
+              <FileText className="w-4 h-4" style={{ color: 'var(--clr-accent)' }} />
             </div>
             <div>
               <p className="text-white text-sm font-mono font-bold">
@@ -110,7 +110,7 @@ export function SettingsTab() {
               'relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0',
               settings?.cor_required
                 ? 'bg-sbg-purple'
-                : 'bg-sbg-navy-light border border-white/[0.12]',
+                : 'bg-white/10 border border-white/[0.12]',
               saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
             ].join(' ')}
           >

@@ -92,6 +92,12 @@ export interface AnnouncementPayload {
   recipients: AnnouncementRecipients;
 }
 
+export interface AppSettings {
+  id: string;
+  cor_required: boolean;
+  updated_at: string;
+}
+
 export type AuditActionType =
   | 'approve'
   | 'reject'

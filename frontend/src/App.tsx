@@ -6,6 +6,7 @@ import { ToastContainer } from './components/ui/ToastContainer'
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const IdFinderPage = lazy(() => import('./pages/IdFinderPage'))
+const SubmitCorPage = lazy(() => import('./pages/SubmitCorPage'))
 
 const AdminLoginPage = __ADMIN_ENABLED__
   ? lazy(() => import('./pages/AdminLoginPage'))
@@ -33,6 +34,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/id-finder" element={<IdFinderPage />} />
+            <Route path="/submit-cor" element={<SubmitCorPage />} />
 
             {__ADMIN_ENABLED__ && AdminLoginPage && (
               <Route path={`/${__ADMIN_PATH__}/login`} element={<AdminLoginPage />} />

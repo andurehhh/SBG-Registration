@@ -1,8 +1,8 @@
 // Email Template with Header and Footer
 // Update the image URLs below to use your actual Cloudinary images
 
-const HEADER_IMAGE_URL = "https://res.cloudinary.com/dkue2jyea/image/upload/v1234567890/sbg_header.png";
-const FOOTER_IMAGE_URL = "https://res.cloudinary.com/dkue2jyea/image/upload/v1234567890/sbg_footer.png";
+const HEADER_IMAGE_URL = "https://res.cloudinary.com/dkue2jyea/image/upload/v1786961156/headerver1_xmn7b3.png";
+const FOOTER_IMAGE_URL = "https://res.cloudinary.com/dkue2jyea/image/upload/v1786960956/headerver3_eo8ets.png";
 
 interface EmailTemplateOptions {
   recipientName: string;

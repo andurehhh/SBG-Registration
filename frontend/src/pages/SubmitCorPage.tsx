@@ -23,7 +23,6 @@ export default function SubmitCorPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
-    // Validate
     const errors: typeof fieldErrors = {}
     if (!studentNumber.trim()) {
       errors.studentNumber = 'Student number is required'
@@ -83,7 +82,7 @@ export default function SubmitCorPage() {
               </div>
               <a
                 href="/id-finder"
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[8px] bg-sbg-purple text-white text-sm font-mono hover:bg-sbg-purple-light transition-colors"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded bg-sbg-purple text-white text-sm font-mono hover:bg-sbg-purple-light transition-colors"
               >
                 Check your ID status
               </a>
@@ -95,19 +94,16 @@ export default function SubmitCorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sbg-black grid-bg flex flex-col">
-      {/* Top bar */}
+    <div className="min-h-screen flex flex-col">
       <div className="relative z-10 px-6 py-4">
         <BackButton to="/" label="Back to Home" />
       </div>
 
-      {/* Content */}
       <div className="flex-1 flex items-center justify-center px-4 pb-20">
         <div className="w-full max-w-md">
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <img src="/sbg-logo.svg" alt="SBG Logo" className="h-10 w-10" />
+              <img src="/sbg-logo-white.svg" alt="SBG Logo" className="h-10 w-10" />
               <div className="text-left">
                 <h1 className="font-bold text-white text-lg leading-tight">
                   Student Builder Group
@@ -146,7 +142,7 @@ export default function SubmitCorPage() {
               />
 
               {submitState.status === 'error' && (
-                <div className="flex items-start gap-2 p-3 rounded-[8px] bg-red-900/20 border border-red-700/50">
+                <div className="flex items-start gap-2 p-3 rounded bg-red-900/20 border border-red-700/50">
                   <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-red-400 font-mono">{submitState.message}</p>
                 </div>

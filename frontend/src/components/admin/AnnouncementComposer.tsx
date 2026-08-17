@@ -1,6 +1,6 @@
 // frontend/src/components/admin/AnnouncementComposer.tsx
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Send, Eye, X, ChevronDown, Trash2, Image } from 'lucide-react'
+import { Send, Eye, X, ChevronDown, Trash2, Image, FileText, Plus } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { supabase, edgeFn, ApiError } from '../../lib/api'
 import { insertAuditLog } from '../../lib/auditLog'
@@ -56,6 +56,56 @@ const SUBJECT_PRESETS: SubjectPreset[] = [
   { label: 'New Event', value: 'New Event — AWS SBG PUP Biñan' },
   { label: 'General Announcement', value: 'General Announcement — AWS SBG PUP Biñan' },
 ]
+
+// --- Message Content Presets (auto-fill subject + body + signature) ---
+
+const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
+interface MessagePreset {
+  id: string
+  label: string
+  subject: string
+  body: string
+  signature: string
+  builtIn?: boolean
+}
+
+const STORAGE_KEY = 'sbg_message_presets';
+
+const DEFAULT_MESSAGE_PRESETS: MessagePreset[] = [
+  {
+    id: 'cor-submission',
+    label: 'COR Submission Reminder',
+    subject: 'Submit Your COR – SBG PUP Biñan',
+    body: `We noticed you haven't submitted your Certificate of Registration (COR) yet.
+
+Once you have your COR available, please submit it using the link below:
+
+${FRONTEND_URL}/submit-cor
+
+You will need your student number to complete the submission.
+
+Please submit as soon as possible so we can finalize your membership application.`,
+    signature: 'Best regards,\nStudent Builder Group\nPUP Biñan Campus',
+    builtIn: true,
+  },
+]
+
+function loadMessagePresets(): MessagePreset[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const custom: MessagePreset[] = JSON.parse(saved)
+      return [...DEFAULT_MESSAGE_PRESETS, ...custom]
+    }
+  } catch { /* ignore */ }
+  return [...DEFAULT_MESSAGE_PRESETS]
+}
+
+function saveCustomPresets(presets: MessagePreset[]) {
+  const custom = presets.filter((p) => !p.builtIn)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(custom))
+}
 
 interface SendResult {
   sent: number
@@ -367,6 +417,59 @@ export function AnnouncementComposer() {
   const [isSending, setIsSending] = useState(false)
   const [sendResult, setSendResult] = useState<SendResult | null>(null)
   const [sendError, setSendError] = useState<string | null>(null)
+
+  // Message presets state
+  const [messagePresets, setMessagePresets] = useState<MessagePreset[]>(loadMessagePresets)
+  const [showMessagePresets, setShowMessagePresets] = useState(false)
+  const [showSavePreset, setShowSavePreset] = useState(false)
+  const [newPresetName, setNewPresetName] = useState('')
+  const messagePresetsRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!showMessagePresets) {
+      setShowSavePreset(false)
+      setNewPresetName('')
+    }
+  }, [showMessagePresets])
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (messagePresetsRef.current && !messagePresetsRef.current.contains(e.target as Node)) {
+        setShowMessagePresets(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  function handleApplyPreset(preset: MessagePreset) {
+    setSubject(preset.subject)
+    setBody(preset.body)
+    setSignature(preset.signature)
+    setShowMessagePresets(false)
+  }
+
+  function handleSavePreset() {
+    if (!newPresetName.trim() || (!subject.trim() && !body.trim())) return
+    const newPreset: MessagePreset = {
+      id: `custom-${Date.now()}`,
+      label: newPresetName.trim(),
+      subject,
+      body,
+      signature,
+    }
+    const updated = [...messagePresets, newPreset]
+    setMessagePresets(updated)
+    saveCustomPresets(updated)
+    setNewPresetName('')
+    setShowSavePreset(false)
+  }
+
+  function handleDeletePreset(id: string) {
+    const updated = messagePresets.filter((p) => p.id !== id)
+    setMessagePresets(updated)
+    saveCustomPresets(updated)
+  }
 
   const toggleMember = useCallback((member: Member) => {
     setSelectedMembers((prev) => {
@@ -742,6 +845,91 @@ export function AnnouncementComposer() {
             >
               Template
             </Button>
+
+            {/* Message Presets dropdown */}
+            <div className="relative" ref={messagePresetsRef}>
+              <Button
+                variant="ghost"
+                icon={<FileText className="w-4 h-4" />}
+                onClick={() => setShowMessagePresets(!showMessagePresets)}
+                size="md"
+              >
+                Presets
+              </Button>
+
+              {showMessagePresets && (
+                <div className="absolute bottom-full mb-2 left-0 w-72 z-40 bg-sbg-surface border border-white/[0.06] shadow-2xl overflow-hidden">
+                  <div className="max-h-64 overflow-y-auto">
+                    {messagePresets.length === 0 ? (
+                      <p className="text-xs text-sbg-text-muted font-mono p-4 text-center">
+                        No presets saved yet
+                      </p>
+                    ) : (
+                      messagePresets.map((preset) => (
+                        <div
+                          key={preset.id}
+                          className="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/[0.04] last:border-b-0"
+                        >
+                          <button
+                            className="flex-1 text-left"
+                            onClick={() => handleApplyPreset(preset)}
+                          >
+                            <p className="text-sm text-white font-mono truncate">{preset.label}</p>
+                            <p className="text-xs text-sbg-text-muted truncate mt-0.5">{preset.subject}</p>
+                          </button>
+                          {!preset.builtIn && (
+                            <button
+                              onClick={() => handleDeletePreset(preset.id)}
+                              className="p-1 text-sbg-text-muted hover:text-red-400 transition-colors flex-shrink-0"
+                              aria-label={`Delete preset: ${preset.label}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          {preset.builtIn && (
+                            <span className="text-[10px] font-mono text-sbg-purple-light bg-sbg-purple-muted px-1.5 py-0.5 flex-shrink-0">
+                              built-in
+                            </span>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="border-t border-white/[0.06] p-3">
+                    {showSavePreset ? (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Preset name..."
+                          value={newPresetName}
+                          onChange={(e) => setNewPresetName(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') handleSavePreset() }}
+                          autoFocus
+                          className="flex-1 px-2 py-1.5 text-xs text-white bg-white/5 border border-white/10 placeholder:text-sbg-text-muted focus:outline-none focus:ring-1 focus:ring-sbg-purple"
+                        />
+                        <button
+                          onClick={handleSavePreset}
+                          disabled={!newPresetName.trim() || !subject.trim()}
+                          className="px-2 py-1.5 text-xs font-mono bg-sbg-purple text-white hover:bg-sbg-purple-light disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setShowSavePreset(true)}
+                        disabled={!subject.trim() && !body.trim()}
+                        className="flex items-center gap-2 w-full px-2 py-1.5 text-xs font-mono text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Save current as preset
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {recipientType === 'individual' && selectedMembers.length === 0 && (
               <span className="text-xs text-sbg-text-muted ml-2 font-mono">
