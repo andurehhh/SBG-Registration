@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "ai-slop-cleaner": {
+      "source": "yeachan-heo/oh-my-claudecode",
+      "sourceType": "github",
+      "skillPath": "skills/ai-slop-cleaner/SKILL.md",
+      "computedHash": "d9efd747599d082b368acb863c900b4e247d06114b4e80b82eac3952459ae49c"
+    },
     "design-taste-frontend": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",
