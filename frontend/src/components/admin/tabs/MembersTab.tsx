@@ -11,8 +11,10 @@ import type { Member, MemberStatus } from '../../../types'
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
+  { value: 'approved_inactive', label: 'Approved + Inactive' },
   { value: 'approved', label: 'Approved' },
   { value: 'inactive', label: 'Inactive (Previous Term)' },
+  { value: 'rejected', label: 'Rejected' },
 ]
 
 const COURSE_OPTIONS = [
@@ -92,7 +94,7 @@ export function MembersTab() {
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [isExporting, setIsExporting] = useState(false)
-  const [filterStatus, setFilterStatus] = useState<MemberStatus | ''>('approved')
+  const [filterStatus, setFilterStatus] = useState<MemberStatus | 'approved_inactive' | ''>('approved')
   const [filterCourse, setFilterCourse] = useState('')
   const [sort, setSort] = useState('created_at_desc')
   const addToast = useToastStore((state) => state.addToast)
@@ -106,8 +108,11 @@ export function MembersTab() {
         .from('Member')
         .select('*', { count: 'exact' })
 
-      const statusFilter = filterStatus || 'approved'
-      query = query.eq('status', statusFilter)
+      if (filterStatus === 'approved_inactive') {
+        query = query.in('status', ['approved', 'inactive'])
+      } else if (filterStatus) {
+        query = query.eq('status', filterStatus)
+      }
       if (filterCourse) query = query.eq('course', filterCourse)
 
       const orderMap: Record<string, { col: string; asc: boolean }> = {
@@ -140,8 +145,11 @@ export function MembersTab() {
         .from('Member')
         .select('*')
 
-      const statusFilter = filterStatus || 'approved'
-      query = query.eq('status', statusFilter)
+      if (filterStatus === 'approved_inactive') {
+        query = query.in('status', ['approved', 'inactive'])
+      } else if (filterStatus) {
+        query = query.eq('status', filterStatus)
+      }
       if (filterCourse) query = query.eq('course', filterCourse)
 
       const orderMap: Record<string, { col: string; asc: boolean }> = {
@@ -216,7 +224,7 @@ export function MembersTab() {
           <Select
             options={STATUS_OPTIONS}
             value={filterStatus}
-            onChange={(e) => { setFilterStatus(e.target.value as MemberStatus | ''); setPage(1) }}
+            onChange={(e) => { setFilterStatus(e.target.value as MemberStatus | 'approved_inactive' | ''); setPage(1) }}
           />
         </div>
         <div className="w-52">

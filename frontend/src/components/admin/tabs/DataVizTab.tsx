@@ -77,9 +77,9 @@ export function DataVizTab() {
 
     Promise.all([
       supabase.from('Member').select('status').match(termWhere),
-      supabase.from('Member').select('course').match({ ...termWhere, status: 'approved' }).not('course', 'is', null),
-      supabase.from('Member').select('year_level').match({ ...termWhere, status: 'approved' }),
-      supabase.from('Member').select('gender').match({ ...termWhere, status: 'approved' }).not('gender', 'is', null),
+      supabase.from('Member').select('course').match(termWhere).in('status', ['approved', 'inactive']).not('course', 'is', null),
+      supabase.from('Member').select('year_level').match(termWhere).in('status', ['approved', 'inactive']),
+      supabase.from('Member').select('gender').match(termWhere).in('status', ['approved', 'inactive']).not('gender', 'is', null),
     ]).then(([statusRes, courseRes, yearRes, genderRes]) => {
       const statusMap: Record<string, number> = {}
       for (const row of statusRes.data ?? []) {

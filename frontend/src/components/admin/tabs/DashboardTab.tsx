@@ -206,8 +206,23 @@ export function DashboardTab() {
         is_active: true,
       })
 
-      // 3. Mark all approved members as inactive
-      await supabase.from('Member').update({ status: 'inactive' }).eq('status', 'approved')
+      // 3. Mark all approved members as inactive (via edge function to bypass RLS)
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
+      if (!token) throw new Error('Not authenticated')
+
+      const resetRes = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/term-reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      const resetJson = await resetRes.json()
+      if (!resetJson.success) throw new Error(resetJson.error || 'Term reset failed')
 
       // 4. Open registration for the new term
       await setRegistrationOpenDB(true)
@@ -217,7 +232,6 @@ export function DashboardTab() {
       addToast(`New semester started: ${termLabel}`, 'success')
 
       // Audit log
-      const { data: sessionData } = await supabase.auth.getSession()
       const user = sessionData.session?.user
       if (user) {
         insertAuditLog({
