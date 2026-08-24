@@ -332,8 +332,8 @@ function InlineMemberSearch({ selectedIds, selectedMembers, onToggle }: InlineMe
 }
 
 interface RecipientSwitcherProps {
-  value: 'all' | 'group' | 'individual' | 'devteam' | 'pending'
-  onChange: (v: 'all' | 'group' | 'individual' | 'devteam' | 'pending') => void
+  value: 'all' | 'group' | 'individual' | 'devteam' | 'pending' | 'non-renewed'
+  onChange: (v: 'all' | 'group' | 'individual' | 'devteam' | 'pending' | 'non-renewed') => void
 }
 
 function RecipientSwitcher({ value, onChange }: RecipientSwitcherProps) {
@@ -357,11 +357,12 @@ function RecipientSwitcher({ value, onChange }: RecipientSwitcherProps) {
   }, [open])
 
   const labels: Record<string, string> = {
-    all: 'All Members',
+    all: 'All Members (Current Term)',
     group: 'Skill Builder Department',
     individual: 'Individual',
     devteam: 'DevTeam',
     pending: 'Pending Applicants',
+    'non-renewed': 'Non-Renewed Members',
   }
 
   return (
@@ -376,11 +377,11 @@ function RecipientSwitcher({ value, onChange }: RecipientSwitcherProps) {
       </button>
       {open && (
         <div className="absolute top-full mt-1 z-[100] bg-sbg-surface border border-white/[0.06] shadow-xl flex flex-col" style={{ right: 0, minWidth: '200px' }}>
-          {(['all', 'group', 'devteam', 'pending', 'individual'] as const).map((opt) => (
+          {(['all', 'non-renewed', 'group', 'devteam', 'pending', 'individual'] as const).map((opt) => (
             <button
               key={opt}
               type="button"
-              onClick={() => { onChange(opt as 'all' | 'group' | 'individual' | 'devteam' | 'pending'); setOpen(false) }}
+              onClick={() => { onChange(opt as 'all' | 'group' | 'individual' | 'devteam' | 'pending' | 'non-renewed'); setOpen(false) }}
               className={[
                 'w-full text-left px-3 py-2 text-xs transition-colors',
                 value === opt ? 'text-white bg-white/10' : 'text-sbg-text-muted hover:bg-white/5',
@@ -406,7 +407,7 @@ export function AnnouncementComposer() {
   const [showSubjectPresets, setShowSubjectPresets] = useState(false)
   const subjectDropdownRef = useRef<HTMLDivElement>(null)
 
-  const [recipientType, setRecipientType] = useState<'all' | 'group' | 'individual' | 'devteam' | 'pending'>('all')
+  const [recipientType, setRecipientType] = useState<'all' | 'group' | 'individual' | 'devteam' | 'pending' | 'non-renewed'>('all')
   const [filterCourse, setFilterCourse] = useState('')
   const [filterYearLevel, setFilterYearLevel] = useState('')
   const [filterStatus, setFilterStatus] = useState<MemberStatus | ''>('')
@@ -479,7 +480,7 @@ export function AnnouncementComposer() {
     })
   }, [])
 
-  const handleRecipientTypeChange = useCallback((type: 'all' | 'group' | 'individual' | 'devteam' | 'pending') => {
+  const handleRecipientTypeChange = useCallback((type: 'all' | 'group' | 'individual' | 'devteam' | 'pending' | 'non-renewed') => {
     setRecipientType(type)
     setSelectedMembers([])
     setFilterCourse('')
@@ -536,7 +537,9 @@ export function AnnouncementComposer() {
       headerImageUrl: selectedTemplate.headerUrl ?? undefined,
       footerImageUrl: selectedTemplate.footerUrl ?? undefined,
       recipients: {
-        type: recipientType === 'devteam' || recipientType === 'pending' || recipientType === 'group' ? 'group' : recipientType,
+        type: recipientType === 'devteam' || recipientType === 'pending' || recipientType === 'group' ? 'group'
+            : recipientType === 'non-renewed' ? 'non-renewed'
+            : recipientType,
         filters:
           recipientType === 'group'
             ? { status: 'approved' as MemberStatus }

@@ -55,10 +55,17 @@ Deno.serve(async (req) => {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
 
+    const appUrl = Deno.env.get("APP_URL") || "https://sbg-pupbinan.vercel.app";
+    const hasCor = !!record.cor_url;
+
+    const corNote = hasCor
+      ? ''
+      : `\n\nIf you haven't submitted your COR yet, you can upload it here: <a href="${appUrl}/submit-cor">${appUrl}/submit-cor</a>`;
+
     const html = generateEmailHTML({
       recipientName: record.full_name,
-      body: `Thank you for your application to the Student Builder Group (SBG)!\n\nWe have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.\n\nIn the meantime, if you have any questions, feel free to reach out to us.`,
-      signature: "Best regards,\nStudent Builder Group\nPUP Biñan Campus",
+      body: `Thank you for applying to the <b>AWS Student Builder Group</b> at PUP Biñan!\n\nWe've received your registration and our team is currently reviewing your application. You'll receive another email once we're done.${corNote}\n\nTo stay updated, follow us on our <a href="https://www.facebook.com/profile.php?id=61584279257151">Facebook page</a> or email us at <a href="mailto:sbg.pupbinan@gmail.com">sbg.pupbinan@gmail.com</a>.`,
+      signature: "AWS Student Builder Group\nPUP Biñan Campus",
     });
 
     const { data: queuedEmail, error: insertError } = await supabase

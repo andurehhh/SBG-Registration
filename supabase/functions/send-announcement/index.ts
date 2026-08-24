@@ -18,8 +18,30 @@ Deno.serve(async (req) => {
 
     const { subject, body, signature, recipients } = await req.json();
 
+    // Get current active school year for "all" and "non-renewed" queries
+    let currentSchoolYear: string | null = null;
+    if (recipients.type === "all" || recipients.type === "non-renewed") {
+      const { data: activeTerm } = await supabase
+        .from("SchoolYear")
+        .select("school_year")
+        .eq("is_active", true)
+        .single();
+      currentSchoolYear = activeTerm?.school_year ?? null;
+    }
+
     let query = supabase.from("Member").select("id, email, full_name");
-    if (recipients.type === "group" && recipients.filters) {
+
+    if (recipients.type === "all") {
+      // "All Members" = approved members in the current term only
+      query = query.eq("status", "approved");
+      if (currentSchoolYear) {
+        query = query.eq("school_year", currentSchoolYear);
+      }
+    } else if (recipients.type === "non-renewed") {
+      // Non-renewed = members who were previously approved but are now inactive
+      // (they got reset at term change and haven't re-registered)
+      query = query.eq("status", "inactive");
+    } else if (recipients.type === "group" && recipients.filters) {
       const f = recipients.filters;
       if (f.course) query = query.eq("course", f.course);
       if (f.year_level) query = query.eq("year_level", f.year_level);

@@ -74,7 +74,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface AnnouncementRecipients {
-  type: "all" | "group" | "individual";
+  type: "all" | "group" | "individual" | "non-renewed";
   filters?: {
     course?: string;
     year_level?: number;

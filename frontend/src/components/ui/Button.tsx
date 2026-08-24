@@ -13,17 +13,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode
 }
 
-const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-sbg-accent hover:brightness-110 text-[#0c0f10] border-transparent',
-  outline: 'bg-transparent hover:opacity-70 text-sbg-text border-sbg-text/30 hover:border-sbg-text/60',
-  ghost: 'bg-transparent hover:opacity-70 text-sbg-text border-transparent',
-  danger: 'bg-red-600 hover:bg-red-700 text-white border-transparent',
-}
-
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-sm',
+  sm: 'px-3 py-1.5 text-xs',
   md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
+  lg: 'px-6 py-3 text-sm',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -37,25 +30,35 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       className = '',
       disabled,
+      style,
       ...props
     },
     ref
   ) => {
     const isDisabled = disabled || loading
 
+    const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
+      primary: { background: '#2d9cdb', color: '#ffffff', border: '1.5px solid #1a7bb5' },
+      outline: { background: 'transparent', color: '#2d9cdb', border: '1.5px solid #2d9cdb' },
+      ghost: { background: 'transparent', color: 'var(--text)', border: '1.5px solid transparent' },
+      danger: { background: '#e53e3e', color: '#ffffff', border: '1.5px solid #c53030' },
+    }
+
     return (
       <button
         ref={ref}
         disabled={isDisabled}
         className={[
-          'inline-flex items-center justify-center gap-2 font-sans font-medium',
-          'rounded border transition-colors duration-150',
-          'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40 focus:ring-offset-0 focus:ring-offset-sbg-black',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          variantClasses[variant],
+          'inline-flex items-center justify-center gap-2 font-sans font-semibold',
+          'rounded-lg transition-all duration-150',
+          'hover:brightness-110 hover:-translate-y-[1px]',
+          'active:translate-y-0 active:brightness-100',
+          'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/30 focus:ring-offset-1',
+          'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0',
           sizeClasses[size],
           className,
         ].join(' ')}
+        style={{ ...variantStyles[variant], ...style }}
         {...props}
       >
         {loading && (

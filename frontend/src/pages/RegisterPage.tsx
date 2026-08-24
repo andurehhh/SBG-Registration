@@ -28,7 +28,7 @@ export default function RegisterPage() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ background: 'var(--bg)' }} className="min-h-screen">
+    <div data-theme="light" style={{ background: 'var(--bg)' }} className="min-h-screen">
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', borderBottom: '1px solid var(--border)' }}>

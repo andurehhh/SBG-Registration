@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return corsResponse();
 
   // 5 requests per IP per 10 minutes
-  if (isRateLimited(getClientIp(req), 5, 10 * 60 * 1000)) return rateLimitedResponse();
+  if (isRateLimited(getClientIp(req), 20, 10 * 60 * 1000)) return rateLimitedResponse();
 
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
