@@ -32,92 +32,74 @@ export default function RegisterPage() {
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', borderBottom: '1px solid var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
+          <button onClick={() => navigate('/')} className="flex items-center gap-2">
             <img src="/sbg-logo-white.svg" alt="" className="w-6 h-6" />
-            <span className="text-sm font-semibold hidden sm:block" style={{ color: 'var(--text)' }}>SBG</span>
+            <span className="text-xs font-semibold hidden sm:block" style={{ color: 'var(--text)' }}>SBG</span>
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-            <button onClick={() => navigate('/')} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-              <ArrowLeft size={14} /> Back
+            <button onClick={() => navigate('/')} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }}>
+              <ArrowLeft size={12} /> Back
             </button>
           </div>
         </div>
       </nav>
 
       {/* Main */}
-      <div className="max-w-7xl mx-auto px-6 py-12 sm:py-16">
-        <div className="grid lg:grid-cols-12 gap-0 rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
-          {/* Left: Info */}
-          <div className="lg:col-span-5 p-8 lg:p-10" style={{ background: 'var(--bg-raised)', borderRight: '1px solid var(--border)' }}>
-            <p className="text-sm font-medium mb-4" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Registration</p>
-            <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: 'var(--text)' }}>
-              Join the Builder Community
-            </h1>
-            <p className="text-sm mt-4 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Apply for SBG membership and get your official digital membership ID card. Build, learn, and grow with AWS.
-            </p>
-            <ul className="space-y-3 mt-8">
-              {[
-                'Official digital membership ID card',
-                'Access to AWS learning resources',
-                'Community events and workshops',
-                'Builder network at PUP Binan',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-12 pt-6" style={{ borderTop: '1px solid var(--border)' }}>
-              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Powered by AWS. PUP Binan Campus.</p>
-            </div>
-          </div>
-
-          {/* Right: Form */}
-          <div className="lg:col-span-7 p-8 lg:p-10">
-            {/* Tabs */}
-            <div className="flex mb-8 rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-              <button
-                type="button"
-                onClick={() => setActiveTab('new')}
-                className="flex-1 px-4 py-2.5 text-sm font-medium transition-all"
-                style={{
-                  background: activeTab === 'new' ? 'var(--accent)' : 'transparent',
-                  color: activeTab === 'new' ? '#09090b' : 'var(--text-secondary)',
-                }}
-              >
-                New Member
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('returning')}
-                className="flex-1 px-4 py-2.5 text-sm font-medium transition-all"
-                style={{
-                  background: activeTab === 'returning' ? 'var(--accent)' : 'transparent',
-                  color: activeTab === 'returning' ? '#09090b' : 'var(--text-secondary)',
-                }}
-              >
-                Returning Member
-              </button>
-            </div>
-
-            <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text)' }}>
-              {activeTab === 'new' ? 'Create your application' : 'Renew your membership'}
-            </h2>
-            <p className="text-sm mb-8" style={{ color: 'var(--text-secondary)' }}>
-              {activeTab === 'new'
-                ? 'Fill out all three steps to complete your membership application.'
-                : 'Enter your SBG ID and upload your updated documents.'}
-            </p>
-
-            {activeTab === 'new' ? <RegistrationForm /> : <RenewalForm />}
-          </div>
-
+        {/* Header — compact on mobile */}
+        <div className="mb-5">
+          <p className="text-xs font-medium mb-1" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Registration</p>
+          <h1 className="text-lg sm:text-2xl font-bold leading-tight" style={{ color: 'var(--text)' }}>
+            Join the Builder Community
+          </h1>
+          <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+            Apply for SBG membership and get your official digital membership ID card.
+          </p>
         </div>
+
+        {/* Tabs */}
+        <div className="flex mb-5 rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+          <button
+            type="button"
+            onClick={() => setActiveTab('new')}
+            className="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all"
+            style={{
+              background: activeTab === 'new' ? 'var(--accent)' : 'transparent',
+              color: activeTab === 'new' ? 'white' : 'var(--text-secondary)',
+            }}
+          >
+            New Member
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('returning')}
+            className="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all"
+            style={{
+              background: activeTab === 'returning' ? 'var(--accent)' : 'transparent',
+              color: activeTab === 'returning' ? 'white' : 'var(--text-secondary)',
+            }}
+          >
+            Returning Member
+          </button>
+        </div>
+
+        {/* Sub-heading */}
+        <div className="mb-5">
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text)' }}>
+            {activeTab === 'new' ? 'Create your application' : 'Renew your membership'}
+          </h2>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+            {activeTab === 'new'
+              ? 'Fill out all three steps to complete your membership application.'
+              : 'Enter your SBG ID and upload your updated documents.'}
+          </p>
+        </div>
+
+        {/* Form */}
+        {activeTab === 'new' ? <RegistrationForm /> : <RenewalForm />}
       </div>
     </div>
   )
