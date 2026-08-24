@@ -234,15 +234,29 @@ export default function LandingPage() {
       <section className="py-12 sm:py-16">
         <div className="max-w-6xl mx-auto px-5">
           <ScrollReveal>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--text)' }}>
-              What is AWS?
-            </h2>
-            <p className="text-xs sm:text-sm leading-relaxed max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-              <b style={{ color: 'var(--text)' }}>Amazon Web Services (AWS)</b> is the world's most widely adopted cloud platform, offering over 200 services from data centers globally. It powers everything from startups to enterprise applications — including Netflix, Airbnb, and NASA. Learning AWS gives students real-world skills in cloud computing, serverless architecture, AI/ML, and more.
-            </p>
-            <p className="text-xs sm:text-sm leading-relaxed max-w-2xl mt-3" style={{ color: 'var(--text-secondary)' }}>
-              <b style={{ color: 'var(--text)' }}>AWS Student Builder Groups</b> (formerly AWS Cloud Clubs) are student-led communities recognized by AWS on post-secondary campuses worldwide. Members get access to AWS credits, learning resources, certification pathways, and a global network of student builders.
-            </p>
+            <div className="game-card p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                {/* AWS Logo */}
+                <div className="shrink-0">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="Amazon Web Services" className="w-20 sm:w-24 h-auto" />
+                </div>
+                {/* Content */}
+                <div className="flex-1">
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: 'var(--text)' }}>
+                    Built on the same cloud that powers Netflix, Airbnb, and NASA.
+                  </h2>
+                  <p className="text-xs sm:text-sm leading-relaxed mt-3" style={{ color: 'var(--text-secondary)' }}>
+                    Amazon Web Services is the world's most adopted cloud platform — 200+ services, used by millions of companies, startups, and governments worldwide. When you learn AWS, you're learning the infrastructure that runs the modern internet.
+                  </p>
+                  <p className="text-xs sm:text-sm leading-relaxed mt-3" style={{ color: 'var(--text-secondary)' }}>
+                    <b style={{ color: 'var(--text)' }}>AWS Student Builder Groups</b> are the official student communities recognized by Amazon. Our chapter gives PUP Biñan students something most universities don't have: direct access to cloud credits, certification pathways, mentorship, and a global network of builders — all while still in school.
+                  </p>
+                  <p className="text-xs font-medium mt-4" style={{ color: 'var(--accent)' }}>
+                    You're not just joining a club. You're joining a global ecosystem.
+                  </p>
+                </div>
+              </div>
+            </div>
           </ScrollReveal>
         </div>
       </section>
