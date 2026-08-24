@@ -1,6 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 Deno.serve(async (req) => {
+  let record: Record<string, unknown> | null = null;
+
   try {
     const incomingSecret = req.headers.get("x-webhook-secret");
     const expectedSecret = Deno.env.get("WEBHOOK_SECRET");
@@ -9,7 +11,8 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    const { record } = await req.json();
+    const body = await req.json();
+    record = body.record ?? body;
     
     if (!record?.to || !record?.html || !record?.id) {
       console.error("Missing required fields:", { to: record?.to, html: !!record?.html, id: record?.id });
@@ -108,8 +111,7 @@ Deno.serve(async (req) => {
     
     // Try to update status to failed with error message
     try {
-      const payload = await req.json();
-      if (payload.record?.id) {
+      if (record?.id) {
         const supabase = createClient(
           Deno.env.get("SUPABASE_URL")!,
           Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -120,10 +122,10 @@ Deno.serve(async (req) => {
           .update({ 
             status: "failed",
             error: String(err).substring(0, 500),
-            retry_count: (payload.record.retry_count || 0) + 1,
+            retry_count: ((record.retry_count as number) || 0) + 1,
             updated_at: new Date().toISOString(),
           })
-          .eq("id", payload.record.id);
+          .eq("id", record.id);
       }
     } catch (updateErr) {
       console.error("Failed to update error status:", updateErr);
