@@ -283,29 +283,31 @@ export default function LandingPage() {
             </div>
           </ScrollReveal>
 
-          {/* Founder card */}
+          {/* Founder card — highlighted */}
           <ScrollReveal>
-            <div className="game-card p-4 sm:p-5 mt-4">
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+            <div className="mt-6 p-5 sm:p-6 rounded-xl" style={{ background: 'linear-gradient(135deg, rgba(45,156,219,0.08) 0%, rgba(45,156,219,0.02) 100%)', border: '1.5px solid rgba(45,156,219,0.2)' }}>
+              <div className="flex flex-col sm:flex-row items-start gap-5">
                 <img
                   src="/My picture.jpg"
                   alt="John Lexter Reyes"
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover shrink-0"
-                  style={{ border: '1.5px solid var(--border)' }}
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover shrink-0"
+                  style={{ border: '2px solid rgba(45,156,219,0.3)' }}
                   onError={(e) => {
                     e.currentTarget.style.display = 'none'
-                    e.currentTarget.parentElement!.innerHTML = '<div style="width:4rem;height:4rem;display:flex;align-items:center;justify-content:center;background:var(--accent-light);color:var(--accent-dark);font-size:1rem;font-weight:800;border-radius:8px">JR</div>'
+                    e.currentTarget.parentElement!.innerHTML = '<div style="width:6rem;height:6rem;display:flex;align-items:center;justify-content:center;background:rgba(45,156,219,0.1);color:var(--accent-dark);font-size:1.5rem;font-weight:800;border-radius:12px;border:2px solid rgba(45,156,219,0.3)">JR</div>'
                   }}
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="text-sm font-bold" style={{ color: 'var(--text)' }}>John Lexter Reyes</h3>
-                    <span className="text-[8px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'var(--accent-dim)', color: 'var(--accent-dark)' }}>Founder</span>
-                  </div>
-                  <p className="text-[11px] mb-2" style={{ color: 'var(--text-secondary)' }}>President, AWS Student Builder Group - PUP Biñan</p>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--accent)' }}>Founder &amp; President</span>
+                  <h3 className="text-base sm:text-lg font-bold mt-1" style={{ color: 'var(--text)' }}>John Lexter Reyes</h3>
+                  <p className="text-xs mt-2 leading-relaxed italic" style={{ color: 'var(--text-secondary)' }}>
                     "There was no tech club here. No cloud workshops, no hackathons, no community for students who wanted to build real things. So I stopped asking 'why not' and just built it."
                   </p>
+                  <div className="flex items-center gap-3 mt-3">
+                    <a href="https://www.facebook.com/profile.php?id=61584279257151" target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold transition-colors" style={{ color: 'var(--accent)' }}>Facebook</a>
+                    <span style={{ color: 'var(--border)' }}>|</span>
+                    <a href="https://www.instagram.com/_awsccfrizz" target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold transition-colors" style={{ color: 'var(--accent)' }}>Instagram</a>
+                  </div>
                 </div>
               </div>
             </div>
