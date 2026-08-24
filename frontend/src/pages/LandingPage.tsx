@@ -52,6 +52,7 @@ export default function LandingPage() {
                 style={{ color: 'var(--text-secondary)' }}
               >{item}</button>
             ))}
+            <button onClick={() => navigate('/id-finder')} className="text-[12px] font-semibold transition-colors hover:text-[var(--accent-dark)]" style={{ color: 'var(--text-secondary)' }}>Find ID</button>
             <button onClick={() => navigate('/register')} className="btn-primary" style={{ padding: '6px 14px', fontSize: '11px' }}>
               Join <ArrowRight size={12} />
             </button>
@@ -194,6 +195,37 @@ export default function LandingPage() {
                 </div>
               </StaggerItem>
             ))}
+          </StaggerChildren>
+        </div>
+      </section>
+
+      {/* ═══ MISSION & VISION ═══ */}
+      <section className="py-12 sm:py-16" style={{ background: 'var(--bg-raised)' }}>
+        <div className="max-w-6xl mx-auto px-5">
+          <ScrollReveal>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-6" style={{ color: 'var(--text)' }}>
+              Our purpose
+            </h2>
+          </ScrollReveal>
+          <StaggerChildren className="grid sm:grid-cols-2 gap-4" staggerDelay={0.1}>
+            <StaggerItem>
+              <div className="game-card p-5 h-full">
+                <div className="w-8 h-1 rounded-full mb-3" style={{ background: 'var(--accent)' }} />
+                <h3 className="text-sm font-bold mb-2" style={{ color: 'var(--text)' }}>Mission</h3>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  To empower students to master cloud technology through collaboration, hands-on practice, and community. We bridge the gap between classroom theory and real-world cloud engineering.
+                </p>
+              </div>
+            </StaggerItem>
+            <StaggerItem>
+              <div className="game-card p-5 h-full">
+                <div className="w-8 h-1 rounded-full mb-3" style={{ background: 'var(--warm)' }} />
+                <h3 className="text-sm font-bold mb-2" style={{ color: 'var(--text)' }}>Vision</h3>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  To be the leading student-run cloud computing community in the Philippines, building a generation of cloud-ready graduates who are confident, certified, and connected.
+                </p>
+              </div>
+            </StaggerItem>
           </StaggerChildren>
         </div>
       </section>
@@ -359,22 +391,27 @@ export default function LandingPage() {
               <img src="/sbg-logo-white.svg" alt="" className="h-7 w-auto" />
               <div>
                 <p className="text-xs font-bold" style={{ color: 'var(--text)' }}>AWS Student Builder Group</p>
-                <p className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>PUP Biñan. Est. 2026.</p>
+                <p className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>PUP Biñan Campus. Est. 2026.</p>
               </div>
             </div>
-            <div className="flex gap-6 text-[11px]" style={{ color: 'var(--text-secondary)' }}>
+            <div className="flex gap-8 text-[11px]" style={{ color: 'var(--text-secondary)' }}>
               <div className="flex flex-col gap-1.5">
+                <span className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: 'var(--text)' }}>Pages</span>
                 <button onClick={() => navigate('/register')} className="text-left hover:text-[var(--accent-dark)] transition-colors">Register</button>
                 <button onClick={() => navigate('/id-finder')} className="text-left hover:text-[var(--accent-dark)] transition-colors">ID Finder</button>
+                <button onClick={() => navigate('/submit-cor')} className="text-left hover:text-[var(--accent-dark)] transition-colors">Submit COR</button>
               </div>
               <div className="flex flex-col gap-1.5">
+                <span className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: 'var(--text)' }}>Connect</span>
                 <a href="https://www.facebook.com/profile.php?id=61584279257151" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--accent-dark)] transition-colors">Facebook</a>
                 <a href="https://www.instagram.com/_awsccfrizz" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--accent-dark)] transition-colors">Instagram</a>
+                <a href="mailto:sbg.pupbinan@gmail.com" className="hover:text-[var(--accent-dark)] transition-colors">sbg.pupbinan@gmail.com</a>
               </div>
             </div>
           </div>
-          <div className="mt-6 pt-4 text-[10px]" style={{ borderTop: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
-            &copy; 2026 AWS Student Builder Group, PUP Biñan. Built by students, for students.
+          <div className="mt-6 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px]" style={{ borderTop: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
+            <span>&copy; 2026 AWS Student Builder Group, PUP Biñan</span>
+            <span style={{ fontStyle: 'italic' }}>"It's Always Day One!"</span>
           </div>
         </div>
       </footer>
