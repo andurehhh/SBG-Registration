@@ -230,11 +230,62 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ ORIGIN — compact ═══ */}
+      {/* ═══ WHAT IS AWS? ═══ */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto px-5">
+          <ScrollReveal>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--text)' }}>
+              What is AWS?
+            </h2>
+            <p className="text-xs sm:text-sm leading-relaxed max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
+              <b style={{ color: 'var(--text)' }}>Amazon Web Services (AWS)</b> is the world's most widely adopted cloud platform, offering over 200 services from data centers globally. It powers everything from startups to enterprise applications — including Netflix, Airbnb, and NASA. Learning AWS gives students real-world skills in cloud computing, serverless architecture, AI/ML, and more.
+            </p>
+            <p className="text-xs sm:text-sm leading-relaxed max-w-2xl mt-3" style={{ color: 'var(--text-secondary)' }}>
+              <b style={{ color: 'var(--text)' }}>AWS Student Builder Groups</b> (formerly AWS Cloud Clubs) are student-led communities recognized by AWS on post-secondary campuses worldwide. Members get access to AWS credits, learning resources, certification pathways, and a global network of student builders.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ═══ OUR STORY ═══ */}
       <section className="py-12 sm:py-16" style={{ background: 'var(--bg-raised)' }}>
         <div className="max-w-6xl mx-auto px-5">
           <ScrollReveal>
-            <div className="game-card p-5 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-4" style={{ color: 'var(--text)' }}>
+              Our story
+            </h2>
+          </ScrollReveal>
+
+          {/* Timeline */}
+          <ScrollReveal>
+            <div className="flex flex-col gap-4">
+              <div className="game-card p-4 sm:p-5">
+                <span className="text-[10px] font-bold" style={{ color: 'var(--accent)' }}>2026</span>
+                <h3 className="text-sm font-bold mt-1" style={{ color: 'var(--text)' }}>Founded as AWS Cloud Club</h3>
+                <p className="text-xs leading-relaxed mt-1" style={{ color: 'var(--text-secondary)' }}>
+                  PUP Biñan had no tech organization. One student decided to change that. The AWS Cloud Club was established as the first and only tech org on campus — starting from zero members, built entirely from scratch.
+                </p>
+              </div>
+              <div className="game-card p-4 sm:p-5">
+                <span className="text-[10px] font-bold" style={{ color: 'var(--accent)' }}>2026</span>
+                <h3 className="text-sm font-bold mt-1" style={{ color: 'var(--text)' }}>Evolved into AWS Student Builder Group</h3>
+                <p className="text-xs leading-relaxed mt-1" style={{ color: 'var(--text-secondary)' }}>
+                  AWS restructured its student communities globally, transitioning Cloud Clubs into Student Builder Groups — expanding the program's scope beyond cloud into AI, serverless, and full-stack development. Our chapter was among those that made the transition, unlocking more resources, mentorship, and global recognition.
+                </p>
+              </div>
+              <div className="game-card p-4 sm:p-5">
+                <span className="text-[10px] font-bold" style={{ color: 'var(--accent)' }}>Today</span>
+                <h3 className="text-sm font-bold mt-1" style={{ color: 'var(--text)' }}>63+ builders and growing</h3>
+                <p className="text-xs leading-relaxed mt-1" style={{ color: 'var(--text-secondary)' }}>
+                  Now a globally recognized AWS student community with 63+ active members. We run workshops, hackathons, and tech talks — giving PUP Biñan students hands-on experience with production cloud infrastructure before they graduate.
+                </p>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* Founder card */}
+          <ScrollReveal>
+            <div className="game-card p-4 sm:p-5 mt-4">
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <img
                   src="/My picture.jpg"
@@ -251,9 +302,9 @@ export default function LandingPage() {
                     <h3 className="text-sm font-bold" style={{ color: 'var(--text)' }}>John Lexter Reyes</h3>
                     <span className="text-[8px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'var(--accent-dim)', color: 'var(--accent-dark)' }}>Founder</span>
                   </div>
-                  <p className="text-[11px] mb-2" style={{ color: 'var(--text-secondary)' }}>President, AWS Student Builder Group</p>
+                  <p className="text-[11px] mb-2" style={{ color: 'var(--text-secondary)' }}>President, AWS Student Builder Group - PUP Biñan</p>
                   <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                    "Just join your university's tech club," they said. PUP Biñan didn't have one. So one Linux user stopped waiting and started building. From zero to 63+ members. From nothing to a globally recognized AWS chapter.
+                    "There was no tech club here. No cloud workshops, no hackathons, no community for students who wanted to build real things. So I stopped asking 'why not' and just built it."
                   </p>
                 </div>
               </div>
