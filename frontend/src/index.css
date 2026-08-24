@@ -63,6 +63,13 @@
     background: var(--accent);
     color: white;
   }
+
+  /* Placeholder styling — clearly distinct from real input */
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+  }
 }
 
 @layer components {

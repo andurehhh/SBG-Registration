@@ -23,7 +23,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="text-xs text-sbg-text-secondary font-mono"
+            className="text-xs font-semibold"
+            style={{ color: 'var(--text)' }}
           >
             {label}
           </label>
@@ -32,33 +33,35 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={[
-            'w-full px-3 py-2.5 text-sm transition-colors duration-150',
-            'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40',
+            'w-full px-3 py-2.5 rounded-lg text-sm',
+            'transition-all duration-150',
+            'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/25 focus:border-[#2d9cdb]',
             'appearance-none cursor-pointer',
-            error
-              ? 'border border-red-500 focus:ring-red-500'
-              : 'border border-sbg-line',
             className,
           ].join(' ')}
-          style={{ background: 'var(--card)', color: 'var(--text)' }}
+          style={{
+            background: '#ffffff',
+            border: error ? '1.5px solid #e53e3e' : '1.5px solid #d1d9e0',
+            color: 'var(--text, #1a2332)',
+          }}
           {...props}
         >
           {placeholder && (
-            <option value="" disabled>
+            <option value="" disabled style={{ color: '#9ca3af' }}>
               {placeholder}
             </option>
           )}
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} style={{ background: 'var(--card)', color: 'var(--text)' }}>
+            <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
         </select>
         {error && (
-          <p className="text-xs text-red-400 font-mono">{error}</p>
+          <p className="text-xs font-medium" style={{ color: '#e53e3e' }}>{error}</p>
         )}
         {hint && !error && (
-          <p className="text-xs text-sbg-text-muted">{hint}</p>
+          <p className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
         )}
       </div>
     )

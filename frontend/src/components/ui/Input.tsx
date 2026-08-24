@@ -16,7 +16,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-xs text-sbg-text-secondary font-mono"
+            className="text-xs font-semibold"
+            style={{ color: 'var(--text)' }}
           >
             {label}
           </label>
@@ -25,27 +26,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={[
-            'w-full px-3 py-2.5 rounded text-sm',
-            'transition-colors duration-150',
-            'placeholder:text-sbg-text-muted',
-            'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40 focus:border-sbg-accent/40',
-            error
-              ? 'border-red-500 focus:ring-red-500'
-              : '',
+            'w-full px-3 py-2.5 rounded-lg text-sm',
+            'transition-all duration-150',
+            'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/25 focus:border-[#2d9cdb]',
             className,
           ].join(' ')}
           style={{
-            background: 'var(--card)',
-            border: error ? undefined : '1px solid var(--line)',
-            color: 'var(--text)',
+            background: '#ffffff',
+            border: error ? '1.5px solid #e53e3e' : '1.5px solid #d1d9e0',
+            color: 'var(--text, #1a2332)',
+            // Placeholder styled via CSS below
           }}
           {...props}
         />
         {error && (
-          <p className="text-xs text-red-400 font-mono">{error}</p>
+          <p className="text-xs font-medium" style={{ color: '#e53e3e' }}>{error}</p>
         )}
         {hint && !error && (
-          <p className="text-xs text-sbg-text-muted break-all">{hint}</p>
+          <p className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
         )}
       </div>
     )
