@@ -29,7 +29,7 @@
   --border: rgba(120, 160, 220, 0.12);
   --border-hover: rgba(120, 160, 220, 0.28);
   --card: #0e131c;
-  --grid-color: rgba(80, 130, 200, 0.05);
+  --grid-color: rgba(90, 140, 210, 0.08);
 }
 
 @layer base {
@@ -44,12 +44,18 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
-    /* Circuit-grid texture + faint blue glow, like the poster */
+    /* Layered background, poster-style:
+       1. diagonal base gradient (dark corners → blue-tinted glow)
+       2. top center glow
+       3. bottom-left accent glow
+       4. + 5. crisp grid lines */
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(47, 143, 255, 0.10), transparent),
+      linear-gradient(135deg, #050810 0%, #0a1020 45%, #0b1424 60%, #060a12 100%),
+      radial-gradient(ellipse 70% 55% at 50% -5%, rgba(47, 143, 255, 0.16), transparent 70%),
+      radial-gradient(ellipse 50% 50% at 0% 100%, rgba(47, 143, 255, 0.08), transparent 60%),
       linear-gradient(var(--grid-color) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
     background-attachment: fixed;
   }
 
@@ -136,6 +142,40 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+  }
+}
+
+@layer utilities {
+  /* Denser grid overlay for section backgrounds (poster-style). Absolutely positioned. */
+  .grid-overlay {
+    background-image:
+      linear-gradient(rgba(90, 140, 210, 0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 140, 210, 0.10) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, #000 30%, transparent 80%);
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, #000 30%, transparent 80%);
+  }
+
+  /* Blue gradient text for headline highlights */
+  .gradient-text {
+    background: linear-gradient(120deg, #4ea3ff 0%, #2f8fff 50%, #7ec0ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Soft blue radial glow behind an element */
+  .glow-blue {
+    position: relative;
+  }
+  .glow-blue::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(ellipse at center, rgba(47, 143, 255, 0.18), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
   }
 }
 
