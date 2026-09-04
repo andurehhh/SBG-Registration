@@ -8,8 +8,9 @@ A serverless, cloud-native membership portal for managing registrations, member 
 ## Overview
 
 The SBG Registration Portal is a comprehensive membership management system that handles:
-- **Multi-step registration** with document uploads and validation
+- **Multi-step registration** with document uploads, source tracking, and validation
 - **Returning member renewal** — streamlined re-registration with student number verification
+- **Late COR submission** — applicants who registered without a COR can upload it later via `/submit-cor`
 - **Semester management** — per-semester term resets with school year + semester tracking
 - **Digital ID retrieval** for approved and inactive members (with QR code for event check-in)
 - **Admin dashboard** — bulk approve/reject, CSV export, audit log, announcements
@@ -151,6 +152,7 @@ Required secrets:
 
 ```bash
 supabase functions deploy register
+supabase functions deploy submit-cor
 supabase functions deploy approve
 supabase functions deploy reject
 supabase functions deploy send-announcement
@@ -163,11 +165,13 @@ supabase functions deploy term-reset
 ### Database setup
 
 The database schema is managed via Supabase. Key tables:
-- `Member` — student registrations and membership data
+- `Member` — student registrations and membership data (includes `heard_from` for source tracking)
 - `EmailQueue` — queued emails with retry logic
 - `SchoolYear` — academic year + semester tracking (1st/2nd)
 - `AppConfig` — application-level feature flags (registration open/closed)
 - `AuditLog` — admin action history (approvals, announcements, term resets)
+
+> **Announcement targeting:** "All Members" sends only to approved members in the current active term. "Non-Renewed Members" targets inactive members from previous terms.
 
 SQL migrations are in the `database/` directory (run them in order in the Supabase SQL Editor):
 1. `schema.sql` — base tables
