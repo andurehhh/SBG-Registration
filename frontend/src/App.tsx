@@ -3,7 +3,6 @@ import { lazy, Suspense } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { ToastContainer } from './components/ui/ToastContainer'
 
-const LandingPage = lazy(() => import('./pages/LandingPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const IdFinderPage = lazy(() => import('./pages/IdFinderPage'))
 const SubmitCorPage = lazy(() => import('./pages/SubmitCorPage'))
@@ -31,8 +30,9 @@ function App() {
       <BrowserRouter>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            {/* Registration is the app root — the public marketing site lives on a separate domain */}
+            <Route path="/" element={<RegisterPage />} />
+            <Route path="/register" element={<Navigate to="/" replace />} />
             <Route path="/id-finder" element={<IdFinderPage />} />
             <Route path="/submit-cor" element={<SubmitCorPage />} />
 

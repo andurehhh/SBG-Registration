@@ -4,7 +4,7 @@ export default function SubmitCorPage() {
   return (
     <div className="min-h-screen bg-sbg-black flex flex-col">
       <div className="px-5 py-4">
-        <BackButton to="/" label="Back to Home" />
+        <BackButton to="/" label="Back to Registration" />
       </div>
 
       <div className="flex-1 flex items-center justify-center px-5 pb-16">

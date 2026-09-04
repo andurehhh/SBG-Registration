@@ -58,7 +58,7 @@ export default function IdFinderPage() {
   return (
     <div className="min-h-screen bg-sbg-black">
       <div className="relative z-10 px-6 py-4">
-        <BackButton to="/" label="Back to Home" />
+        <BackButton to="/" label="Back to Registration" />
       </div>
 
       <div className="relative px-4 pb-12">

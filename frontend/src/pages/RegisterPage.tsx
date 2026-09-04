@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
 import { RenewalForm } from '../components/registration/RenewalForm'
 
 type FormTab = 'new' | 'returning'
+
+// Main marketing site — the "Back to site" links point here.
+const MARKETING_URL = import.meta.env.VITE_MARKETING_URL || '/'
 
 function ThemeToggle() {
   const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark')
@@ -25,7 +27,6 @@ const MoonIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="non
 
 export default function RegisterPage() {
   const [activeTab, setActiveTab] = useState<FormTab>('new')
-  const navigate = useNavigate()
 
   return (
     <div data-theme="light" style={{ background: 'var(--bg)' }} className="min-h-screen">
@@ -33,15 +34,15 @@ export default function RegisterPage() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2">
+          <a href={MARKETING_URL} className="flex items-center gap-2">
             <img src="/sbg-logo-white.svg" alt="" className="w-6 h-6" />
-            <span className="text-xs font-semibold hidden sm:block" style={{ color: 'var(--text)' }}>SBG</span>
-          </button>
+            <span className="text-xs font-semibold hidden sm:block" style={{ color: 'var(--text)' }}>AWS SBG - PUP Biñan</span>
+          </a>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <button onClick={() => navigate('/')} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }}>
-              <ArrowLeft size={12} /> Back
-            </button>
+            <a href={MARKETING_URL} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }}>
+              <ArrowLeft size={12} /> Back to site
+            </a>
           </div>
         </div>
       </nav>

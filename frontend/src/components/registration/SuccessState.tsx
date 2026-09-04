@@ -1,12 +1,12 @@
 // frontend/src/components/registration/SuccessState.tsx
 import { CheckCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/Button'
 import { useRegistrationStore } from '../../store/registration'
 
+const MARKETING_URL = import.meta.env.VITE_MARKETING_URL || '/'
+
 export function SuccessState() {
   const store = useRegistrationStore()
-  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col items-center text-center gap-5 py-6">
@@ -57,9 +57,9 @@ export function SuccessState() {
       </p>
 
       <div className="flex flex-col gap-2.5 w-full max-w-xs">
-        <Button onClick={() => navigate('/')} className="w-full">
-          Back to Home
-        </Button>
+        <a href={MARKETING_URL} className="w-full">
+          <Button className="w-full">Back to Site</Button>
+        </a>
         <Button variant="ghost" onClick={() => store.reset()} className="w-full">
           Submit Another Application
         </Button>
