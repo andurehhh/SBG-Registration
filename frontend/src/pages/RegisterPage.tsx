@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown } from 'lucide-react'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
 import { RenewalForm } from '../components/registration/RenewalForm'
 
@@ -37,6 +37,7 @@ export default function RegisterPage() {
   const [activeTab, setActiveTab] = useState<FormTab>('new')
   const [started, setStarted] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [privacyOpen, setPrivacyOpen] = useState(false)
 
   return (
     <div data-theme="light" style={{ background: 'var(--bg)' }} className="min-h-screen">
@@ -57,65 +58,77 @@ export default function RegisterPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {/* Hero */}
           <div className="mb-8">
-            <p className="text-xs font-medium mb-2" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Membership Application</p>
+            <p className="text-sm font-medium mb-2" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Membership Application</p>
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: 'var(--text)' }}>
               Learn cloud computing.<br />Build real projects. Get hired.
             </h1>
-            <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm sm:text-base mt-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Join the first tech organization at PUP Biñan. Get hands-on with AWS through workshops, hackathons, and certification pathways. Members also receive an official digital membership ID card.
             </p>
           </div>
 
-          {/* Before you apply — the focus */}
+          {/* Before you apply + What you'll need — one panel */}
           <div className="rounded-xl overflow-hidden mb-5" style={{ border: '1px solid var(--border)' }}>
-            <div className="px-5 py-3.5" style={{ background: 'var(--accent)' }}>
-              <h2 className="text-sm font-bold text-white">Before you apply</h2>
+            <div className="px-6 py-4" style={{ background: 'var(--accent)' }}>
+              <h2 className="text-base font-bold text-white">Before you apply</h2>
             </div>
-            <div className="p-5 space-y-4" style={{ background: 'var(--bg-raised)' }}>
-              {ELIGIBILITY.map(([label, value]) => (
-                <div key={label} className="flex flex-col sm:flex-row sm:gap-4">
-                  <span className="text-xs font-bold shrink-0 sm:w-36" style={{ color: 'var(--text)' }}>{label}</span>
-                  <span className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+            <div className="p-6" style={{ background: 'var(--bg-raised)' }}>
+              {/* Eligibility rows — more breathing room */}
+              <div className="space-y-5">
+                {ELIGIBILITY.map(([label, value]) => (
+                  <div key={label} className="flex flex-col sm:flex-row sm:gap-5">
+                    <span className="text-sm font-bold shrink-0 sm:w-36 mb-0.5 sm:mb-0" style={{ color: 'var(--text)' }}>{label}</span>
+                    <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</span>
+                  </div>
+                ))}
+              </div>
 
-          {/* What you'll need */}
-          <div className="rounded-xl overflow-hidden mb-5" style={{ border: '1px solid var(--border)' }}>
-            <div className="px-5 py-3.5" style={{ borderBottom: '1px solid var(--border)' }}>
-              <h2 className="text-sm font-bold" style={{ color: 'var(--text)' }}>What you'll need</h2>
-            </div>
-            <div className="p-5 space-y-2.5" style={{ background: 'var(--bg-raised)' }}>
-              {[
-                'Your student number and PUP webmail',
-                'A screenshot proving you shared our recruitment post (required)',
-                'Your Certificate of Registration — optional, can be submitted later',
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-2.5">
-                  <Check size={14} className="shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
-                  <span className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{item}</span>
-                </div>
-              ))}
+              {/* Divider */}
+              <div className="my-6 h-px" style={{ background: 'var(--border)' }} />
+
+              {/* What you'll need */}
+              <p className="text-sm font-bold mb-3" style={{ color: 'var(--text)' }}>What you'll need</p>
+              <div className="space-y-3">
+                {[
+                  'Your student number and PUP webmail',
+                  'A screenshot proving you shared our recruitment post (required)',
+                  'Your Certificate of Registration — optional, can be submitted later',
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <Check size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
+                    <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Privacy consent */}
-          <div className="rounded-xl p-5 mb-5" style={{ border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
-            <h2 className="text-sm font-bold mb-2" style={{ color: 'var(--text)' }}>Data privacy</h2>
-            <p className="text-[11px] leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
-              We collect your student number, personal email, PUP webmail, gender, Certificate of Registration, and proof-of-share screenshot solely to review your membership application. This data is accessible only to SBG Core Team officers and is used for verification and communication. Application documents (COR and screenshots) are deleted at the end of each semester.
+          <div className="rounded-xl p-6 mb-6" style={{ border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
+            <h2 className="text-base font-bold mb-2" style={{ color: 'var(--text)' }}>Data privacy</h2>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              We collect your details only to review your membership application, accessible only to SBG Core Team officers.{' '}
+              {!privacyOpen && (
+                <button onClick={() => setPrivacyOpen(true)} className="inline-flex items-center gap-0.5 font-semibold" style={{ color: 'var(--accent)' }}>
+                  Read more <ChevronDown size={13} />
+                </button>
+              )}
             </p>
-            <label className="flex items-start gap-3 cursor-pointer select-none">
+            {privacyOpen && (
+              <p className="text-sm leading-relaxed mt-2" style={{ color: 'var(--text-secondary)' }}>
+                The data we collect includes your student number, personal email, PUP webmail, gender, Certificate of Registration, and proof-of-share screenshot. It is used solely for verification and communication. Application documents (COR and screenshots) are deleted at the end of each semester.
+              </p>
+            )}
+            <label className="flex items-start gap-3 cursor-pointer select-none mt-4">
               <input
                 type="checkbox"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
-                className="mt-0.5 w-4 h-4 shrink-0 cursor-pointer"
+                className="mt-0.5 w-5 h-5 shrink-0 cursor-pointer"
                 style={{ accentColor: '#2d9cdb' }}
               />
-              <span className="text-xs leading-relaxed" style={{ color: 'var(--text)' }}>
-                I understand and consent to how my data will be collected, used, and stored as described above.
+              <span className="text-sm leading-relaxed" style={{ color: 'var(--text)' }}>
+                I understand and consent to how my data will be collected, used, and stored.
               </span>
             </label>
           </div>
@@ -125,11 +138,11 @@ export default function RegisterPage() {
             onClick={() => setStarted(true)}
             disabled={!agreed}
             className="btn-primary w-full"
-            style={{ opacity: agreed ? 1 : 0.5, cursor: agreed ? 'pointer' : 'not-allowed' }}
+            style={{ opacity: agreed ? 1 : 0.5, cursor: agreed ? 'pointer' : 'not-allowed', padding: '14px' }}
           >
             Start Application <ArrowRight size={16} />
           </button>
-          <p className="text-[11px] text-center mt-3" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm text-center mt-4" style={{ color: 'var(--text-secondary)' }}>
             Already a member?{' '}
             <button onClick={() => { setActiveTab('returning'); setStarted(true); setAgreed(true) }} className="font-semibold" style={{ color: 'var(--accent)' }}>
               Renew here
