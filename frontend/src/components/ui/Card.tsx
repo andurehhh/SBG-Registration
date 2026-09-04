@@ -20,7 +20,7 @@ export function Card({ children, padding = 'md', className = '', ...props }: Car
         paddingClasses[padding],
         className,
       ].join(' ')}
-      style={{ background: 'var(--card)', border: '1px solid var(--line)' }}
+      style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px' }}
       {...props}
     >
       {children}

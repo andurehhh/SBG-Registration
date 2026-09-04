@@ -17,7 +17,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="text-xs text-sbg-text-secondary font-mono"
+            className="text-xs font-semibold"
+            style={{ color: 'var(--text)' }}
           >
             {label}
           </label>
@@ -25,20 +26,22 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
-          style={{ minHeight, background: 'var(--card)', color: 'var(--text)', ...style }}
+          style={{
+            minHeight,
+            background: 'rgba(255,255,255,0.03)',
+            color: 'var(--text)',
+            border: error ? '1.5px solid var(--danger, #f87171)' : '1.5px solid var(--border)',
+            ...style,
+          }}
           className={[
-            'w-full px-3 py-2.5 text-sm resize-y transition-colors duration-150',
-            'placeholder:text-sbg-text-muted',
-            'focus:outline-none focus:ring-1 focus:ring-sbg-accent/40',
-            error
-              ? 'border border-red-500 focus:ring-red-500'
-              : 'border border-sbg-line',
+            'w-full px-3 py-2.5 text-sm resize-y rounded-lg transition-all duration-150',
+            'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/25 focus:border-[#2d9cdb]',
             className,
           ].join(' ')}
           {...props}
         />
         {error && (
-          <p className="text-xs text-red-400 font-mono">{error}</p>
+          <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
         )}
         {hint && !error && (
           <p className="text-xs text-sbg-text-muted">{hint}</p>

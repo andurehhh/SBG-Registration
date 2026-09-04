@@ -40,7 +40,7 @@ export default function RegisterPage() {
   const [privacyOpen, setPrivacyOpen] = useState(false)
 
   return (
-    <div data-theme="light" style={{ background: 'var(--bg)' }} className="min-h-screen">
+    <div data-theme="dark" style={{ background: 'var(--bg)' }} className="min-h-screen">
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', borderBottom: '1px solid var(--border)' }}>
@@ -58,9 +58,12 @@ export default function RegisterPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {/* Hero */}
           <div className="mb-8">
-            <p className="text-sm font-medium mb-2" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Membership Application</p>
+            <div className="inline-flex items-center gap-2 mb-3 px-2.5 py-1 rounded" style={{ border: '1px solid rgba(47,143,255,0.3)', background: 'var(--accent-dim)' }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-bright)' }} />
+              <span className="text-[11px] font-medium tracking-wide" style={{ color: 'var(--accent-bright)', fontFamily: 'var(--font-mono)' }}>MEMBERSHIP APPLICATION</span>
+            </div>
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: 'var(--text)' }}>
-              Learn cloud computing.<br />Build real projects. Get hired.
+              Learn cloud computing.<br />Build real projects. <span style={{ color: 'var(--accent-bright)' }}>Get hired.</span>
             </h1>
             <p className="text-sm sm:text-base mt-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Join the first tech organization at PUP Biñan. Get hands-on with AWS through workshops, hackathons, and certification pathways. Members also receive an official digital membership ID card.

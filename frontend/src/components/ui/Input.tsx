@@ -32,15 +32,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className,
           ].join(' ')}
           style={{
-            background: '#ffffff',
-            border: error ? '1.5px solid #e53e3e' : '1.5px solid #d1d9e0',
-            color: 'var(--text, #1a2332)',
-            // Placeholder styled via CSS below
+            background: 'rgba(255,255,255,0.03)',
+            border: error ? '1.5px solid var(--danger, #f87171)' : '1.5px solid var(--border)',
+            color: 'var(--text)',
           }}
           {...props}
         />
         {error && (
-          <p className="text-xs font-medium" style={{ color: '#e53e3e' }}>{error}</p>
+          <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
         )}
         {hint && !error && (
           <p className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
