@@ -3,6 +3,8 @@
 **Student Builder Group – PUP Biñan Campus**
 A serverless, cloud-native membership portal for managing registrations, member approvals, and digital ID retrieval.
 
+> This app is registration-focused: the root route (`/`) serves the membership application. The public marketing site lives as a separate project and links back here via its "Join as Member" button (see `VITE_MARKETING_URL`).
+
 ---
 
 ## Overview
@@ -113,6 +115,7 @@ Edit `.env.local` with your Supabase project credentials:
 VITE_SUPABASE_URL=https://<your-project>.supabase.co
 VITE_SUPABASE_ANON_KEY=<your-anon-key>
 VITE_APP_URL=http://localhost:5173
+VITE_MARKETING_URL=https://<your-marketing-site>
 ```
 
 ### 3. Run development server
@@ -262,6 +265,7 @@ SBG-Registration/
 | `VITE_SUPABASE_URL` | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Supabase anonymous/public key |
 | `VITE_APP_URL` | Frontend deployment URL |
+| `VITE_MARKETING_URL` | Main marketing site URL (used by "Back to site" links; falls back to `/`) |
 
 ### Supabase Secrets
 
@@ -328,18 +332,17 @@ A lightweight event system for organizing SBG meetups, workshops, and community 
 - CSV export of attendees (name, student number, course, check-in timestamp)
 - Event capacity tracking and waitlist
 
-### Official Club Website (Planned)
+### Official Club Website (Separate Project)
 
-Expand the portal into the official SBG website — single domain, one cohesive experience.
+The public marketing site (home, about, events, learn) is built and deployed as a **separate project** on its own domain. This portal stays lean and focused on registration, ID retrieval, and admin.
 
-**Planned pages:**
-- `/` — Home (hero, mission, vision, what we do)
-- `/about` — About page (team, advisors, history, departments)
-- `/events` — Public event listing
-- `/register` — Membership registration (existing)
-- `/id-finder` — Digital ID lookup (existing)
+**Integration:** the marketing site's "Join as Member" button links to this app. This app's "Back to site" links point to the marketing site via `VITE_MARKETING_URL`.
 
-**Approach:** No separate website — just add public-facing pages to the existing app with a proper navbar (Home, About, Events, Register, Find ID). Static content (mission, vision, team photos) lives directly in the components.
+**This portal serves:**
+- `/` — Membership registration (new + returning)
+- `/id-finder` — Digital ID lookup
+- `/submit-cor` — Late COR submission
+- `/[admin-path]/*` — Admin dashboard (hidden)
 
 ---
 
