@@ -2,9 +2,20 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Textarea } from '../ui/Textarea'
+import { Select } from '../ui/Select'
 import { Button } from '../ui/Button'
 import { useRegistrationStore } from '../../store/registration'
 import { registrationStep2Schema, type RegistrationStep2Data } from '../../lib/validations'
+
+const HEARD_FROM_OPTIONS = [
+  { value: 'Facebook', label: 'Facebook' },
+  { value: 'Instagram', label: 'Instagram' },
+  { value: 'LinkedIn', label: 'LinkedIn' },
+  { value: 'Classroom / Professor', label: 'Classroom / Professor' },
+  { value: 'Friend / Classmate', label: 'Friend / Classmate' },
+  { value: 'Partner Organization', label: 'Partner Organization' },
+  { value: 'Other', label: 'Other' },
+]
 
 interface StepApplicationQuestionsProps {
   onNext: () => void
@@ -64,6 +75,14 @@ export function StepApplicationQuestions({ onNext, onBack }: StepApplicationQues
             {expectationsValue.length} / 25 min
           </p>
         </div>
+
+        <Select
+          label="How did you hear about us?"
+          options={HEARD_FROM_OPTIONS}
+          placeholder="Select an option"
+          value={store.heard_from}
+          onChange={(e) => store.setField('heard_from', e.target.value)}
+        />
       </div>
 
       <div className="flex gap-3 mt-2">

@@ -28,6 +28,9 @@ interface RegistrationState {
   cor_file: File | null
   proof_of_share_file: File | null
 
+  // Source tracking — how they found us
+  heard_from: string
+
   // Submission
   submissionStatus: SubmissionStatus
   serverError: string | null
@@ -57,8 +60,28 @@ const initialState = {
   expectations: '',
   cor_file: null,
   proof_of_share_file: null,
+  heard_from: initialHeardFrom(),
   submissionStatus: 'idle' as SubmissionStatus,
   serverError: null,
+}
+
+/** Reads UTM source from the URL to prefill "how did you hear about us". */
+function initialHeardFrom(): string {
+  if (typeof window === 'undefined') return ''
+  const params = new URLSearchParams(window.location.search)
+  const utm = params.get('utm_source') || params.get('ref') || params.get('source')
+  if (!utm) return ''
+  const map: Record<string, string> = {
+    facebook: 'Facebook',
+    fb: 'Facebook',
+    instagram: 'Instagram',
+    ig: 'Instagram',
+    linkedin: 'LinkedIn',
+    classroom: 'Classroom / Professor',
+    class: 'Classroom / Professor',
+    partner: 'Partner Organization',
+  }
+  return map[utm.toLowerCase()] || ''
 }
 
 export const useRegistrationStore = create<RegistrationState>((set) => ({

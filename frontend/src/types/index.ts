@@ -16,6 +16,7 @@ export interface Member {
   skills: string[];
   why_join: string | null;
   expectations: string | null;
+  heard_from: string | null;
   cor_url: string | null;
   proof_of_share_url: string | null;
   sticker_id: string | null;

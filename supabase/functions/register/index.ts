@@ -123,6 +123,7 @@ Deno.serve(async (req) => {
       skills: formData.getAll("skills") as string[],
       why_join: sanitize(formData.get("why_join") as string),
       expectations: sanitize(formData.get("expectations") as string),
+      heard_from: formData.get("heard_from") ? sanitize(formData.get("heard_from") as string) : null,
       cor_url: corUrl,
       proof_of_share_url: proofUrl,
       status: "pending",

@@ -9,46 +9,58 @@ export function SuccessState() {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col items-center text-center gap-6 py-8">
-      <div className="w-16 h-16 flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-        <CheckCircle className="w-8 h-8" style={{ color: 'var(--accent, #2d9cdb)' }} />
+    <div className="flex flex-col items-center text-center gap-5 py-6">
+      <div className="w-14 h-14 flex items-center justify-center rounded-full" style={{ background: 'var(--accent-dim, rgba(45,156,219,0.1))' }}>
+        <CheckCircle className="w-7 h-7" style={{ color: 'var(--accent, #2d9cdb)' }} />
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         <h2 className="text-xl font-bold" style={{ color: 'var(--text)' }}>
           Application Submitted!
         </h2>
-        <p className="text-sm" style={{ color: 'var(--muted, var(--text-secondary))' }}>
-          Thank you, <span style={{ color: 'var(--text)' }} className="font-medium">{store.full_name}</span>!
-        </p>
-        <p className="text-sm max-w-sm" style={{ color: 'var(--muted, var(--text-secondary))' }}>
-          We'll notify you at{' '}
-          <span className="font-mono" style={{ color: 'var(--text)' }}>{store.email}</span>{' '}
-          once your application is reviewed.
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          Thank you, <span style={{ color: 'var(--text)' }} className="font-semibold">{store.full_name}</span>. We've received your application.
         </p>
       </div>
 
-      <div className="p-4 w-full max-w-xs" style={{ background: 'var(--card)', border: '1px solid var(--line, var(--border))' }}>
-        <p className="text-xs mb-1 font-mono" style={{ color: 'var(--muted, var(--text-secondary))' }}>STUDENT NUMBER</p>
-        <p className="text-sm font-mono" style={{ color: 'var(--text)' }}>{store.student_number}</p>
+      {/* Student number receipt */}
+      <div className="p-3 w-full max-w-xs rounded-lg" style={{ background: 'var(--bg-raised, rgba(0,0,0,0.03))', border: '1px solid var(--border)' }}>
+        <p className="text-[10px] mb-0.5 font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Student Number</p>
+        <p className="text-sm font-mono font-semibold" style={{ color: 'var(--text)' }}>{store.student_number}</p>
       </div>
 
-      <p className="text-xs max-w-xs" style={{ color: 'var(--muted, var(--text-secondary))' }}>
-        Follow our <a href="https://www.facebook.com/profile.php?id=61584279257151" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #2d9cdb)' }}>Facebook page</a> for updates while you wait.
+      {/* What happens next */}
+      <div className="w-full max-w-sm text-left rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+        <div className="px-4 py-2" style={{ background: 'var(--accent)', color: 'white' }}>
+          <p className="text-xs font-bold">What happens next</p>
+        </div>
+        <div className="p-4 space-y-2.5" style={{ background: 'var(--bg-raised, transparent)' }}>
+          {[
+            ['1', `We'll email a confirmation to ${store.email}.`],
+            ['2', 'Our team reviews your application within 3–5 days.'],
+            ['3', 'If approved, you\'ll get your digital membership ID and an invite to orientation.'],
+          ].map(([n, text]) => (
+            <div key={n} className="flex gap-2.5">
+              <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 mt-0.5" style={{ background: 'var(--accent-dim, rgba(45,156,219,0.15))', color: 'var(--accent-dark, #1a7bb5)' }}>{n}</span>
+              <span className="text-[11px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Help */}
+      <p className="text-[11px] max-w-sm" style={{ color: 'var(--text-secondary)' }}>
+        Questions? Message us on{' '}
+        <a href="https://www.facebook.com/profile.php?id=61584279257151" target="_blank" rel="noopener noreferrer" className="font-semibold" style={{ color: 'var(--accent, #2d9cdb)' }}>Facebook</a>{' '}
+        or email{' '}
+        <a href="mailto:sbg.pupbinan@gmail.com" className="font-semibold" style={{ color: 'var(--accent, #2d9cdb)' }}>sbg.pupbinan@gmail.com</a>.
       </p>
 
-      <div className="flex flex-col gap-3 w-full max-w-xs">
-        <Button
-          onClick={() => navigate('/')}
-          className="w-full"
-        >
+      <div className="flex flex-col gap-2.5 w-full max-w-xs">
+        <Button onClick={() => navigate('/')} className="w-full">
           Back to Home
         </Button>
-        <Button
-          variant="ghost"
-          onClick={() => store.reset()}
-          className="w-full"
-        >
+        <Button variant="ghost" onClick={() => store.reset()} className="w-full">
           Submit Another Application
         </Button>
       </div>

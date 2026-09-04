@@ -54,6 +54,9 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
       store.skills.forEach((skill) => formData.append('skills', skill))
       formData.append('why_join', store.why_join)
       formData.append('expectations', store.expectations)
+      if (store.heard_from) {
+        formData.append('heard_from', store.heard_from)
+      }
       if (store.cor_file) {
         formData.append('cor_file', store.cor_file)
       }
@@ -90,15 +93,21 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
         />
 
         <FileUpload
-          label="Proof of Share"
+          label="Proof of Share — Required"
           value={store.proof_of_share_file}
           onChange={(file) => {
             store.setField('proof_of_share_file', file)
             if (file) setProofError(null)
           }}
           error={proofError ?? undefined}
-          hint="Screenshot of your shared SBG application post"
+          hint="Required: upload a screenshot showing you shared our recruitment post publicly."
         />
+      </div>
+
+      {/* Privacy notice */}
+      <div className="p-3 rounded-lg text-[11px] leading-relaxed" style={{ background: 'var(--bg-raised, rgba(0,0,0,0.03))', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
+        <span className="font-bold" style={{ color: 'var(--text)' }}>Privacy notice.</span>{' '}
+        Your student number, personal email, PUP webmail, gender, COR, and proof-of-share screenshot are collected only to review your membership application. This data is accessible only to SBG Core Team officers and is used solely for verification and communication. Application documents (COR and screenshots) are deleted at the end of each semester. By submitting, you consent to this use of your data.
       </div>
 
       {store.serverError && (

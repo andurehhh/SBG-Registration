@@ -49,16 +49,39 @@ export default function RegisterPage() {
       {/* Main */}
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
-        {/* Header — compact on mobile */}
+        {/* Header — lead with the learning outcome */}
         <div className="mb-5">
-          <p className="text-xs font-medium mb-1" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Registration</p>
+          <p className="text-xs font-medium mb-1" style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Membership Application</p>
           <h1 className="text-lg sm:text-2xl font-bold leading-tight" style={{ color: 'var(--text)' }}>
-            Join the Builder Community
+            Learn cloud computing. Build real projects. Get hired.
           </h1>
-          <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-            Apply for SBG membership and get your official digital membership ID card.
+          <p className="text-xs sm:text-sm mt-2 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            Join the first tech organization at PUP Biñan. Get hands-on with AWS through workshops, hackathons, and certification pathways. Members also receive an official digital membership ID card.
           </p>
         </div>
+
+        {/* Info block — only shown for new members, before the form */}
+        {activeTab === 'new' && (
+          <div className="mb-5 rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+            <div className="px-4 py-2.5" style={{ background: 'var(--accent)', color: 'white' }}>
+              <p className="text-xs font-bold">Before you apply</p>
+            </div>
+            <div className="p-4 space-y-3" style={{ background: 'var(--bg-raised)' }}>
+              {[
+                ['Who can apply', 'Currently enrolled students of PUP Biñan Campus, any year level or course.'],
+                ['Deadline', 'Applications close September 14, 2026 at 11:59 PM.'],
+                ['Expected slots', 'We\'re welcoming our next batch of builders — apply early, slots are limited.'],
+                ['Review timeline', 'Applications are reviewed within 3–5 days. You\'ll be notified by email.'],
+                ['Orientation', 'Approved members will be invited to an onboarding orientation. Details sent via email and our Facebook page.'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex flex-col sm:flex-row sm:gap-3">
+                  <span className="text-[11px] font-bold shrink-0 sm:w-32" style={{ color: 'var(--text)' }}>{label}</span>
+                  <span className="text-[11px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex mb-5 rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
