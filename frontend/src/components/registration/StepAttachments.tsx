@@ -104,11 +104,7 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
         />
       </div>
 
-      {/* Privacy notice */}
-      <div className="p-3 rounded-lg text-[11px] leading-relaxed" style={{ background: 'var(--bg-raised, rgba(0,0,0,0.03))', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
-        <span className="font-bold" style={{ color: 'var(--text)' }}>Privacy notice.</span>{' '}
-        Your student number, personal email, PUP webmail, gender, COR, and proof-of-share screenshot are collected only to review your membership application. This data is accessible only to SBG Core Team officers and is used solely for verification and communication. Application documents (COR and screenshots) are deleted at the end of each semester. By submitting, you consent to this use of your data.
-      </div>
+
 
       {store.serverError && (
         <div className="p-3 rounded-[8px] bg-red-900/20 border border-red-700/50 text-sm text-red-400 font-mono">
