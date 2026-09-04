@@ -17,7 +17,7 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
             style={{
               flex: 1,
               height: '4px',
-              background: i < current ? 'var(--orange)' : 'var(--line)',
+              background: i < current ? 'var(--accent)' : 'var(--border)',
               transition: 'background 0.3s',
             }}
           />

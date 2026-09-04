@@ -35,6 +35,20 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Kill the default gray/black mobile tap highlight */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Buttons should never flash a default background on tap/focus */
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:focus {
+    outline: none;
+  }
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   body {
@@ -222,9 +236,25 @@
   animation-delay: -1.5s;
 }
 
+/* Floating blue cubes — decorative background */
+@keyframes cube-float {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-18px) rotate(calc(var(--rot, 0deg) + 8deg)); }
+}
+.cube {
+  position: absolute;
+  border: 1.5px solid rgba(78, 163, 255, 0.35);
+  background: linear-gradient(135deg, rgba(47, 143, 255, 0.14), rgba(47, 143, 255, 0.02));
+  border-radius: 4px;
+  box-shadow: 0 0 24px rgba(47, 143, 255, 0.12), inset 0 0 12px rgba(47, 143, 255, 0.08);
+  animation: cube-float var(--dur, 7s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  pointer-events: none;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .marquee-track, .gallery-track { animation: none; }
-  .float, .float-delayed { animation: none; }
+  .float, .float-delayed, .cube { animation: none; }
 }

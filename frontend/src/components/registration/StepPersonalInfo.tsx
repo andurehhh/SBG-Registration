@@ -184,8 +184,8 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
 
         {/* AWS Interests multi-select */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-sbg-text-muted font-mono">
-            AWS Interests <span className="text-red-400">*</span>
+          <label className="text-xs font-semibold" style={{ color: 'var(--text)' }}>
+            AWS Interests <span style={{ color: 'var(--danger, #f87171)' }}>*</span>
           </label>
           <Controller
             name="skills"
@@ -204,12 +204,13 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
                           : [...field.value, interest]
                         field.onChange(next)
                       }}
-                      className="px-3 py-1.5 rounded text-xs border transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-xs transition-all"
                       style={{
-                        background: isSelected ? 'var(--orange)' : 'var(--card)',
-                        borderColor: isSelected ? 'var(--orange)' : 'var(--line)',
-                        color: isSelected ? '#0c0f14' : 'var(--muted)',
-                        fontWeight: isSelected ? 600 : 400,
+                        background: isSelected ? 'var(--accent)' : 'rgba(255,255,255,0.03)',
+                        border: isSelected ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
+                        color: isSelected ? '#ffffff' : 'var(--text)',
+                        fontWeight: isSelected ? 700 : 500,
+                        boxShadow: isSelected ? '0 0 12px rgba(47,143,255,0.35)' : 'none',
                       }}
                     >
                       {interest}
@@ -220,7 +221,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
             )}
           />
           {errors.skills && (
-            <p className="text-xs text-red-400 font-mono">{errors.skills.message}</p>
+            <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{errors.skills.message}</p>
           )}
         </div>
       </div>

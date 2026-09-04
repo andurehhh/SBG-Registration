@@ -1,29 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ArrowRight, Check, ChevronDown } from 'lucide-react'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
 import { RenewalForm } from '../components/registration/RenewalForm'
+import { BlueCubes } from '../components/ui/BlueCubes'
 
 type FormTab = 'new' | 'returning'
 
 // Main marketing site — the logo links here.
 const MARKETING_URL = import.meta.env.VITE_MARKETING_URL || '/'
-
-function ThemeToggle() {
-  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark')
-  useEffect(() => {
-    const obs = new MutationObserver(() => setTheme(document.documentElement.getAttribute('data-theme') || 'dark'))
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-    return () => obs.disconnect()
-  }, [])
-  return (
-    <button onClick={() => { const n = theme === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('sbg-theme', n) }}
-      className="theme-btn" aria-label="Toggle theme">
-      {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-    </button>
-  )
-}
-const SunIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-const MoonIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
 
 const ELIGIBILITY = [
   ['Who can apply', 'Currently enrolled students of PUP Biñan Campus, any year level or course.'],
@@ -42,17 +26,17 @@ export default function RegisterPage() {
   return (
     <div data-theme="dark" style={{ background: 'var(--bg)' }} className="min-h-screen relative">
 
-      {/* Decorative grid glow overlay */}
+      {/* Decorative grid glow overlay + floating blue cubes */}
       <div className="grid-overlay pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+      <BlueCubes />
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
           <a href={MARKETING_URL} className="flex items-center gap-2">
             <img src="/sbg-logo-white.svg" alt="" className="w-6 h-6" />
-            <span className="text-xs font-semibold hidden sm:block" style={{ color: 'var(--text)' }}>AWS SBG - PUP Biñan</span>
+            <span className="text-xs font-semibold" style={{ color: 'var(--text)' }}>AWS SBG - PUP Biñan</span>
           </a>
-          <ThemeToggle />
         </div>
       </nav>
 

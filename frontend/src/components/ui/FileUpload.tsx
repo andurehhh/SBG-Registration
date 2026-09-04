@@ -94,17 +94,17 @@ export function FileUpload({
 
       {value ? (
         // File selected state
-        <div className="flex items-center gap-3 p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-          <File className="w-5 h-5 shrink-0" style={{ color: 'var(--muted)' }} />
+        <div className="flex items-center gap-3 p-3" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+          <File className="w-5 h-5 shrink-0" style={{ color: 'var(--text-secondary)' }} />
           <div className="flex-1 min-w-0">
             <p className="text-sm truncate font-mono" style={{ color: 'var(--text)' }}>{value.name}</p>
-            <p className="text-xs" style={{ color: 'var(--muted)' }}>{formatFileSize(value.size)}</p>
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{formatFileSize(value.size)}</p>
           </div>
           <button
             type="button"
             onClick={handleRemove}
             className="p-1 transition-colors"
-            style={{ color: 'var(--muted)' }}
+            style={{ color: 'var(--text-secondary)' }}
             aria-label="Remove file"
           >
             <X className="w-4 h-4" />
@@ -122,17 +122,17 @@ export function FileUpload({
           onDragLeave={handleDragLeave}
           className="flex flex-col items-center justify-center gap-2 p-6 border border-dashed cursor-pointer transition-colors duration-150"
           style={{
-            borderColor: isDragging ? 'var(--text)' : displayError ? '#ef4444' : 'var(--line)',
+            borderColor: isDragging ? 'var(--text)' : displayError ? '#ef4444' : 'var(--border)',
             background: isDragging ? 'var(--card)' : displayError ? 'rgba(239,68,68,0.05)' : 'transparent',
           }}
         >
-          <Upload className="w-6 h-6" style={{ color: 'var(--muted)' }} />
+          <Upload className="w-6 h-6" style={{ color: 'var(--text-secondary)' }} />
           <div className="text-center">
-            <p className="text-sm" style={{ color: 'var(--muted)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Drop file here or{' '}
               <span className="underline" style={{ color: 'var(--text)' }}>browse</span>
             </p>
-            <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
               JPEG, PNG, or PDF — max 1 MB
             </p>
           </div>

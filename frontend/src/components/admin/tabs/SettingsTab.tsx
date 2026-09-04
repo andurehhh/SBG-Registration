@@ -51,7 +51,7 @@ export function SettingsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--clr-accent)' }} />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--accent)' }} />
       </div>
     )
   }
@@ -85,7 +85,7 @@ export function SettingsTab() {
         <div className="flex items-center justify-between gap-4 py-4 border-b border-white/[0.04] last:border-b-0">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded bg-white/5 border border-white/[0.06] flex items-center justify-center flex-shrink-0 mt-0.5">
-              <FileText className="w-4 h-4" style={{ color: 'var(--clr-accent)' }} />
+              <FileText className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
               <p className="text-white text-sm font-mono font-bold">

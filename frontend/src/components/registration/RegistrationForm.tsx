@@ -50,7 +50,7 @@ export function RegistrationForm() {
     return (
       <Card>
         <div className="flex flex-col items-center text-center gap-4 py-8">
-          <div className="w-14 h-14 flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+          <div className="w-14 h-14 flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
             <span className="text-2xl">🔒</span>
           </div>
           <div>

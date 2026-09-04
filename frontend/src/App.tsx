@@ -16,9 +16,9 @@ const AdminPage = __ADMIN_ENABLED__
 
 function LoadingSpinner() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--clr-bg)' }}>
-      <div className="text-xs" style={{ color: 'var(--clr-muted)' }}>
-        <span style={{ color: 'var(--clr-accent)' }}>$</span> loading...
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg)' }}>
+      <div className="text-xs" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+        <span style={{ color: 'var(--accent)' }}>$</span> loading...
       </div>
     </div>
   )

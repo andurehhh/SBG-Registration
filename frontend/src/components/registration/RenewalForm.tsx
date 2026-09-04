@@ -242,7 +242,7 @@ export function RenewalForm() {
 
           {/* Verification success message */}
           {memberData && step === 'upload' && (
-            <div className="p-3 text-sm font-mono" style={{ background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--orange)' }}>
+            <div className="p-3 text-sm font-mono" style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--accent)' }}>
               Welcome back, {memberData.full_name}!
             </div>
           )}
