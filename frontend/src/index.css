@@ -5,11 +5,19 @@
 @tailwind utilities;
 
 :root {
-  --accent: #2f8fff;
-  --accent-dark: #1e6fd9;
-  --accent-bright: #4ea3ff;
-  --accent-dim: rgba(47, 143, 255, 0.1);
-  --accent-light: rgba(47, 143, 255, 0.14);
+  /* AWS blue — primary actions, active states, and the brand identity color */
+  --accent: #4f8ff7;
+  --accent-dark: #2f6fd6;
+  --accent-bright: #6ba4fb;
+  --accent-dim: rgba(79, 143, 247, 0.12);
+  --accent-light: rgba(79, 143, 247, 0.16);
+
+  /* Blue accent family for highlights & decorative elements (matches the logo) */
+  --sky: #4f8ff7;
+  --sky-bright: #6ba4fb;
+  --sky-soft: #a9ccff;
+  --sky-dim: rgba(79, 143, 247, 0.12);
+
   --warm: #f5a623;
   --success: #34d399;
   --danger: #f87171;
@@ -18,18 +26,19 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* Dark-first, black + blue branding (matches SBG poster aesthetic) */
+/* Dark-first "blue technical blueprint" — deep navy base with an AWS-blue atmosphere */
 [data-theme="dark"],
 :root:not([data-theme]),
 [data-theme="light"] {
-  --bg: #070a0f;
-  --bg-raised: #0e131c;
-  --text: #eef2f7;
-  --text-secondary: #8a97a8;
-  --border: rgba(120, 160, 220, 0.12);
-  --border-hover: rgba(120, 160, 220, 0.28);
-  --card: #0e131c;
-  --grid-color: rgba(90, 140, 210, 0.08);
+  --bg: #07111f;
+  --bg-raised: #0d1a2b;
+  --text: #eaf2f9;
+  --text-secondary: #9fb0c3;
+  --border: rgba(120, 165, 235, 0.14);
+  --border-hover: rgba(120, 165, 235, 0.3);
+  --card: #0d1a2b;
+  /* Grid lines lean slightly blue to read as a technical blueprint */
+  --grid-color: rgba(95, 150, 225, 0.07);
 }
 
 @layer base {
@@ -76,30 +85,32 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
-    /* Layered background, poster-style:
-       1. diagonal base gradient (dark corners → blue-tinted glow)
-       2. top center glow
-       3. bottom-left accent glow
-       4. + 5. crisp grid lines */
+    /* "Blue technical blueprint" background, built from layered gradients + a grid:
+       1. soft AWS-blue glow behind the hero (top-center)
+       2. blue atmosphere sweeping up from the bottom-left
+       3. faint blue depth in the bottom-right corner
+       4. diagonal deep-navy base gradient
+       5. + 6. crisp technical grid lines */
     background-image:
-      linear-gradient(135deg, #050810 0%, #0a1020 45%, #0b1424 60%, #060a12 100%),
-      radial-gradient(ellipse 70% 55% at 50% -5%, rgba(47, 143, 255, 0.16), transparent 70%),
-      radial-gradient(ellipse 50% 50% at 0% 100%, rgba(47, 143, 255, 0.08), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 50% -8%, rgba(79, 143, 247, 0.16), transparent 62%),
+      radial-gradient(ellipse 60% 60% at 2% 102%, rgba(79, 143, 247, 0.12), transparent 60%),
+      radial-gradient(ellipse 55% 55% at 100% 100%, rgba(107, 164, 251, 0.08), transparent 60%),
+      linear-gradient(150deg, #050d18 0%, #07111f 42%, #081627 66%, #060f1c 100%),
       linear-gradient(var(--grid-color) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
     background-attachment: fixed;
   }
 
   ::selection {
     background: var(--accent);
-    color: #070a0f;
+    color: #041019;
   }
 
   /* Placeholder styling — clearly distinct from real input */
   input::placeholder,
   textarea::placeholder {
-    color: #5b6675;
+    color: #6b7a8c;
     font-style: italic;
   }
 }
@@ -120,12 +131,12 @@
     cursor: pointer;
     transition: all 0.2s;
     border: none;
-    box-shadow: 0 0 0 1px rgba(47, 143, 255, 0.4), 0 6px 20px rgba(47, 143, 255, 0.25);
+    box-shadow: 0 0 0 1px rgba(79, 143, 247, 0.45), 0 6px 20px rgba(79, 143, 247, 0.22);
   }
   .btn-primary:hover {
     background: var(--accent-bright);
     transform: translateY(-1px);
-    box-shadow: 0 0 0 1px rgba(78, 163, 255, 0.5), 0 8px 26px rgba(47, 143, 255, 0.35);
+    box-shadow: 0 0 0 1px rgba(107, 164, 251, 0.55), 0 8px 26px rgba(79, 143, 247, 0.32);
   }
   .btn-primary:active {
     transform: translateY(0);
@@ -134,14 +145,14 @@
   .btn-primary[disabled] {
     opacity: 0.45;
     cursor: not-allowed;
-    box-shadow: 0 0 0 1px rgba(47, 143, 255, 0.25);
+    box-shadow: 0 0 0 1px rgba(79, 143, 247, 0.25);
     transform: none;
   }
   .btn-primary:disabled:hover,
   .btn-primary[disabled]:hover {
     background: var(--accent);
     transform: none;
-    box-shadow: 0 0 0 1px rgba(47, 143, 255, 0.25);
+    box-shadow: 0 0 0 1px rgba(79, 143, 247, 0.25);
   }
 
   .btn-secondary {
@@ -180,9 +191,9 @@
     font-family: var(--font-pixel);
     font-size: 7px;
     padding: 5px 10px;
-    background: var(--accent-dim);
-    color: var(--accent-bright);
-    border: 1px solid rgba(47, 143, 255, 0.25);
+    background: var(--sky-dim);
+    color: var(--sky-bright);
+    border: 1px solid rgba(79, 143, 247, 0.28);
     border-radius: 5px;
     display: inline-flex;
     align-items: center;
@@ -191,34 +202,37 @@
 }
 
 @layer utilities {
-  /* Denser grid overlay for section backgrounds (poster-style). Absolutely positioned. */
+  /* Denser technical-grid overlay for section backgrounds. Absolutely positioned.
+     Faded with a radial mask so it never competes with foreground content. */
   .grid-overlay {
     background-image:
-      linear-gradient(rgba(90, 140, 210, 0.10) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(90, 140, 210, 0.10) 1px, transparent 1px);
-    background-size: 32px 32px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, #000 30%, transparent 80%);
-    mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, #000 30%, transparent 80%);
+      linear-gradient(rgba(95, 150, 225, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(95, 150, 225, 0.09) 1px, transparent 1px);
+    background-size: 34px 34px;
+    -webkit-mask-image: radial-gradient(ellipse 68% 60% at 50% 32%, #000 26%, transparent 78%);
+    mask-image: radial-gradient(ellipse 68% 60% at 50% 32%, #000 26%, transparent 78%);
   }
 
-  /* Blue gradient text for headline highlights */
+  /* Headline highlight — AWS blue gradient */
   .gradient-text {
-    background: linear-gradient(120deg, #4ea3ff 0%, #2f8fff 50%, #7ec0ff 100%);
+    background: linear-gradient(120deg, var(--sky-bright) 0%, var(--sky-soft) 55%, var(--sky-bright) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
 
-  /* Soft blue radial glow behind an element */
+  /* Very soft blue radial glow behind an element (used behind the hero) */
+  .glow-teal,
   .glow-blue {
     position: relative;
   }
+  .glow-teal::before,
   .glow-blue::before {
     content: "";
     position: absolute;
     inset: -20%;
-    background: radial-gradient(ellipse at center, rgba(47, 143, 255, 0.18), transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(79, 143, 247, 0.18), transparent 70%);
     z-index: -1;
     pointer-events: none;
   }
@@ -267,21 +281,43 @@
   animation-delay: -1.5s;
 }
 
-/* Floating blue cubes — decorative background */
+/* Floating blue cubes — decorative background (calm drift) */
 @keyframes cube-float {
   0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-  50% { transform: translateY(-18px) rotate(calc(var(--rot, 0deg) + 8deg)); }
+  50% { transform: translateY(-14px) rotate(calc(var(--rot, 0deg) + 6deg)); }
 }
 .cube {
   position: absolute;
-  border: 1.5px solid rgba(78, 163, 255, 0.35);
-  background: linear-gradient(135deg, rgba(47, 143, 255, 0.14), rgba(47, 143, 255, 0.02));
+  border: 1.5px solid rgba(107, 164, 251, 0.34);
+  background: linear-gradient(135deg, rgba(79, 143, 247, 0.13), rgba(79, 143, 247, 0.02));
   border-radius: 4px;
-  box-shadow: 0 0 24px rgba(47, 143, 255, 0.12), inset 0 0 12px rgba(47, 143, 255, 0.08);
-  animation: cube-float var(--dur, 7s) ease-in-out infinite;
+  box-shadow: 0 0 22px rgba(79, 143, 247, 0.12), inset 0 0 12px rgba(107, 164, 251, 0.08);
+  animation: cube-float var(--dur, 8s) ease-in-out infinite;
   animation-delay: var(--delay, 0s);
   pointer-events: none;
 }
+
+/* Stepped geometric shapes — quiet blueprint accents anchored to the edges.
+   Built from nested L-shapes so no raster image is needed. */
+.step-shape {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.5;
+  color: rgba(107, 164, 251, 0.5);
+  background:
+    linear-gradient(currentColor 0 0) 0 0 / 100% 2px no-repeat,
+    linear-gradient(currentColor 0 0) 0 0 / 2px 100% no-repeat;
+}
+/* A hollow "staircase" bracket made from three nested L-shapes */
+.step-shape::before,
+.step-shape::after {
+  content: "";
+  position: absolute;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+}
+.step-shape::before { inset: 30% 30% 0 0; }
+.step-shape::after { inset: 60% 60% 0 0; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {

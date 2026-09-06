@@ -1,0 +1,47 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - navigation [ref=e6]:
+      - link "AWS SBG - PUP Biñan" [ref=e8] [cursor=pointer]:
+        - /url: /
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: MEMBERSHIP APPLICATION
+        - heading "Learn cloud computing. Build real projects. Get hired." [level=1] [ref=e15]: Learn cloud computing.Build real projects. Get hired.
+        - paragraph [ref=e16]: Join the first tech organization at PUP Biñan. Get hands-on with AWS through workshops, hackathons, and certification pathways. Members also receive an official digital membership ID card.
+      - generic [ref=e17]:
+        - heading "Before you apply" [level=2] [ref=e19]
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - generic [ref=e23]: Who can apply
+              - generic [ref=e24]: Currently enrolled students of PUP Biñan Campus, any year level or course.
+            - generic [ref=e25]:
+              - generic [ref=e26]: Deadline
+              - generic [ref=e27]: Applications close September 14, 2026 at 11:59 PM.
+            - generic [ref=e28]:
+              - generic [ref=e29]: Expected slots
+              - generic [ref=e30]: We're welcoming our next batch of builders — apply early, slots are limited.
+            - generic [ref=e31]:
+              - generic [ref=e32]: Review timeline
+              - generic [ref=e33]: Applications are reviewed within 3–5 days. You'll be notified by email.
+            - generic [ref=e34]:
+              - generic [ref=e35]: Orientation
+              - generic [ref=e36]: Approved members will be invited to an onboarding orientation. Details sent via email and our Facebook page.
+          - paragraph [ref=e38]: What you'll need
+          - generic [ref=e39]:
+            - generic [ref=e40]: Your student number and PUP webmail
+            - generic [ref=e44]: A screenshot proving you shared our recruitment post (required)
+            - generic [ref=e48]: Your Certificate of Registration — optional, can be submitted later
+      - generic [ref=e52]:
+        - heading "Data privacy" [level=2] [ref=e53]
+        - paragraph [ref=e54]: We collect your details only to review your membership application, accessible only to SBG Core Team officers.
+        - button "Read more" [active] [ref=e69] [cursor=pointer]
+        - generic [ref=e58] [cursor=pointer]:
+          - checkbox "I understand and consent to how my data will be collected, used, and stored." [ref=e59]
+          - generic [ref=e60]: I understand and consent to how my data will be collected, used, and stored.
+      - button "Start Application" [disabled] [ref=e61]
+      - paragraph [ref=e64]: Please agree to the data privacy notice above to continue.
+      - paragraph [ref=e65]:
+        - text: Already a member?
+        - button "Renew here" [ref=e66] [cursor=pointer]
+  - status

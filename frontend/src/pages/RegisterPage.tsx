@@ -26,8 +26,16 @@ export default function RegisterPage() {
   return (
     <div data-theme="dark" style={{ background: 'var(--bg)' }} className="min-h-screen relative">
 
-      {/* Decorative grid glow overlay + floating blue cubes */}
+      {/* Decorative technical grid + soft blue hero glow + blueprint accents */}
       <div className="grid-overlay pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+      <div
+        className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[60vh]"
+        aria-hidden="true"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 100% at 50% 0%, rgba(79,143,247,0.16), rgba(79,143,247,0.05) 40%, transparent 72%)',
+        }}
+      />
       <BlueCubes />
 
       {/* Nav */}
@@ -45,7 +53,7 @@ export default function RegisterPage() {
         <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {/* Hero */}
           <div className="mb-8">
-            <div className="inline-flex items-center gap-2 mb-3 px-2.5 py-1 rounded" style={{ border: '1px solid rgba(47,143,255,0.3)', background: 'var(--accent-dim)' }}>
+            <div className="inline-flex items-center gap-2 mb-3 px-2.5 py-1 rounded" style={{ border: '1px solid rgba(79,143,247,0.35)', background: 'var(--accent-dim)' }}>
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-bright)' }} />
               <span className="text-[11px] font-medium tracking-wide" style={{ color: 'var(--accent-bright)', fontFamily: 'var(--font-mono)' }}>MEMBERSHIP APPLICATION</span>
             </div>
@@ -59,7 +67,7 @@ export default function RegisterPage() {
 
           {/* Before you apply + What you'll need — one panel */}
           <div className="rounded-xl overflow-hidden mb-5" style={{ border: '1px solid var(--border)' }}>
-            <div className="px-6 py-4" style={{ background: 'var(--accent)' }}>
+            <div className="px-6 py-4" style={{ background: 'linear-gradient(120deg, #4f8ff7 0%, #2f6fd6 100%)' }}>
               <h2 className="text-base font-bold text-white">Before you apply</h2>
             </div>
             <div className="p-6" style={{ background: 'var(--bg-raised)' }}>
@@ -85,7 +93,7 @@ export default function RegisterPage() {
                   'Your Certificate of Registration — optional, can be submitted later',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
-                    <Check size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
+                    <Check size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--accent-bright)' }} />
                     <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{item}</span>
                   </div>
                 ))}

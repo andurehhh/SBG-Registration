@@ -88,8 +88,21 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
     onNext()
   }
 
+  // If validation blocks the step, move focus to the first invalid control.
+  // RHF focuses registered fields automatically; this covers the skills group,
+  // which has no native form ref, as a fallback.
+  function onInvalid() {
+    requestAnimationFrame(() => {
+      const firstInvalid = document.querySelector<HTMLElement>(
+        'form [aria-invalid="true"], form [data-invalid="true"]'
+      )
+      firstInvalid?.focus()
+      firstInvalid?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    })
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4">
         <Input
           label="Full Name"
@@ -220,14 +233,22 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
 
         {/* AWS Interests multi-select */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold" style={{ color: 'var(--text)' }}>
-            AWS Interests <span style={{ color: 'var(--danger, #f87171)' }}>*</span>
+          <label id="skills-label" className="text-xs font-semibold" style={{ color: 'var(--text)' }}>
+            AWS Interests <span style={{ color: 'var(--danger, #f87171)' }} aria-hidden="true">*</span>
           </label>
           <Controller
             name="skills"
             control={control}
             render={({ field }) => (
-              <div className="flex flex-wrap gap-2">
+              <div
+                role="group"
+                aria-labelledby="skills-label"
+                aria-invalid={errors.skills ? true : undefined}
+                aria-describedby={errors.skills ? 'skills-error' : undefined}
+                tabIndex={errors.skills ? -1 : undefined}
+                data-invalid={errors.skills ? 'true' : undefined}
+                className="flex flex-wrap gap-2"
+              >
                 {AWS_INTERESTS.map((interest) => {
                   const isSelected = field.value.includes(interest)
                   return (
@@ -246,7 +267,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
                         border: isSelected ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
                         color: isSelected ? '#ffffff' : 'var(--text)',
                         fontWeight: isSelected ? 700 : 500,
-                        boxShadow: isSelected ? '0 0 12px rgba(47,143,255,0.35)' : 'none',
+                        boxShadow: isSelected ? '0 0 12px rgba(79,143,247,0.35)' : 'none',
                       }}
                     >
                       {interest}
@@ -257,7 +278,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
             )}
           />
           {errors.skills && (
-            <p role="alert" className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{errors.skills.message}</p>
+            <p id="skills-error" role="alert" className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{errors.skills.message}</p>
           )}
         </div>
       </div>

@@ -78,8 +78,9 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <FileUpload
-          label={`Certificate of Registration (COR)${!corRequired && settingsLoaded ? ' (optional)' : ''}`}
+          label="Certificate of Registration (COR)"
           required={corRequired}
+          optional={!corRequired && settingsLoaded}
           value={store.cor_file}
           onChange={(file) => {
             store.setField('cor_file', file)

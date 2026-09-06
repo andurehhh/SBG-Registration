@@ -13,6 +13,8 @@ interface FileUploadProps {
   error?: string
   hint?: string
   required?: boolean
+  /** When true, shows an explicit "Optional" badge (used only when not required). */
+  optional?: boolean
 }
 
 function formatFileSize(bytes: number): string {
@@ -43,6 +45,7 @@ export function FileUpload({
   error,
   hint,
   required,
+  optional,
 }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -104,9 +107,23 @@ export function FileUpload({
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-semibold font-mono" style={{ color: 'var(--text)' }}>
-          {label}
-          {required && <span style={{ color: 'var(--danger)' }} aria-hidden="true"> *</span>}
+        <label htmlFor={inputId} className="flex items-center gap-2 flex-wrap text-xs font-semibold font-mono" style={{ color: 'var(--text)' }}>
+          <span>{label}</span>
+          {required ? (
+            <span
+              className="px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide"
+              style={{ background: 'var(--accent-dim)', color: 'var(--accent-bright)', border: '1px solid rgba(79,143,247,0.35)' }}
+            >
+              REQUIRED
+            </span>
+          ) : optional ? (
+            <span
+              className="px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide"
+              style={{ background: 'rgba(159,176,195,0.12)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
+            >
+              OPTIONAL
+            </span>
+          ) : null}
         </label>
       )}
 

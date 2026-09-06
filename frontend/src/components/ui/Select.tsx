@@ -45,7 +45,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           className={[
             'w-full px-3 py-2.5 rounded-lg text-sm',
             'transition-all duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/25 focus:border-[#2d9cdb]',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-bright)] focus-visible:border-[var(--accent)]',
             'appearance-none cursor-pointer',
             className,
           ].join(' ')}
@@ -57,12 +57,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           {...props}
         >
           {placeholder && (
-            <option value="" disabled style={{ color: '#5b6675', background: '#0e131c' }}>
+            <option value="" disabled style={{ color: '#6b7a8c', background: '#0d1a2b' }}>
               {placeholder}
             </option>
           )}
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} style={{ background: '#0e131c', color: '#eef2f7' }}>
+            <option key={opt.value} value={opt.value} style={{ background: '#0d1a2b', color: '#eaf2f9' }}>
               {opt.label}
             </option>
           ))}

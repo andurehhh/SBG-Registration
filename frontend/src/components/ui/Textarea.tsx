@@ -49,7 +49,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           }}
           className={[
             'w-full px-3 py-2.5 text-sm resize-y rounded-lg transition-all duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/25 focus:border-[#2d9cdb]',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-bright)] focus-visible:border-[var(--accent)]',
             className,
           ].join(' ')}
           {...props}

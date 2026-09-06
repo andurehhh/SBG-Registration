@@ -53,7 +53,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'rounded-lg transition-all duration-150 min-h-[44px]',
           'hover:brightness-110 hover:-translate-y-[1px]',
           'active:translate-y-0 active:brightness-100',
-          'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/30 focus:ring-offset-1',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-bright)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]',
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0',
           sizeClasses[size],
           className,
