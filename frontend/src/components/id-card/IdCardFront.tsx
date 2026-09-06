@@ -24,11 +24,11 @@ export function IdCardFront({ member, stickerId, cardRef }: IdCardFrontProps) {
     >
       <div className="absolute inset-0 grid-bg opacity-40" aria-hidden="true" />
 
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#AE5CFF]" />
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#2f8fff]" />
 
-      <div className="absolute top-4 right-4 w-3 h-3 bg-[#AE5CFF] opacity-60" aria-hidden="true" />
-      <div className="absolute top-8 right-8 w-2 h-2 bg-[#AE5CFF] opacity-40" aria-hidden="true" />
-      <div className="absolute bottom-6 left-4 w-2 h-2 bg-[#AE5CFF] opacity-30" aria-hidden="true" />
+      <div className="absolute top-4 right-4 w-3 h-3 bg-[#2f8fff] opacity-60" aria-hidden="true" />
+      <div className="absolute top-8 right-8 w-2 h-2 bg-[#2f8fff] opacity-40" aria-hidden="true" />
+      <div className="absolute bottom-6 left-4 w-2 h-2 bg-[#2f8fff] opacity-30" aria-hidden="true" />
 
       <div className="relative z-10 p-6 h-full flex flex-col">
         <div className="flex items-start justify-between mb-4">
@@ -60,14 +60,14 @@ export function IdCardFront({ member, stickerId, cardRef }: IdCardFrontProps) {
         </h2>
 
         <p className="text-xs text-sbg-text-muted mb-3 font-mono">
-          {member.course ?? '—'} · Year {member.year_level} — {member.section}
+          {member.course ?? '—'} {member.year_level}-{member.section}
         </p>
 
         {member.sbg_id && (
           <div className="flex-1 flex items-center">
-            <div className="w-full text-center py-2 bg-[#AE5CFF]/10 border border-[#AE5CFF]/30 rounded-[8px]">
+            <div className="w-full text-center py-2 bg-[#2f8fff]/10 border border-[#2f8fff]/30 rounded-[8px]">
               <p className="text-[10px] text-sbg-text-muted uppercase tracking-widest mb-0.5 font-mono">Membership ID</p>
-              <p className="text-[#AE5CFF] text-lg font-bold tracking-wider font-mono">
+              <p className="text-[#2f8fff] text-lg font-bold tracking-wider font-mono">
                 {member.sbg_id}
               </p>
             </div>

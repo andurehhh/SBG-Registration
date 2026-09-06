@@ -31,6 +31,11 @@ const YEAR_OPTIONS = [
   { value: '5', label: 'Ladderized' },
 ]
 
+const SECTION_OPTIONS = [
+  { value: '1', label: 'Section 1' },
+  { value: '2', label: 'Section 2' },
+]
+
 interface StepPersonalInfoProps {
   onNext: () => void
 }
@@ -150,12 +155,19 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
           />
         )}
 
-        <Input
-          label="Section"
-          placeholder="e.g. 3A"
-          hint="Your block/section only — course and year level are set above."
-          error={errors.section?.message}
-          {...register('section')}
+        <Controller
+          name="section"
+          control={control}
+          render={({ field }) => (
+            <Select
+              label="Section"
+              options={SECTION_OPTIONS}
+              placeholder="Select section"
+              hint="Each course and year level has two sections."
+              error={errors.section?.message}
+              {...field}
+            />
+          )}
         />
 
         <Input

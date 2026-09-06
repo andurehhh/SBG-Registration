@@ -19,7 +19,7 @@ export function IdCardBack({ member, cardRef }: IdCardBackProps) {
     >
       <div className="absolute inset-0 grid-bg opacity-40" aria-hidden="true" />
 
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#AE5CFF]" />
+      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#2f8fff]" />
 
       <div className="relative z-10 p-6 h-full flex flex-col">
         <div className="flex items-start justify-between mb-4">
@@ -52,7 +52,7 @@ export function IdCardBack({ member, cardRef }: IdCardBackProps) {
               {member.skills.slice(0, 5).map((skill) => (
                 <span
                   key={skill}
-                  className="px-2 py-0.5 bg-[#AE5CFF]/10 border border-[#AE5CFF]/30 rounded-[4px] text-[10px] text-[#AE5CFF]"
+                  className="px-2 py-0.5 bg-[#2f8fff]/10 border border-[#2f8fff]/30 rounded-[4px] text-[10px] text-[#2f8fff]"
                 >
                   {skill}
                 </span>

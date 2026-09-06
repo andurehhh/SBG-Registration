@@ -37,9 +37,7 @@ export const registrationStep1Schema = z.object({
     .max(6, "Year level must be at most 6"),
   section: z
     .string()
-    .min(1, "Section is required")
-    .max(10, "Section must be at most 10 characters")
-    .regex(/^[A-Za-z0-9-]+$/, "Section can only contain letters, numbers, and dashes"),
+    .min(1, "Please select a section"),
   email: z.string().email("Please enter a valid personal email address"),
   scholar_email: z.string().email("Please enter a valid scholar email address"),
   gender: z.enum(["Male", "Female", "NonBinary", "PreferNotToSay"], {
