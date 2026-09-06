@@ -35,17 +35,23 @@ interface StepPersonalInfoProps {
   onNext: () => void
 }
 
+const PRESET_COURSES = ['BSIT', 'BSIE', 'BSCE']
+
 export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
   const store = useRegistrationStore()
-  const [otherCourse, setOtherCourse] = useState(
-    store.course && !['BSIT', 'BSIE', 'BSCE'].includes(store.course) ? store.course : ''
-  )
+
+  // Is the stored course a preset, or a custom "Other" value?
+  const storedIsOther = !!store.course && !PRESET_COURSES.includes(store.course)
+
+  // The dropdown selection is tracked separately from the actual course value,
+  // so typing in the "Other" field doesn't change the dropdown and collapse it.
+  const [courseSelection, setCourseSelection] = useState(storedIsOther ? 'Other' : store.course)
+  const [otherCourse, setOtherCourse] = useState(storedIsOther ? store.course : '')
 
   const {
     register,
     handleSubmit,
     control,
-    watch,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegistrationStep1Data>({
@@ -62,8 +68,6 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
       skills: store.skills,
     },
   })
-
-  const selectedCourse = watch('course')
 
   async function onSubmit(data: RegistrationStep1Data) {
     store.setField('full_name', data.full_name)
@@ -97,22 +101,23 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Controller
-            name="course"
-            control={control}
-            render={({ field }) => (
-              <Select
-                label="Course"
-                options={COURSE_OPTIONS}
-                placeholder="Select course"
-                error={errors.course?.message}
-                {...field}
-                onChange={(e) => {
-                  field.onChange(e)
-                  if (e.target.value !== 'Other') setOtherCourse('')
-                }}
-              />
-            )}
+          <Select
+            label="Course"
+            options={COURSE_OPTIONS}
+            placeholder="Select course"
+            error={errors.course?.message}
+            value={courseSelection}
+            onChange={(e) => {
+              const val = e.target.value
+              setCourseSelection(val)
+              if (val === 'Other') {
+                // Keep whatever's typed (or empty) as the course value
+                setValue('course', otherCourse, { shouldValidate: !!otherCourse })
+              } else {
+                setOtherCourse('')
+                setValue('course', val, { shouldValidate: true })
+              }
+            }}
           />
 
           <Controller
@@ -122,7 +127,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
               <Select
                 label="Year Level"
                 options={YEAR_OPTIONS}
-                placeholder="Select year"
+                placeholder="Select year level"
                 error={errors.year_level?.message}
                 value={field.value?.toString() ?? ''}
                 onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
@@ -131,22 +136,24 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
           />
         </div>
 
-        {selectedCourse === 'Other' && (
+        {courseSelection === 'Other' && (
           <Input
             label="Specify your course"
             placeholder="e.g. BS Civil Engineering"
             value={otherCourse}
             onChange={(e) => {
-              setOtherCourse(e.target.value)
-              setValue('course', e.target.value, { shouldValidate: true })
+              const val = e.target.value
+              setOtherCourse(val)
+              setValue('course', val, { shouldValidate: true })
             }}
-            error={selectedCourse === 'Other' && !otherCourse ? 'Please specify your course' : undefined}
+            error={!otherCourse ? 'Please specify your course' : undefined}
           />
         )}
 
         <Input
-          label="Year and Section"
-          placeholder="BSIT-3A"
+          label="Section"
+          placeholder="e.g. 3A"
+          hint="Your block/section only — course and year level are set above."
           error={errors.section?.message}
           {...register('section')}
         />
