@@ -38,10 +38,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabled = disabled || loading
 
     const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
-      primary: { background: '#2d9cdb', color: '#ffffff', border: '1.5px solid #1a7bb5' },
-      outline: { background: 'transparent', color: '#2d9cdb', border: '1.5px solid #2d9cdb' },
-      ghost: { background: 'transparent', color: 'var(--text)', border: '1.5px solid transparent' },
-      danger: { background: '#e53e3e', color: '#ffffff', border: '1.5px solid #c53030' },
+      primary: { background: 'var(--accent)', color: '#ffffff', border: '1.5px solid var(--accent-dark)' },
+      outline: { background: 'transparent', color: 'var(--accent-bright)', border: '1.5px solid var(--accent)' },
+      ghost: { background: 'transparent', color: 'var(--text)', border: '1.5px solid var(--border)' },
+      danger: { background: 'var(--danger)', color: '#ffffff', border: '1.5px solid #c53030' },
     }
 
     return (
@@ -50,7 +50,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isDisabled}
         className={[
           'inline-flex items-center justify-center gap-2 font-sans font-semibold',
-          'rounded-lg transition-all duration-150',
+          'rounded-lg transition-all duration-150 min-h-[44px]',
           'hover:brightness-110 hover:-translate-y-[1px]',
           'active:translate-y-0 active:brightness-100',
           'focus:outline-none focus:ring-2 focus:ring-[#2d9cdb]/30 focus:ring-offset-1',

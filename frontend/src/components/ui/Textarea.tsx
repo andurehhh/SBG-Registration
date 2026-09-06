@@ -6,11 +6,18 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: string
   hint?: string
   minHeight?: string
+  /** id of an external element (e.g. a character counter) to associate for screen readers */
+  describedById?: string
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, error, hint, minHeight = '120px', className = '', id, style, ...props }, ref) => {
+  ({ label, error, hint, minHeight = '120px', className = '', id, style, required, describedById, ...props }, ref) => {
     const textareaId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
+    const errorId = textareaId ? `${textareaId}-error` : undefined
+    const hintId = textareaId ? `${textareaId}-hint` : undefined
+    const describedBy = [error ? errorId : hint ? hintId : undefined, describedById]
+      .filter(Boolean)
+      .join(' ') || undefined
 
     return (
       <div className="flex flex-col gap-1.5">
@@ -21,11 +28,18 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             style={{ color: 'var(--text)' }}
           >
             {label}
+            {required && (
+              <span style={{ color: 'var(--danger, #f87171)' }} aria-hidden="true"> *</span>
+            )}
           </label>
         )}
         <textarea
           ref={ref}
           id={textareaId}
+          required={required}
+          aria-required={required || undefined}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
           style={{
             minHeight,
             background: 'rgba(255,255,255,0.03)',
@@ -41,10 +55,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && (
-          <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
+          <p id={errorId} role="alert" className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
         )}
         {hint && !error && (
-          <p className="text-xs text-sbg-text-muted">{hint}</p>
+          <p id={hintId} className="text-xs text-sbg-text-muted">{hint}</p>
         )}
       </div>
     )

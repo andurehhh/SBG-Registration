@@ -1,6 +1,6 @@
 // frontend/src/components/ui/FileUpload.tsx
-import { useRef, useState, type DragEvent, type ChangeEvent } from 'react'
-import { Upload, File, X, AlertCircle } from 'lucide-react'
+import { useRef, useState, useId, type DragEvent, type ChangeEvent, type KeyboardEvent } from 'react'
+import { Upload, X, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'application/pdf']
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
@@ -12,6 +12,7 @@ interface FileUploadProps {
   onChange: (file: File | null) => void
   error?: string
   hint?: string
+  required?: boolean
 }
 
 function formatFileSize(bytes: number): string {
@@ -41,12 +42,19 @@ export function FileUpload({
   onChange,
   error,
   hint,
+  required,
 }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
 
+  const reactId = useId()
+  const inputId = `file-${reactId}`
+  const errorId = `${inputId}-error`
+  const hintId = `${inputId}-hint`
+
   const displayError = error ?? validationError
+  const describedBy = displayError ? errorId : hint ? hintId : undefined
 
   function handleFile(file: File) {
     const err = validateFile(file)
@@ -80,6 +88,13 @@ export function FileUpload({
     setIsDragging(false)
   }
 
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      inputRef.current?.click()
+    }
+  }
+
   function handleRemove() {
     onChange(null)
     setValidationError(null)
@@ -89,25 +104,33 @@ export function FileUpload({
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label className="text-xs text-sbg-text-muted font-mono">{label}</label>
+        <label htmlFor={inputId} className="text-xs font-semibold font-mono" style={{ color: 'var(--text)' }}>
+          {label}
+          {required && <span style={{ color: 'var(--danger)' }} aria-hidden="true"> *</span>}
+        </label>
       )}
 
       {value ? (
-        // File selected state
-        <div className="flex items-center gap-3 p-3" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-          <File className="w-5 h-5 shrink-0" style={{ color: 'var(--text-secondary)' }} />
+        // File selected / success state
+        <div
+          className="flex items-center gap-3 p-3 rounded-lg"
+          style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.35)' }}
+        >
+          <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: 'var(--success, #34d399)' }} aria-hidden="true" />
           <div className="flex-1 min-w-0">
             <p className="text-sm truncate font-mono" style={{ color: 'var(--text)' }}>{value.name}</p>
-            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{formatFileSize(value.size)}</p>
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+              {formatFileSize(value.size)} · Ready to submit
+            </p>
           </div>
           <button
             type="button"
             onClick={handleRemove}
-            className="p-1 transition-colors"
+            className="p-2 rounded transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
             style={{ color: 'var(--text-secondary)' }}
-            aria-label="Remove file"
+            aria-label={`Remove file ${value.name}`}
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       ) : (
@@ -115,22 +138,24 @@ export function FileUpload({
         <div
           role="button"
           tabIndex={0}
+          aria-label={label ? `${label}. Upload a file. Accepted formats JPEG, PNG or PDF, maximum 1 megabyte.` : 'Upload a file'}
+          aria-describedby={describedBy}
           onClick={() => inputRef.current?.click()}
-          onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+          onKeyDown={handleKeyDown}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className="flex flex-col items-center justify-center gap-2 p-6 border border-dashed cursor-pointer transition-colors duration-150"
+          className="flex flex-col items-center justify-center gap-2 p-6 border border-dashed rounded-lg cursor-pointer transition-colors duration-150"
           style={{
-            borderColor: isDragging ? 'var(--text)' : displayError ? '#ef4444' : 'var(--border)',
-            background: isDragging ? 'var(--card)' : displayError ? 'rgba(239,68,68,0.05)' : 'transparent',
+            borderColor: isDragging ? 'var(--accent)' : displayError ? 'var(--danger)' : 'var(--border)',
+            background: isDragging ? 'var(--accent-dim)' : displayError ? 'rgba(248,113,113,0.05)' : 'transparent',
           }}
         >
-          <Upload className="w-6 h-6" style={{ color: 'var(--text-secondary)' }} />
+          <Upload className="w-6 h-6" style={{ color: isDragging ? 'var(--accent-bright)' : 'var(--text-secondary)' }} aria-hidden="true" />
           <div className="text-center">
             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Drop file here or{' '}
-              <span className="underline" style={{ color: 'var(--text)' }}>browse</span>
+              <span className="underline" style={{ color: 'var(--accent-bright)' }}>browse</span>
             </p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
               JPEG, PNG, or PDF — max 1 MB
@@ -141,21 +166,22 @@ export function FileUpload({
 
       <input
         ref={inputRef}
+        id={inputId}
         type="file"
         accept="image/jpeg,image/png,application/pdf"
         onChange={handleChange}
-        className="hidden"
-        aria-hidden="true"
+        className="sr-only"
+        tabIndex={-1}
       />
 
       {displayError && (
-        <div className="flex items-center gap-1.5 text-xs text-red-400 font-mono">
-          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+        <div id={errorId} role="alert" className="flex items-center gap-1.5 text-xs font-mono" style={{ color: 'var(--danger)' }}>
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
           {displayError}
         </div>
       )}
       {hint && !displayError && (
-        <p className="text-xs text-sbg-text-muted">{hint}</p>
+        <p id={hintId} className="text-xs" style={{ color: 'var(--text-secondary)' }}>{hint}</p>
       )}
     </div>
   )

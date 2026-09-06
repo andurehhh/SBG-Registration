@@ -87,23 +87,26 @@ export function RegistrationForm() {
     }
   }
 
+  const stepTitle =
+    store.currentStep === 1 ? 'Personal Information' :
+    store.currentStep === 2 ? 'Application Questions' : 'Attachments'
+
   return (
     <Card>
       <div className="flex flex-col gap-6">
-        <div className="text-center">
-          <h2 className="font-sans text-sbg-text text-lg font-bold">
-            {store.currentStep === 1 && 'Personal Information'}
-            {store.currentStep === 2 && 'Application Questions'}
-            {store.currentStep === 3 && 'Attachments'}
-          </h2>
-        </div>
+        {/* Step indicator at the top so users always see where they are */}
+        <ProgressBar current={store.currentStep} total={3} />
+
+        <h2 className="font-sans text-lg font-bold" style={{ color: 'var(--text)' }}>
+          {stepTitle}
+        </h2>
+
         <FlipCard
           front={currentContent}
           back={nextContent ?? currentContent}
           isFlipped={isFlipped}
           onFlipEnd={handleFlipEnd}
         />
-        <ProgressBar current={store.currentStep} total={3} />
       </div>
     </Card>
   )

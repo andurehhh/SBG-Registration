@@ -29,11 +29,11 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
     // Validate files present
     let hasError = false
     if (corRequired && !store.cor_file) {
-      setCorError('COR file is required')
+      setCorError('Certificate of Registration is required')
       hasError = true
     }
     if (!store.proof_of_share_file) {
-      setProofError('Proof of Share file is required')
+      setProofError('Proof of Share is required')
       hasError = true
     }
     if (hasError) return
@@ -78,7 +78,8 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <FileUpload
-          label={`Certificate of Registration (COR)${!corRequired && settingsLoaded ? ' — Optional' : ''}`}
+          label={`Certificate of Registration (COR)${!corRequired && settingsLoaded ? ' (optional)' : ''}`}
+          required={corRequired}
           value={store.cor_file}
           onChange={(file) => {
             store.setField('cor_file', file)
@@ -87,20 +88,21 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
           error={corError ?? undefined}
           hint={
             corRequired
-              ? 'Upload your COR from the PUP student portal'
-              : "Optional — you can submit your COR later if you don't have it yet"
+              ? 'Upload your COR from the PUP student portal.'
+              : "Optional — you can submit your COR later if you don't have it yet."
           }
         />
 
         <FileUpload
-          label="Proof of Share — Required"
+          label="Proof of Share"
+          required
           value={store.proof_of_share_file}
           onChange={(file) => {
             store.setField('proof_of_share_file', file)
             if (file) setProofError(null)
           }}
           error={proofError ?? undefined}
-          hint="Required: upload a screenshot showing you shared our recruitment post publicly."
+          hint="Upload a screenshot showing you shared our recruitment post publicly."
         />
       </div>
 

@@ -15,8 +15,11 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, hint, options, placeholder, className = '', id, ...props }, ref) => {
+  ({ label, error, hint, options, placeholder, className = '', id, required, ...props }, ref) => {
     const selectId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
+    const errorId = selectId ? `${selectId}-error` : undefined
+    const hintId = selectId ? `${selectId}-hint` : undefined
+    const describedBy = error ? errorId : hint ? hintId : undefined
 
     return (
       <div className="flex flex-col gap-1.5">
@@ -27,11 +30,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             style={{ color: 'var(--text)' }}
           >
             {label}
+            {required && (
+              <span style={{ color: 'var(--danger, #f87171)' }} aria-hidden="true"> *</span>
+            )}
           </label>
         )}
         <select
           ref={ref}
           id={selectId}
+          required={required}
+          aria-required={required || undefined}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
           className={[
             'w-full px-3 py-2.5 rounded-lg text-sm',
             'transition-all duration-150',
@@ -58,10 +68,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error && (
-          <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
+          <p id={errorId} role="alert" className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
         )}
         {hint && !error && (
-          <p className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
+          <p id={hintId} className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
         )}
       </div>
     )

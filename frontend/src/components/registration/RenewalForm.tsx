@@ -223,10 +223,16 @@ export function RenewalForm() {
       <div className="flex flex-col gap-6">
         {/* SBG ID Verification */}
         <div className="flex flex-col gap-4">
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            Returning members: enter the student number from your previous membership to renew for this semester.
+            You'll then re-upload your updated Certificate of Registration and Proof of Share.
+          </p>
           <div className="flex flex-col gap-1">
             <Input
               label="Student Number"
               placeholder="2026-12345-BN-0"
+              autoComplete="off"
+              required
               value={sbgId}
               onChange={(e) => {
                 setSbgId(e.target.value)
@@ -249,15 +255,23 @@ export function RenewalForm() {
 
           {/* Verify button (only shown before verification) */}
           {step === 'verify' && (
-            <Button
-              type="button"
-              onClick={() => verifySbgId()}
-              loading={verifyLoading}
-              disabled={!sbgId.trim()}
-              className="w-full"
-            >
-              Verify Student Number
-            </Button>
+            <div className="flex flex-col gap-1.5">
+              <Button
+                type="button"
+                onClick={() => verifySbgId()}
+                loading={verifyLoading}
+                disabled={!sbgId.trim()}
+                aria-describedby={!sbgId.trim() ? 'verify-disabled-reason' : undefined}
+                className="w-full"
+              >
+                Verify Student Number
+              </Button>
+              {!sbgId.trim() && (
+                <p id="verify-disabled-reason" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  Enter your student number above to enable verification.
+                </p>
+              )}
+            </div>
           )}
         </div>
 
@@ -266,24 +280,26 @@ export function RenewalForm() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <FileUpload
               label="Certificate of Registration (COR)"
+              required
               value={corFile}
               onChange={(file) => {
                 setCorFile(file)
                 if (file) setCorError(null)
               }}
               error={corError ?? undefined}
-              hint="Upload your updated COR from the PUP student portal"
+              hint="Upload your updated COR from the PUP student portal."
             />
 
             <FileUpload
               label="Proof of Share"
+              required
               value={proofFile}
               onChange={(file) => {
                 setProofFile(file)
                 if (file) setProofError(null)
               }}
               error={proofError ?? undefined}
-              hint="Screenshot of your shared SBG application post"
+              hint="Screenshot of your shared SBG application post."
             />
 
             {serverError && (

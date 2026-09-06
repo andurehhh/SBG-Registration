@@ -55,11 +55,18 @@ export function StepApplicationQuestions({ onNext, onBack }: StepApplicationQues
             label="Why do you wish to join the AWS Student Builder Group?"
             placeholder="Share your motivation for joining SBG..."
             minHeight="140px"
+            required
             error={errors.why_join?.message}
+            describedById="why-join-counter"
             {...register('why_join')}
           />
-          <p className="text-xs text-sbg-text-muted text-right font-mono">
-            {whyJoinValue.length} / 25 min
+          <p
+            id="why-join-counter"
+            aria-live="polite"
+            className="text-xs text-right font-mono"
+            style={{ color: whyJoinValue.length >= 25 ? 'var(--success, #34d399)' : 'var(--text-secondary)' }}
+          >
+            Minimum 25 characters · {whyJoinValue.length} entered
           </p>
         </div>
 
@@ -68,11 +75,18 @@ export function StepApplicationQuestions({ onNext, onBack }: StepApplicationQues
             label="What are you expecting from AWS Student Builder Group?"
             placeholder="Describe what you hope to gain from SBG..."
             minHeight="140px"
+            required
             error={errors.expectations?.message}
+            describedById="expectations-counter"
             {...register('expectations')}
           />
-          <p className="text-xs text-sbg-text-muted text-right font-mono">
-            {expectationsValue.length} / 25 min
+          <p
+            id="expectations-counter"
+            aria-live="polite"
+            className="text-xs text-right font-mono"
+            style={{ color: expectationsValue.length >= 25 ? 'var(--success, #34d399)' : 'var(--text-secondary)' }}
+          >
+            Minimum 25 characters · {expectationsValue.length} entered
           </p>
         </div>
 
@@ -87,10 +101,10 @@ export function StepApplicationQuestions({ onNext, onBack }: StepApplicationQues
 
       <div className="flex gap-3 mt-2">
         <Button type="button" variant="ghost" onClick={onBack} className="flex-1">
-          ← Back
+          Back
         </Button>
         <Button type="submit" className="flex-1">
-          Next →
+          Continue to Attachments
         </Button>
       </div>
     </form>

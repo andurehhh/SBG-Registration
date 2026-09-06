@@ -46,9 +46,27 @@
   button:focus {
     outline: none;
   }
-  button:focus-visible {
-    outline: 2px solid var(--accent);
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--accent-bright);
     outline-offset: 2px;
+  }
+
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   body {
@@ -111,6 +129,19 @@
   }
   .btn-primary:active {
     transform: translateY(0);
+  }
+  .btn-primary:disabled,
+  .btn-primary[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: 0 0 0 1px rgba(47, 143, 255, 0.25);
+    transform: none;
+  }
+  .btn-primary:disabled:hover,
+  .btn-primary[disabled]:hover {
+    background: var(--accent);
+    transform: none;
+    box-shadow: 0 0 0 1px rgba(47, 143, 255, 0.25);
   }
 
   .btn-secondary {

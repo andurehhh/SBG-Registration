@@ -8,8 +8,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, hint, className = '', id, ...props }, ref) => {
+  ({ label, error, hint, className = '', id, required, ...props }, ref) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
+    const errorId = inputId ? `${inputId}-error` : undefined
+    const hintId = inputId ? `${inputId}-hint` : undefined
+    const describedBy = error ? errorId : hint ? hintId : undefined
 
     return (
       <div className="flex flex-col gap-1.5">
@@ -20,11 +23,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             style={{ color: 'var(--text)' }}
           >
             {label}
+            {required && (
+              <span style={{ color: 'var(--danger, #f87171)' }} aria-hidden="true"> *</span>
+            )}
           </label>
         )}
         <input
           ref={ref}
           id={inputId}
+          required={required}
+          aria-required={required || undefined}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
           className={[
             'w-full px-3 py-2.5 rounded-lg text-sm',
             'transition-all duration-150',
@@ -39,10 +49,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {error && (
-          <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
+          <p id={errorId} role="alert" className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{error}</p>
         )}
         {hint && !error && (
-          <p className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
+          <p id={hintId} className="text-[11px]" style={{ color: 'var(--text-secondary, #5f6d7e)' }}>{hint}</p>
         )}
       </div>
     )

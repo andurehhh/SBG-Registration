@@ -96,26 +96,45 @@ export default function RegisterPage() {
           {/* Privacy consent */}
           <div className="rounded-xl p-6 mb-6" style={{ border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
             <h2 className="text-base font-bold mb-2" style={{ color: 'var(--text)' }}>Data privacy</h2>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              We collect your details only to review your membership application, accessible only to SBG Core Team officers.{' '}
-              {!privacyOpen && (
-                <button onClick={() => setPrivacyOpen(true)} className="inline-flex items-center gap-0.5 font-semibold" style={{ color: 'var(--accent)' }}>
-                  Read more <ChevronDown size={13} />
-                </button>
-              )}
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary, var(--text))' }}>
+              We collect your details only to review your membership application, accessible only to SBG Core Team officers.
             </p>
-            {privacyOpen && (
-              <p className="text-sm leading-relaxed mt-2" style={{ color: 'var(--text-secondary)' }}>
-                The data we collect includes your student number, personal email, PUP webmail, gender, Certificate of Registration, and proof-of-share screenshot. It is used solely for verification and communication. Application documents (COR and screenshots) are deleted at the end of each semester.
-              </p>
-            )}
+
+            {/* Accessible disclosure */}
+            <div
+              id="privacy-details"
+              role="region"
+              aria-label="Full privacy details"
+              hidden={!privacyOpen}
+              className="text-sm leading-relaxed mt-2"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              The data we collect includes your student number, personal email, PUP webmail, gender, Certificate of Registration, and proof-of-share screenshot. It is used solely for verification and communication. Application documents (COR and screenshots) are deleted at the end of each semester.
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setPrivacyOpen((v) => !v)}
+              aria-expanded={privacyOpen}
+              aria-controls="privacy-details"
+              className="mt-2 inline-flex items-center gap-1 text-sm font-semibold rounded"
+              style={{ color: 'var(--accent-bright, var(--accent))' }}
+            >
+              {privacyOpen ? 'Read less' : 'Read more'}
+              <ChevronDown
+                size={14}
+                aria-hidden="true"
+                style={{ transform: privacyOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+              />
+            </button>
+
             <label className="flex items-start gap-3 cursor-pointer select-none mt-4">
               <input
                 type="checkbox"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="mt-0.5 w-5 h-5 shrink-0 cursor-pointer"
-                style={{ accentColor: '#2d9cdb' }}
+                style={{ accentColor: 'var(--accent)' }}
               />
               <span className="text-sm leading-relaxed" style={{ color: 'var(--text)' }}>
                 I understand and consent to how my data will be collected, used, and stored.
@@ -127,14 +146,24 @@ export default function RegisterPage() {
           <button
             onClick={() => setStarted(true)}
             disabled={!agreed}
+            aria-describedby={!agreed ? 'start-disabled-reason' : undefined}
             className="btn-primary w-full"
-            style={{ opacity: agreed ? 1 : 0.5, cursor: agreed ? 'pointer' : 'not-allowed', padding: '14px' }}
+            style={{ minHeight: '48px', padding: '14px' }}
           >
-            Start Application <ArrowRight size={16} />
+            Start Application <ArrowRight size={16} aria-hidden="true" />
           </button>
+          {!agreed && (
+            <p id="start-disabled-reason" className="text-xs text-center mt-2" style={{ color: 'var(--text-secondary)' }}>
+              Please agree to the data privacy notice above to continue.
+            </p>
+          )}
           <p className="text-sm text-center mt-4" style={{ color: 'var(--text-secondary)' }}>
             Already a member?{' '}
-            <button onClick={() => { setActiveTab('returning'); setStarted(true); setAgreed(true) }} className="font-semibold" style={{ color: 'var(--accent)' }}>
+            <button
+              onClick={() => { setActiveTab('returning'); setStarted(true); setAgreed(true) }}
+              className="font-semibold inline-flex items-center min-h-[44px] rounded"
+              style={{ color: 'var(--accent-bright, var(--accent))' }}
+            >
               Renew here
             </button>
           </p>
@@ -145,32 +174,40 @@ export default function RegisterPage() {
           {/* Back to intro */}
           <button
             onClick={() => setStarted(false)}
-            className="text-xs font-medium mb-4 inline-flex items-center gap-1.5"
+            className="text-sm font-medium mb-4 inline-flex items-center gap-1.5 min-h-[44px] rounded"
             style={{ color: 'var(--text-secondary)' }}
           >
-            <ArrowRight size={12} style={{ transform: 'rotate(180deg)' }} /> Back to details
+            <ArrowRight size={14} aria-hidden="true" style={{ transform: 'rotate(180deg)' }} /> Back to details
           </button>
 
           {/* Tabs */}
-          <div className="flex mb-5 rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+          <div role="tablist" aria-label="Application type" className="flex mb-5 rounded-lg overflow-hidden" style={{ border: '1px solid var(--border)' }}>
             <button
               type="button"
+              role="tab"
+              id="tab-new"
+              aria-selected={activeTab === 'new'}
+              aria-controls="panel-form"
               onClick={() => setActiveTab('new')}
-              className="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all"
+              className="flex-1 min-h-[44px] px-3 text-sm font-medium transition-all"
               style={{
                 background: activeTab === 'new' ? 'var(--accent)' : 'transparent',
-                color: activeTab === 'new' ? 'white' : 'var(--text-secondary)',
+                color: activeTab === 'new' ? '#ffffff' : 'var(--text-secondary)',
               }}
             >
               New Member
             </button>
             <button
               type="button"
+              role="tab"
+              id="tab-returning"
+              aria-selected={activeTab === 'returning'}
+              aria-controls="panel-form"
               onClick={() => setActiveTab('returning')}
-              className="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all"
+              className="flex-1 min-h-[44px] px-3 text-sm font-medium transition-all"
               style={{
                 background: activeTab === 'returning' ? 'var(--accent)' : 'transparent',
-                color: activeTab === 'returning' ? 'white' : 'var(--text-secondary)',
+                color: activeTab === 'returning' ? '#ffffff' : 'var(--text-secondary)',
               }}
             >
               Returning Member
@@ -190,7 +227,9 @@ export default function RegisterPage() {
           </div>
 
           {/* Form */}
-          {activeTab === 'new' ? <RegistrationForm /> : <RenewalForm />}
+          <div id="panel-form" role="tabpanel" aria-labelledby={activeTab === 'new' ? 'tab-new' : 'tab-returning'}>
+            {activeTab === 'new' ? <RegistrationForm /> : <RenewalForm />}
+          </div>
         </div>
       )}
     </div>

@@ -94,6 +94,8 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
         <Input
           label="Full Name"
           placeholder="Juan dela Cruz"
+          autoComplete="name"
+          required
           error={errors.full_name?.message}
           {...register('full_name')}
         />
@@ -101,6 +103,9 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
         <Input
           label="Student Number"
           placeholder="2026-12345-BN-0"
+          autoComplete="off"
+          inputMode="text"
+          required
           error={errors.student_number?.message}
           {...register('student_number')}
         />
@@ -110,6 +115,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
             label="Course"
             options={COURSE_OPTIONS}
             placeholder="Select course"
+            required
             error={errors.course?.message}
             value={courseSelection}
             onChange={(e) => {
@@ -133,6 +139,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
                 label="Year Level"
                 options={YEAR_OPTIONS}
                 placeholder="Select year level"
+                required
                 error={errors.year_level?.message}
                 value={field.value?.toString() ?? ''}
                 onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
@@ -145,6 +152,8 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
           <Input
             label="Specify your course"
             placeholder="e.g. BS Civil Engineering"
+            autoComplete="off"
+            required
             value={otherCourse}
             onChange={(e) => {
               const val = e.target.value
@@ -164,6 +173,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
               options={SECTION_OPTIONS}
               placeholder="Select section"
               hint="Each course and year level has two sections."
+              required
               error={errors.section?.message}
               {...field}
             />
@@ -173,7 +183,10 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
         <Input
           label="Personal Email"
           type="email"
+          inputMode="email"
+          autoComplete="email"
           placeholder="juan@gmail.com"
+          required
           error={errors.email?.message}
           {...register('email')}
         />
@@ -181,8 +194,11 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
         <Input
           label="PUP Webmail"
           type="email"
+          inputMode="email"
+          autoComplete="email"
           placeholder="juandelacruz@iskolarngbayan.pup.edu.ph"
           hint="Format: YourFullName@iskolarngbayan.pup.edu.ph"
+          required
           error={errors.scholar_email?.message}
           {...register('scholar_email')}
         />
@@ -195,6 +211,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
               label="Gender"
               options={GENDER_OPTIONS}
               placeholder="Select gender"
+              required
               error={errors.gender?.message}
               {...field}
             />
@@ -240,13 +257,13 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
             )}
           />
           {errors.skills && (
-            <p className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{errors.skills.message}</p>
+            <p role="alert" className="text-xs font-medium" style={{ color: 'var(--danger, #f87171)' }}>{errors.skills.message}</p>
           )}
         </div>
       </div>
 
       <Button type="submit" loading={isSubmitting} className="w-full mt-2">
-        Next →
+        Continue to Application Questions
       </Button>
     </form>
   )
