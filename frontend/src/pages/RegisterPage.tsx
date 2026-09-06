@@ -63,6 +63,14 @@ export default function RegisterPage() {
             <p className="text-sm sm:text-base mt-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Join the first tech organization at PUP Biñan. Get hands-on with AWS through workshops, hackathons, and certification pathways. Members also receive an official digital membership ID card.
             </p>
+            <button
+              type="button"
+              onClick={() => document.getElementById('privacy-consent')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              className="mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold"
+              style={{ color: 'var(--teal-bright)', border: '1px solid rgba(125,226,194,0.28)', background: 'var(--teal-dim)' }}
+            >
+              Review requirements and start <ArrowRight size={14} aria-hidden="true" />
+            </button>
           </div>
 
           {/* Before you apply + What you'll need — one panel */}
@@ -102,7 +110,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Privacy consent */}
-          <div className="rounded-xl p-6 mb-6" style={{ border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
+          <div id="privacy-consent" className="rounded-xl p-6 mb-6 scroll-mt-20" style={{ border: '1px solid var(--border)', background: 'var(--bg-raised)' }}>
             <h2 className="text-base font-bold mb-2" style={{ color: 'var(--text)' }}>Data privacy</h2>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary, var(--text))' }}>
               We collect your details only to review your membership application, accessible only to SBG Core Team officers.
@@ -148,6 +156,9 @@ export default function RegisterPage() {
                 I understand and consent to how my data will be collected, used, and stored.
               </span>
             </label>
+            <p className="mt-4 pt-4 text-xs leading-relaxed" style={{ color: 'var(--text-secondary)', borderTop: '1px solid var(--border)' }}>
+              Your information is reviewed only by the SBG Core Team and handled according to the privacy notice above.
+            </p>
           </div>
 
           {/* Start CTA */}
