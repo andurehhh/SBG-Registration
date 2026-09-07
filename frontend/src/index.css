@@ -43,7 +43,7 @@
   --border-hover: rgba(120, 165, 235, 0.3);
   --card: #0d1a2b;
   /* Grid lines lean slightly blue to read as a technical blueprint */
-  --grid-color: rgba(125, 226, 194, 0.065);
+  --grid-color: rgba(125, 226, 194, 0.09);
 }
 
 @layer base {
@@ -93,8 +93,8 @@
     /* Teal technical blueprint: community energy in the atmosphere, AWS blue
        reserved for actions and the primary interaction path. */
     background-image:
-      radial-gradient(ellipse 72% 55% at 50% -5%, rgba(0, 168, 143, 0.16), transparent 66%),
-      radial-gradient(ellipse 55% 60% at 0% 100%, rgba(0, 168, 143, 0.11), transparent 64%),
+      radial-gradient(ellipse 72% 55% at 50% -5%, rgba(0, 168, 143, 0.21), transparent 66%),
+      radial-gradient(ellipse 55% 60% at 0% 100%, rgba(0, 168, 143, 0.14), transparent 64%),
       radial-gradient(ellipse 45% 55% at 100% 72%, rgba(79, 143, 247, 0.08), transparent 64%),
       linear-gradient(150deg, #050d18 0%, #07111f 42%, #071b28 68%, #060f1c 100%),
       linear-gradient(var(--grid-color) 1px, transparent 1px),
@@ -203,15 +203,14 @@
 }
 
 @layer utilities {
-  /* Denser technical-grid overlay for section backgrounds. Absolutely positioned.
-     Faded with a radial mask so it never competes with foreground content. */
-  .grid-overlay {
+  .blueprint-grid {
     background-image:
-      linear-gradient(rgba(95, 150, 225, 0.09) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(95, 150, 225, 0.09) 1px, transparent 1px);
-    background-size: 34px 34px;
-    -webkit-mask-image: radial-gradient(ellipse 68% 60% at 50% 32%, #000 26%, transparent 78%);
-    mask-image: radial-gradient(ellipse 68% 60% at 50% 32%, #000 26%, transparent 78%);
+      linear-gradient(rgba(125, 226, 194, 0.075) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(125, 226, 194, 0.075) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.9;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.78) 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.78) 55%, transparent 100%);
   }
 
   /* Headline highlight — AWS blue gradient */
@@ -223,20 +222,6 @@
     color: transparent;
   }
 
-  /* Very soft teal radial glow behind an element (used behind the hero) */
-  .glow-teal,
-  .glow-blue {
-    position: relative;
-  }
-  .glow-teal::before,
-  .glow-blue::before {
-    content: "";
-    position: absolute;
-    inset: -20%;
-    background: radial-gradient(ellipse at center, rgba(0, 168, 143, 0.18), transparent 70%);
-    z-index: -1;
-    pointer-events: none;
-  }
 }
 
 /* Marquee */

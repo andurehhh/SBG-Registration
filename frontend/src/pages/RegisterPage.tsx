@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { ArrowRight, Check, ChevronDown } from 'lucide-react'
 import { RegistrationForm } from '../components/registration/RegistrationForm'
 import { RenewalForm } from '../components/registration/RenewalForm'
-import { BlueCubes } from '../components/ui/BlueCubes'
 
 type FormTab = 'new' | 'returning'
 
@@ -24,19 +23,10 @@ export default function RegisterPage() {
   const [privacyOpen, setPrivacyOpen] = useState(false)
 
   return (
-    <div data-theme="dark" style={{ background: 'var(--bg)' }} className="min-h-screen relative">
+    <div data-theme="dark" className="min-h-screen relative">
 
-      {/* Decorative technical grid + soft blue hero glow + blueprint accents */}
-      <div className="grid-overlay pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
-      <div
-        className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[60vh]"
-        aria-hidden="true"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 100% at 50% 0%, rgba(79,143,247,0.16), rgba(79,143,247,0.05) 40%, transparent 72%)',
-        }}
-      />
-      <BlueCubes />
+      {/* One restrained blueprint layer; content remains above it. */}
+      <div className="blueprint-grid pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', borderBottom: '1px solid var(--border)' }}>
@@ -58,19 +48,12 @@ export default function RegisterPage() {
               <span className="text-[11px] font-medium tracking-wide" style={{ color: 'var(--accent-bright)', fontFamily: 'var(--font-mono)' }}>MEMBERSHIP APPLICATION</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: 'var(--text)' }}>
-              Learn cloud computing.<br />Build real projects. <span className="gradient-text">Get hired.</span>
+              <span className="block">Learn cloud computing.</span>
+              <span className="block">Build real projects. <span className="gradient-text">Get hired.</span></span>
             </h1>
             <p className="text-sm sm:text-base mt-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Join the first tech organization at PUP Biñan. Get hands-on with AWS through workshops, hackathons, and certification pathways. Members also receive an official digital membership ID card.
             </p>
-            <button
-              type="button"
-              onClick={() => document.getElementById('privacy-consent')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-              className="mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold"
-              style={{ color: 'var(--teal-bright)', border: '1px solid rgba(125,226,194,0.28)', background: 'var(--teal-dim)' }}
-            >
-              Review requirements and start <ArrowRight size={14} aria-hidden="true" />
-            </button>
           </div>
 
           {/* Before you apply + What you'll need — one panel */}
@@ -156,9 +139,6 @@ export default function RegisterPage() {
                 I understand and consent to how my data will be collected, used, and stored.
               </span>
             </label>
-            <p className="mt-4 pt-4 text-xs leading-relaxed" style={{ color: 'var(--text-secondary)', borderTop: '1px solid var(--border)' }}>
-              Your information is reviewed only by the SBG Core Team and handled according to the privacy notice above.
-            </p>
           </div>
 
           {/* Start CTA */}
