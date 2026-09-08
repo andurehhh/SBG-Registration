@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>AWS SBG — Email Previews</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;background:#eef3fb;margin:0;padding:40px;color:#0a1526;}
+  .card{max-width:760px;margin:0 auto;background:#fff;border:1px solid #dbe4f3;border-radius:12px;padding:32px;}
+  h1{color:#052575;margin:0 0 4px;}
+  p.lead{color:#5f6d7e;margin:0 0 24px;}
+  ul{line-height:2.1;font-size:16px;padding-left:20px;}
+  a{color:#2f6fd6;font-weight:600;text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .meta{color:#5f6d7e;font-size:13px;font-weight:400;}
+  code{background:#eef3fb;padding:1px 6px;border-radius:4px;font-size:12px;}
+  .note{margin-top:24px;font-size:13px;color:#5f6d7e;border-top:1px solid #dbe4f3;padding-top:16px;}
+</style></head>
+<body>
+  <div class="card">
+    <h1>AWS SBG — Email Previews</h1>
+    <p class="lead">Rendered from the live template (<code>emailTemplate.ts</code>) with sample data. Every email shares the branded header and the footer that links our Meetup, Facebook, and Instagram.</p>
+    <ul>
+      <li><a href="./registration-received-with-cor.html">Registration received (COR attached)</a> <span class="meta">— <code>register()</code> · subject: “Application Received – SBG PUP Biñan”</span></li>
+      <li><a href="./registration-received-no-cor.html">Registration received (COR missing — reminder)</a> <span class="meta">— <code>register()</code> · subject: “Application Received – SBG PUP Biñan”</span></li>
+      <li><a href="./registration-confirmation.html">Registration confirmation</a> <span class="meta">— <code>registration-confirmation()</code> · subject: “Application received — AWS SBG PUP Biñan”</span></li>
+      <li><a href="./approved.html">Approved (with SBG ID)</a> <span class="meta">— <code>approve()</code> · subject: “You're in! — AWS SBG PUP Biñan”</span></li>
+      <li><a href="./approval-resend.html">Approval (resend — no ID)</a> <span class="meta">— <code>send-approval-email()</code> · subject: “Membership approved — AWS SBG PUP Biñan”</span></li>
+      <li><a href="./rejected.html">Application not approved</a> <span class="meta">— <code>reject()</code> · subject: “SBG Application Status Update”</span></li>
+      <li><a href="./announcement.html">Announcement (admin broadcast — no heading)</a> <span class="meta">— <code>send-announcement()</code> · subject: “New workshop: Serverless on AWS 🚀”</span></li>
+    </ul>
+    <p class="note">Regenerate anytime: <code>node supabase/functions/_shared/preview-emails.mjs</code></p>
+  </div>
+</body></html>

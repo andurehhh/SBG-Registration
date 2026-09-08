@@ -205,6 +205,13 @@ SQL migrations are in the `database/` directory (run them in order in the Supaba
 
 All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a logo header, the message body, and a footer that always links our Meetup, Facebook, and Instagram. The header logo is served from the frontend at `${APP_URL}/blue-logo.png` (override with `EMAIL_LOGO_URL`).
 
+Preview every email type locally (no sending required) — renders sample HTML into `docs/email-previews/`:
+
+```bash
+node supabase/functions/_shared/preview-emails.mjs
+# then open docs/email-previews/index.html in a browser
+```
+
 ### GitHub Actions setup
 
 1. Add `SUPABASE_SERVICE_ROLE_KEY` to your repository's Actions secrets
