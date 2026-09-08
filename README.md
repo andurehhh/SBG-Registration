@@ -258,7 +258,8 @@ SBG-Registration/
 │   ├── API.md                   # Edge Function & query reference
 │   ├── ADMIN-GUIDE.md           # Admin dashboard usage guide
 │   ├── DEVELOPER.md             # Setup & contribution guide
-│   └── SECURITY.md              # Auth, RLS, known risks
+│   ├── SECURITY.md              # Auth, RLS, known risks
+│   └── email-previews/          # Rendered sample emails (open index.html)
 │
 ├── lambda/
 │   └── email-sender/            # Python Lambda (Gmail SMTP)
