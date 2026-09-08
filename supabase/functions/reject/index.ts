@@ -1,15 +1,14 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { isRateLimited, getClientIp, CORS_HEADERS, corsResponse, rateLimitedResponse } from "../_shared/rateLimiter.ts";
+import { generateEmailHTML } from "../_shared/emailTemplate.ts";
 
 async function sendRejectionEmail(toEmail: string, fullName: string) {
-  const html = `<!DOCTYPE html><html><body style="background:#0f1117;color:#E2E8F0;font-family:Inter,sans-serif;padding:32px;">
-    <div style="max-width:600px;margin:0 auto;background:#1a1f2e;border-radius:8px;padding:32px;border:1px solid rgba(255,255,255,0.08);">
-      <h1 style="color:#ffffff;">Application Update</h1>
-      <p>Hi <strong>${fullName}</strong>,</p>
-      <p>Thank you for your interest in joining SBG. After careful review, your application was not approved at this time.</p>
-      <p>We encourage you to apply again in the future. Keep building!</p>
-    </div>
-  </body></html>`;
+  const html = generateEmailHTML({
+    recipientName: fullName,
+    heading: "Application update",
+    body: `Thank you for your interest in joining the <b>AWS Student Builder Group</b> – PUP Biñan.\n\nAfter careful review, your application was not approved at this time. This isn't the end of the road — we run recruitment every term, and we'd genuinely love to see you apply again.\n\nIn the meantime, join our community using the links below to keep learning and building with us.`,
+    signature: "Keep building,\nThe Core Team\nAWS Student Builder Group – PUP Biñan",
+  });
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",

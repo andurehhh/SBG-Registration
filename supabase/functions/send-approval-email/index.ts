@@ -36,8 +36,9 @@ Deno.serve(async (req) => {
 
     const html = generateEmailHTML({
       recipientName: member.full_name,
-      body: `Congratulations! Your application to the <b>AWS Student Builder Group</b> has been <b>approved</b>!\n\nYou are now an official member. You can view and download your digital membership ID here:\n${appUrl}/id-finder\n\nJoin our community on <a href="https://www.facebook.com/profile.php?id=61584279257151">Facebook</a> to stay connected with fellow builders and get event updates.`,
-      signature: "Welcome aboard!\nAWS Student Builder Group\nPUP Biñan Campus",
+      body: `Congratulations! Your application to the <b>AWS Student Builder Group</b> has been <b>approved</b>!\n\nYou are now an official member. You can view and download your digital membership ID here:\n<a href="${appUrl}/id-finder">${appUrl}/id-finder</a>\n\nJoin our community using the links below to stay connected with fellow builders and get event updates.`,
+      heading: "Welcome to the team!",
+      signature: "Welcome aboard,\nThe Core Team\nAWS Student Builder Group – PUP Biñan",
     });
 
     const { data: queuedEmail, error: insertError } = await supabase

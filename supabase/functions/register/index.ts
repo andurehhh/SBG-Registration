@@ -144,7 +144,7 @@ We have received your registration and are currently reviewing your application.
 
 We noticed you registered without uploading your Certificate of Registration (COR). Once you have your COR available, please submit it using the link below:
 
-<a href="${FRONTEND_URL}/submit-cor" style="display:inline-block;padding:10px 20px;background:#7C3AED;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Submit Your COR</a>
+<a href="${FRONTEND_URL}/submit-cor" style="display:inline-block;padding:10px 20px;background:#2f6fd6;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Submit Your COR</a>
 
 You will need your student number (<strong>${sanitize(studentNumber)}</strong>) to submit.`;
     }
@@ -157,7 +157,8 @@ In the meantime, if you have any questions, feel free to reach out to us.`;
     const html = generateEmailHTML({
       recipientName: fullName,
       body: emailBody,
-      signature: "Best regards,\nStudent Builder Group\nPUP Biñan Campus",
+      heading: "Application received!",
+      signature: "Best regards,\nThe Core Team\nAWS Student Builder Group – PUP Biñan",
     });
 
     const { data: queuedEmail, error: queueError } = await supabase

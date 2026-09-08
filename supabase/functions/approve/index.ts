@@ -56,8 +56,9 @@ Deno.serve(async (req) => {
     // Queue approval email and send immediately
     const html = generateEmailHTML({
       recipientName: member.full_name,
-      body: `Congratulations! Your application to the Student Builder Group (SBG) has been approved!\n\nYour SBG ID: ${sbgId}\n\nYou are now an official member of SBG PUP Biñan. Visit the portal to view and download your digital membership ID.`,
-      signature: "Welcome to the team!\nStudent Builder Group\nPUP Biñan Campus",
+      body: `Congratulations! Your application to the <b>AWS Student Builder Group</b> has been <b>approved</b>!\n\nYour SBG ID: <b>${sbgId}</b>\n\nYou are now an official member of AWS SBG – PUP Biñan. Visit the portal to view and download your digital membership ID, and join our community using the links below to get event updates.`,
+      heading: "Welcome to the team!",
+      signature: "Welcome aboard,\nThe Core Team\nAWS Student Builder Group – PUP Biñan",
     });
 
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
