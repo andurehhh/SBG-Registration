@@ -1,0 +1,39 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - button "Back to Registration" [ref=e8] [cursor=pointer]
+      - generic: Back to Registration
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - img "SBG Logo" [ref=e15]
+          - generic [ref=e16]:
+            - heading "Student Builder Group" [level=1] [ref=e17]
+            - paragraph [ref=e18]: PUP Biñan Campus
+        - heading "Submit your COR" [level=2] [ref=e19]
+        - paragraph [ref=e20]: Enter your student number to find your application, then upload your Certificate of Registration.
+      - generic [ref=e21]:
+        - generic [ref=e22]: Student Number
+        - textbox "Student number" [disabled] [ref=e26]:
+          - /placeholder: 2026-12345-BN-0
+          - text: 2026-12345-BN-0
+      - generic [ref=e33]:
+        - generic [ref=e34]: Application found for Juan dela Cruz. Upload your COR below.
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: Certificate of Registration (COR)
+            - generic [ref=e42]: REQUIRED
+          - generic [ref=e56]:
+            - generic [ref=e47]:
+              - paragraph [ref=e48]: cor.pdf
+              - paragraph [ref=e49]: 13 B · Ready to submit
+            - button "Remove file cor.pdf" [ref=e60] [cursor=pointer]
+          - button "Certificate of Registration (COR) REQUIRED" [ref=e50]
+          - paragraph [ref=e51]: Upload your COR from the PUP student portal. JPEG, PNG, or PDF — max 1 MB.
+        - button "Submit COR" [ref=e52] [cursor=pointer]
+      - paragraph [ref=e31]:
+        - text: Trouble uploading? Email your COR to
+        - link "sbg.pupbinan@gmail.com" [ref=e32] [cursor=pointer]:
+          - /url: mailto:sbg.pupbinan@gmail.com
+        - text: with your student number in the subject line.
+  - status

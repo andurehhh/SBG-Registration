@@ -49,16 +49,22 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: "Student number is required" }, { status: 400, headers: CORS_HEADERS });
     }
 
-    if (!corFile) {
-      return Response.json({ success: false, error: "COR file is required" }, { status: 400, headers: CORS_HEADERS });
-    }
+    // Two modes:
+    //   - "check" (no file): the frontend searches by student number first, so
+    //     it can reveal the upload UI only for a real pending applicant. Pending
+    //     members are hidden from the public view by RLS, so this lookup must
+    //     happen here (service role) rather than from the browser.
+    //   - "upload" (file present): validate + store the COR.
+    const isCheckOnly = !corFile;
 
-    // Validate file
-    if (!ALLOWED_MIME_TYPES.includes(corFile.type)) {
-      return Response.json({ success: false, error: "Invalid file type. Only JPEG, PNG, and PDF are allowed." }, { status: 400, headers: CORS_HEADERS });
-    }
-    if (corFile.size > MAX_FILE_SIZE) {
-      return Response.json({ success: false, error: "File too large. Maximum size is 1MB." }, { status: 400, headers: CORS_HEADERS });
+    // Validate the file up front only when uploading.
+    if (!isCheckOnly) {
+      if (!ALLOWED_MIME_TYPES.includes(corFile!.type)) {
+        return Response.json({ success: false, error: "Invalid file type. Only JPEG, PNG, and PDF are allowed." }, { status: 400, headers: CORS_HEADERS });
+      }
+      if (corFile!.size > MAX_FILE_SIZE) {
+        return Response.json({ success: false, error: "File too large. Maximum size is 1MB." }, { status: 400, headers: CORS_HEADERS });
+      }
     }
 
     // Check if member exists, is pending, and has no COR
@@ -78,6 +84,15 @@ Deno.serve(async (req) => {
 
     if (member.cor_url) {
       return Response.json({ success: false, error: "COR has already been submitted for this application." }, { status: 400, headers: CORS_HEADERS });
+    }
+
+    // Check-only mode: applicant is valid and awaiting a COR. Tell the frontend
+    // to reveal the upload step. No file was provided, so stop here.
+    if (isCheckOnly) {
+      return Response.json(
+        { success: true, data: { name: member.full_name, canUpload: true } },
+        { status: 200, headers: CORS_HEADERS }
+      );
     }
 
     // Upload to Cloudinary

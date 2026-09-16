@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - button "Back to Registration" [ref=e8] [cursor=pointer]
+      - generic: Back to Registration
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - img "SBG Logo" [ref=e15]
+          - generic [ref=e16]:
+            - heading "Student Builder Group" [level=1] [ref=e17]
+            - paragraph [ref=e18]: PUP Biñan Campus
+        - heading "Submit your COR" [level=2] [ref=e19]
+        - paragraph [ref=e20]: Enter your student number to find your application, then upload your Certificate of Registration.
+      - generic [ref=e64]:
+        - heading "COR submitted" [level=3] [ref=e68]
+        - paragraph [ref=e69]: Thanks, Juan dela Cruz! We've received your Certificate of Registration. Our team will continue reviewing your application and email you once a decision is made.
+  - status

@@ -1,0 +1,26 @@
+- generic [ref=f1e2]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e5]:
+      - button "Back to Registration" [ref=f1e6] [cursor=pointer]
+      - generic: Back to Registration
+    - generic [ref=f1e10]:
+      - generic [ref=f1e11]:
+        - generic [ref=f1e12]:
+          - img "SBG Logo" [ref=f1e13]
+          - generic [ref=f1e14]:
+            - heading "Student Builder Group" [level=1] [ref=f1e15]
+            - paragraph [ref=f1e16]: PUP Biñan Campus
+        - heading "Submit your COR" [level=2] [ref=f1e17]
+        - paragraph [ref=f1e18]: Enter your student number to find your application, then upload your Certificate of Registration.
+      - generic [ref=f1e19]:
+        - generic [ref=f1e20]: Student Number
+        - generic [ref=f1e21]:
+          - textbox "Student number" [ref=f1e24]:
+            - /placeholder: 2026-12345-BN-0
+          - button "Search" [ref=f1e25] [cursor=pointer]
+      - paragraph [ref=f1e29]:
+        - text: Trouble uploading? Email your COR to
+        - link "sbg.pupbinan@gmail.com" [ref=f1e30] [cursor=pointer]:
+          - /url: mailto:sbg.pupbinan@gmail.com
+        - text: with your student number in the subject line.
+  - status
