@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     }
 
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
-    const appUrl = Deno.env.get("APP_URL") || "https://sbg-registration.app";
+    const appUrl = (Deno.env.get("APP_URL") || "https://sbg-registration.vercel.app").replace(/\/$/, "");
 
     const html = generateEmailHTML({
       recipientName: member.full_name,

@@ -7,7 +7,7 @@
 
 // ── Brand constants ─────────────────────────────────────────────────────────
 // The frontend deployment hosts our image assets; APP_URL points at it.
-const APP_URL = (Deno.env.get("APP_URL") || "https://sbg-registration.app").replace(/\/$/, "");
+const APP_URL = (Deno.env.get("APP_URL") || "https://sbg-registration.vercel.app").replace(/\/$/, "");
 
 // Full horizontal logo lockup (blue mark + wordmark on transparent bg).
 // Override with EMAIL_LOGO_URL if the asset ever moves.

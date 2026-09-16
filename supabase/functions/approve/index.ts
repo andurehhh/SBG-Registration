@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
     if (updateError) throw updateError;
 
     // Queue approval email and send immediately
-    const appUrl = (Deno.env.get("APP_URL") || "https://sbg-registration.app").replace(/\/$/, "");
+    const appUrl = (Deno.env.get("APP_URL") || "https://sbg-registration.vercel.app").replace(/\/$/, "");
     const html = generateEmailHTML({
       recipientName: member.full_name,
       body: `Congratulations! Your membership application has been approved, and you are now officially part of the <b>AWS Student Builder Group – PUP Biñan</b> community.\n\nYour official SBG Member ID is:\n<b>${sbgId}</b>\n\nYou can view and download your digital membership ID here:\n<a href="${appUrl}/id-finder">${appUrl}/id-finder</a>\n\nAs the Lead and Founder, I'm excited to welcome you to a community where students learn, build, collaborate, and grow through cloud technology and hands-on experiences.\n\nHere at AWS, "It's Always Day One!" This reminds us to stay curious, keep learning, and approach every challenge with the excitement of a new beginning.\n\n<b>Stay connected through our official channels:</b>\n• Facebook Page: <a href="${SOCIAL_LINKS.facebook}">${SOCIAL_LINKS.facebook}</a>\n• Messenger Community: <a href="${SOCIAL_LINKS.messenger}">${SOCIAL_LINKS.messenger}</a>\n• Instagram: <a href="${SOCIAL_LINKS.instagram}">${SOCIAL_LINKS.instagram}</a>\n• Official Website: Coming soon — stay tuned!\n\nPlease join our <b>Messenger community first</b>, as it will be our primary channel for announcements, activities, and member coordination.\n\nWelcome to AWS SBG PUP Biñan. We're looking forward to learning and building with you!`,

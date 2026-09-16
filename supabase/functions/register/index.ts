@@ -6,8 +6,11 @@ import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "application/pdf"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
-// Update this to your production frontend URL
-const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://sbg-pupbinan.vercel.app";
+// Production frontend URL. Prefer APP_URL (used by all other email functions);
+// fall back to the legacy FRONTEND_URL secret, then the live default.
+const FRONTEND_URL = (
+  Deno.env.get("APP_URL") || Deno.env.get("FRONTEND_URL") || "https://sbg-registration.vercel.app"
+).replace(/\/$/, "");
 
 function sanitize(str: string): string {
   return str

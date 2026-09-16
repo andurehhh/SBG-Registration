@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
 
-    const appUrl = Deno.env.get("APP_URL") || "https://sbg-pupbinan.vercel.app";
+    const appUrl = (Deno.env.get("APP_URL") || "https://sbg-registration.vercel.app").replace(/\/$/, "");
     const hasCor = !!record.cor_url;
 
     const corNote = hasCor
