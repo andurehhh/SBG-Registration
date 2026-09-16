@@ -29,3 +29,16 @@ yarn-error.log*
 # IDE
 .vscode/
 .idea/
+
+# Playwright CLI test artifacts
+.playwright-cli/
+
+# Supabase CLI scratch (already ignored below, kept for clarity)
+supabase/.temp/
+
+# Email design export (not part of the app)
+aws-cloud-club-pupbc-3-emails-emailify-html-06-Sep-2026-5.12pm/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
