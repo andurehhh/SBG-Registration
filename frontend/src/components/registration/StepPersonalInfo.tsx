@@ -135,8 +135,9 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
               const val = e.target.value
               setCourseSelection(val)
               if (val === 'Other') {
-                // Keep whatever's typed (or empty) as the course value
-                setValue('course', otherCourse, { shouldValidate: !!otherCourse })
+                // Keep whatever's typed (or empty) as the course value.
+                // Always validate so an empty custom course is caught on submit.
+                setValue('course', otherCourse, { shouldValidate: true })
               } else {
                 setOtherCourse('')
                 setValue('course', val, { shouldValidate: true })

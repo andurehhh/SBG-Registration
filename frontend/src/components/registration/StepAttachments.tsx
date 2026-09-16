@@ -4,6 +4,7 @@ import { FileUpload } from '../ui/FileUpload'
 import { Button } from '../ui/Button'
 import { useRegistrationStore } from '../../store/registration'
 import { edgeFn, ApiError, fetchAppSettings } from '../../lib/api'
+import { registrationStep1Schema, registrationStep2Schema } from '../../lib/validations'
 
 interface StepAttachmentsProps {
   onBack: () => void
@@ -13,6 +14,7 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
   const store = useRegistrationStore()
   const [corError, setCorError] = useState<string | null>(null)
   const [proofError, setProofError] = useState<string | null>(null)
+  const [stepError, setStepError] = useState<string | null>(null)
   const [corRequired, setCorRequired] = useState(false)
   const [settingsLoaded, setSettingsLoaded] = useState(false)
 
@@ -25,6 +27,42 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setStepError(null)
+
+    // Re-validate the earlier steps against their schemas. StepAttachments is
+    // not a react-hook-form, so without this a blank field left in the store
+    // (e.g. via the "Other" course flow or editing after Back) would slip
+    // straight through to the server. Guard it here before building FormData.
+    const step1 = registrationStep1Schema.safeParse({
+      full_name: store.full_name,
+      student_number: store.student_number,
+      course: store.course,
+      year_level: store.year_level ?? undefined,
+      section: store.section,
+      email: store.email,
+      scholar_email: store.scholar_email,
+      gender: store.gender,
+      skills: store.skills,
+    })
+    if (!step1.success) {
+      setStepError(
+        'Some details in "Personal Information" are missing or invalid. Please go back and complete every required field.'
+      )
+      store.goToStep(1)
+      return
+    }
+
+    const step2 = registrationStep2Schema.safeParse({
+      why_join: store.why_join,
+      expectations: store.expectations,
+    })
+    if (!step2.success) {
+      setStepError(
+        'Your answers in "Application Questions" are incomplete. Each response needs at least 25 characters.'
+      )
+      store.goToStep(2)
+      return
+    }
 
     // Validate files present
     let hasError = false
@@ -107,7 +145,11 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
         />
       </div>
 
-
+      {stepError && (
+        <div role="alert" className="p-3 rounded-[8px] bg-red-900/20 border border-red-700/50 text-sm text-red-400">
+          {stepError}
+        </div>
+      )}
 
       {store.serverError && (
         <div className="p-3 rounded-[8px] bg-red-900/20 border border-red-700/50 text-sm text-red-400 font-mono">
