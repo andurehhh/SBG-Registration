@@ -186,6 +186,7 @@ SQL migrations are in the `database/` directory (run them in order in the Supaba
 4. `003_audit_log.sql` — audit log table
 5. `004_semester_management.sql` — redesigned SchoolYear with semester support
 6. `005_renewal_view.sql` — renewal verification view for returning members
+7. `006_drop_legacy_member_email_trigger.sql` — removes a legacy DB trigger that sent a duplicate confirmation email (the `register` Edge Function is the single source of truth)
 
 ---
 
@@ -197,13 +198,13 @@ SQL migrations are in the `database/` directory (run them in order in the Supaba
 2. **Queue**: Email inserted into `EmailQueue` table with `status='pending'`
 3. **Processing**: GitHub Actions cron runs every 1 minute
 4. **Sending**: Edge function retrieves pending emails and calls AWS Lambda
-5. **Lambda**: Connects via Gmail SMTP and sends email
+5. **Lambda**: Connects via Gmail SMTP and sends email (`lambda/email-sender/lambda_function.py`). The subject and HTML body are sent with an explicit UTF-8 charset so non-ASCII copy like "Biñan" and en-dashes deliver correctly.
 6. **Update**: Queue status updated to `'sent'` or `'failed'`
 7. **Retry**: Failed emails retry up to 3 times
 
 ### Branding
 
-All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a logo header, the message body, and a footer that always links our Meetup, Facebook, and Instagram. The header logo is served from the frontend at `${APP_URL}/blue-logo.png` (override with `EMAIL_LOGO_URL`).
+All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a logo header, the message body, and a footer that always links our Messenger community, Facebook, Instagram, and Meetup. The header logo is served from the frontend at `${APP_URL}/blue-logo.png` (override with `EMAIL_LOGO_URL`).
 
 Preview every email type locally (no sending required) — renders sample HTML into `docs/email-previews/`:
 

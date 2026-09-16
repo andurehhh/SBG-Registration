@@ -15,10 +15,11 @@ const LOGO_URL = Deno.env.get("EMAIL_LOGO_URL") || `${APP_URL}/blue-logo.png`;
 
 // Official community channels — surfaced in every email footer.
 export const SOCIAL_LINKS = {
-  meetup:
-    "https://www.meetup.com/aws-sbg-at-polytechnic-univ-of-the-philippines-binan-campus/?eventOrigin=home_groups_you_organize",
+  messenger: "https://m.me/ch/AbYQQFhNkbLp9Fg-/",
   facebook: "https://www.facebook.com/profile.php?id=61584279257151",
   instagram: "https://www.instagram.com/_awsccfrizz/",
+  meetup:
+    "https://www.meetup.com/aws-sbg-at-polytechnic-univ-of-the-philippines-binan-campus/?eventOrigin=home_groups_you_organize",
 } as const;
 
 const BRAND = {
@@ -146,17 +147,21 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
                     </p>
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
                       <tr>
-                        <td style="padding:0 8px;">
-                          <a href="${escapeAttr(SOCIAL_LINKS.meetup)}" target="_blank" rel="noopener noreferrer"
-                             style="display:inline-block;background-color:${BRAND.blueBright};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Meetup</a>
+                        <td style="padding:4px 6px;">
+                          <a href="${escapeAttr(SOCIAL_LINKS.messenger)}" target="_blank" rel="noopener noreferrer"
+                             style="display:inline-block;background-color:${BRAND.blueBright};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Messenger</a>
                         </td>
-                        <td style="padding:0 8px;">
+                        <td style="padding:4px 6px;">
                           <a href="${escapeAttr(SOCIAL_LINKS.facebook)}" target="_blank" rel="noopener noreferrer"
                              style="display:inline-block;background-color:${BRAND.blue};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Facebook</a>
                         </td>
-                        <td style="padding:0 8px;">
+                        <td style="padding:4px 6px;">
                           <a href="${escapeAttr(SOCIAL_LINKS.instagram)}" target="_blank" rel="noopener noreferrer"
                              style="display:inline-block;background-color:${BRAND.blueDark};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Instagram</a>
+                        </td>
+                        <td style="padding:4px 6px;">
+                          <a href="${escapeAttr(SOCIAL_LINKS.meetup)}" target="_blank" rel="noopener noreferrer"
+                             style="display:inline-block;background-color:${BRAND.blue};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Meetup</a>
                         </td>
                       </tr>
                     </table>
@@ -181,11 +186,13 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
                   <td align="center" style="padding:0 0 12px 0;">
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
                       <tr>
-                        ${socialCell("Meetup", SOCIAL_LINKS.meetup)}
+                        ${socialCell("Messenger", SOCIAL_LINKS.messenger)}
                         <td style="color:${BRAND.footerText};font-size:13px;">·</td>
                         ${socialCell("Facebook", SOCIAL_LINKS.facebook)}
                         <td style="color:${BRAND.footerText};font-size:13px;">·</td>
                         ${socialCell("Instagram", SOCIAL_LINKS.instagram)}
+                        <td style="color:${BRAND.footerText};font-size:13px;">·</td>
+                        ${socialCell("Meetup", SOCIAL_LINKS.meetup)}
                       </tr>
                     </table>
                   </td>

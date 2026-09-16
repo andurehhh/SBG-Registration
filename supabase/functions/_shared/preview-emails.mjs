@@ -26,7 +26,7 @@ globalThis.Deno = { env: { get: (k) => ({ APP_URL: APP }[k]) } }
 
 const templateTs = readFileSync(resolve(HERE, 'emailTemplate.ts'), 'utf8')
 const { code } = transformSync(templateTs, { loader: 'ts', format: 'esm' })
-const { generateEmailHTML } = await import('data:text/javascript,' + encodeURIComponent(code))
+const { generateEmailHTML, SOCIAL_LINKS } = await import('data:text/javascript,' + encodeURIComponent(code))
 
 // Each entry mirrors the body/heading/signature used by its Edge Function.
 const samples = [
@@ -37,9 +37,9 @@ const samples = [
     subject: 'Application Received – SBG PUP Biñan',
     opts: {
       recipientName: 'Juan dela Cruz',
-      heading: 'Application received!',
-      body: `Thank you for your application to the Student Builder Group (SBG)!\n\nWe have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.\n\nIn the meantime, if you have any questions, feel free to reach out to us.`,
-      signature: 'Best regards,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      heading: 'Application Received',
+      body: `Thank you for submitting your membership application to the <b>AWS Student Builder Group – PUP Biñan</b>.\n\nWe have received your application and attached copy of your Certificate of Registration (COR). Our team will review your application and contact you regarding the next steps.\n\nPlease make sure that the information you submitted is accurate and that your email remains accessible for future updates.\n\nThank you for your interest in joining our community.`,
+      signature: 'Best regards,\nAWS Student Builder Group – PUP Biñan',
     },
   },
   {
@@ -49,45 +49,45 @@ const samples = [
     subject: 'Application Received – SBG PUP Biñan',
     opts: {
       recipientName: 'Juan dela Cruz',
-      heading: 'Application received!',
-      body: `Thank you for your application to the Student Builder Group (SBG)!\n\nWe have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.\n\n<strong>Important: Submit your COR</strong>\n\nWe noticed you registered without uploading your Certificate of Registration (COR). Once you have your COR available, please submit it using the link below:\n\n<a href="${APP}/submit-cor" style="display:inline-block;padding:10px 20px;background:#2f6fd6;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Submit Your COR</a>\n\nYou will need your student number (<strong>2026-12345-BN-0</strong>) to submit.\n\nIn the meantime, if you have any questions, feel free to reach out to us.`,
-      signature: 'Best regards,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      heading: 'Application Received',
+      body: `Thank you for submitting your membership application to the <b>AWS Student Builder Group – PUP Biñan</b>.\n\nWe received your application, but we noticed that your Certificate of Registration (COR) was not included.\n\nPlease reply to this email with a clear copy of your COR or upload it through the membership website:\n\n<a href="${APP}/submit-cor" style="display:inline-block;padding:10px 20px;background:#2f6fd6;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Upload COR</a>\n\nYou'll need your student number (<strong>2026-12345-BN-0</strong>) to submit. Your application may not be processed until the required document is submitted.\n\nThank you for your cooperation.`,
+      signature: 'Best regards,\nAWS Student Builder Group – PUP Biñan',
     },
   },
   {
     id: 'registration-confirmation',
     label: 'Registration confirmation',
     fn: 'registration-confirmation()',
-    subject: 'Application received — AWS SBG PUP Biñan',
+    subject: 'Application Received — AWS SBG PUP Biñan',
     opts: {
       recipientName: 'Andrea Reyes',
-      heading: 'Application received!',
-      body: `Thank you for applying to the <b>AWS Student Builder Group</b> at PUP Biñan!\n\nWe've received your registration and our team is currently reviewing your application. You'll receive another email once we're done.\n\nIf you haven't submitted your COR yet, you can upload it here: <a href="${APP}/submit-cor">${APP}/submit-cor</a>\n\nWhile you wait, join our community using the links below, or reach us anytime at <a href="mailto:sbg.pupbinan@gmail.com">sbg.pupbinan@gmail.com</a>. You'll be the first to know when events and onboarding go live.`,
-      signature: 'See you in our next build,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      heading: 'Application Received',
+      body: `Your membership application to the <b>AWS Student Builder Group – PUP Biñan</b> has been successfully received.\n\nOur team will review the information and documents you submitted. You will receive another email once a decision has been made regarding your application.\n\nPlease keep your email accessible and check your inbox regularly for updates.\n\nThank you for your interest in becoming part of our community.`,
+      signature: 'Best regards,\nAWS Student Builder Group – PUP Biñan',
     },
   },
   {
     id: 'approved',
     label: 'Approved (with SBG ID)',
     fn: 'approve()',
-    subject: "You're in! — AWS SBG PUP Biñan",
+    subject: "You're In! Welcome to AWS SBG PUP Biñan",
     opts: {
       recipientName: 'Maria Santos',
-      heading: 'Welcome to the team!',
-      body: `Congratulations! Your application to the <b>AWS Student Builder Group</b> has been <b>approved</b>!\n\nYour SBG ID: <b>SBG-PUPBC-2026-0042</b>\n\nYou are now an official member of AWS SBG – PUP Biñan. Visit the portal to view and download your digital membership ID, and join our community using the links below to get event updates.`,
-      signature: 'Welcome aboard,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      heading: "You're In! Welcome to AWS SBG PUP Biñan",
+      body: `Congratulations! Your membership application has been approved, and you are now officially part of the <b>AWS Student Builder Group – PUP Biñan</b> community.\n\nYour official SBG Member ID is:\n<b>SBG-PUPBC-2026-0042</b>\n\nYou can view and download your digital membership ID here:\n<a href="${APP}/id-finder">${APP}/id-finder</a>\n\nAs the Lead and Founder, I'm excited to welcome you to a community where students learn, build, collaborate, and grow through cloud technology and hands-on experiences.\n\nHere at AWS, "It's Always Day One!" This reminds us to stay curious, keep learning, and approach every challenge with the excitement of a new beginning.\n\n<b>Stay connected through our official channels:</b>\n• Facebook Page: <a href="${SOCIAL_LINKS.facebook}">${SOCIAL_LINKS.facebook}</a>\n• Messenger Community: <a href="${SOCIAL_LINKS.messenger}">${SOCIAL_LINKS.messenger}</a>\n• Instagram: <a href="${SOCIAL_LINKS.instagram}">${SOCIAL_LINKS.instagram}</a>\n• Official Website: Coming soon — stay tuned!\n\nPlease join our <b>Messenger community first</b>, as it will be our primary channel for announcements, activities, and member coordination.\n\nWelcome to AWS SBG PUP Biñan. We're looking forward to learning and building with you!`,
+      signature: "Best regards,\nJohn Lexter Reyes\nLead and Founder\nAWS Student Builder Group – PUP Biñan",
     },
   },
   {
     id: 'approval-resend',
     label: 'Approval (resend — no ID)',
     fn: 'send-approval-email()',
-    subject: 'Membership approved — AWS SBG PUP Biñan',
+    subject: "You're In! Welcome to AWS SBG PUP Biñan",
     opts: {
       recipientName: 'Miguel Torres',
-      heading: 'Welcome to the team!',
-      body: `Congratulations! Your application to the <b>AWS Student Builder Group</b> has been <b>approved</b>!\n\nYou are now an official member. You can view and download your digital membership ID here:\n<a href="${APP}/id-finder">${APP}/id-finder</a>\n\nJoin our community using the links below to stay connected with fellow builders and get event updates.`,
-      signature: 'Welcome aboard,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      heading: "You're In! Welcome to AWS SBG PUP Biñan",
+      body: `Congratulations! Your membership application has been approved, and you are now officially part of the <b>AWS Student Builder Group – PUP Biñan</b> community.\n\nYou can view and download your official digital membership ID here:\n<a href="${APP}/id-finder">${APP}/id-finder</a>\n\nAs the Lead and Founder, I'm excited to welcome you to a community where students learn, build, collaborate, and grow through cloud technology and hands-on experiences.\n\nHere at AWS, "It's Always Day One!" This reminds us to stay curious, keep learning, and approach every challenge with the excitement of a new beginning.\n\n<b>Stay connected through our official channels:</b>\n• Facebook Page: <a href="${SOCIAL_LINKS.facebook}">${SOCIAL_LINKS.facebook}</a>\n• Messenger Community: <a href="${SOCIAL_LINKS.messenger}">${SOCIAL_LINKS.messenger}</a>\n• Instagram: <a href="${SOCIAL_LINKS.instagram}">${SOCIAL_LINKS.instagram}</a>\n• Official Website: Coming soon — stay tuned!\n\nPlease join our <b>Messenger community first</b>, as it will be our primary channel for announcements, activities, and member coordination.\n\nWelcome to AWS SBG PUP Biñan. We're looking forward to learning and building with you!`,
+      signature: "Best regards,\nJohn Lexter Reyes\nLead and Founder\nAWS Student Builder Group – PUP Biñan",
     },
   },
   {
@@ -97,20 +97,20 @@ const samples = [
     subject: 'SBG Application Status Update',
     opts: {
       recipientName: 'Paolo Cruz',
-      heading: 'Application update',
-      body: `Thank you for your interest in joining the <b>AWS Student Builder Group</b> – PUP Biñan.\n\nAfter careful review, your application was not approved at this time. This isn't the end of the road — we run recruitment every term, and we'd genuinely love to see you apply again.\n\nIn the meantime, join our community using the links below to keep learning and building with us.`,
-      signature: 'Keep building,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      heading: 'Application Status Update',
+      body: `Thank you for your interest in joining the <b>AWS Student Builder Group – PUP Biñan</b> and for taking the time to submit your application.\n\nAfter reviewing your application, we regret to inform you that it was not approved for the current membership intake.\n\nThis decision does not define your potential as a student or builder. We encourage you to continue learning, developing your skills, and watching our official channels for future opportunities, events, and application periods.\n\n• Facebook Page: <a href="${SOCIAL_LINKS.facebook}">${SOCIAL_LINKS.facebook}</a>\n• Instagram: <a href="${SOCIAL_LINKS.instagram}">${SOCIAL_LINKS.instagram}</a>\n• Official Website: Coming soon — stay tuned!\n\nThank you again for your interest in AWS SBG PUP Biñan.`,
+      signature: 'Best regards,\nAWS Student Builder Group – PUP Biñan',
     },
   },
   {
     id: 'announcement',
     label: 'Announcement (admin broadcast — no heading)',
     fn: 'send-announcement()',
-    subject: 'New workshop: Serverless on AWS 🚀',
+    subject: 'New Workshop: Serverless on AWS 🚀',
     opts: {
       recipientName: 'Bea Villanueva',
-      body: `We're kicking off our next hands-on session and you're invited!\n\n<b>Serverless on AWS</b> — build and deploy a real Lambda + API Gateway app in one sitting.\n\n<b>When:</b> Saturday, 2:00 PM\n<b>Where:</b> Google Meet (link sent to registrants)\n\nReserve your slot through our Meetup page below. Bring a laptop and your curiosity!`,
-      signature: 'See you there,\nThe Core Team\nAWS Student Builder Group – PUP Biñan',
+      body: `We're excited to announce our upcoming workshop on <b>Serverless on AWS</b>.\n\nIn this session, you'll learn how serverless technologies can help you build and deploy applications without managing traditional servers. This workshop is designed to be practical, beginner-friendly, and focused on helping you understand how cloud services work together.\n\n<b>Event details:</b>\n• Date: [Event date]\n• Time: [Event time]\n• Location/Platform: [Venue or meeting link]\n• Registration link: [Registration link]\n\nWhether you are new to AWS or already exploring cloud development, this is a great opportunity to learn, ask questions, and build alongside fellow student developers.\n\nWe hope to see you there!`,
+      signature: 'AWS Student Builder Group – PUP Biñan',
     },
   },
 ]

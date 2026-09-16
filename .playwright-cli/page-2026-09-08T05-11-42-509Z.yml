@@ -1,0 +1,100 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - link "AWS SBG - PUP Biñan" [ref=e6] [cursor=pointer]:
+        - /url: /
+    - generic [ref=e8]:
+      - button "Back to details" [ref=e67] [cursor=pointer]
+      - tablist "Application type" [ref=e70]:
+        - tab "New Member" [selected] [ref=e71] [cursor=pointer]
+        - tab "Returning Member" [ref=e72] [cursor=pointer]
+      - generic [ref=e52]:
+        - heading "Create your application" [level=2] [ref=e73]
+        - paragraph [ref=e54]: Fill out all three steps to complete your membership application.
+      - tabpanel "New Member" [ref=e74]:
+        - generic [ref=e76]:
+          - navigation "Registration progress" [ref=e77]:
+            - paragraph [ref=e78]: "Step 1 of 3: Personal Information"
+            - list [ref=e79]:
+              - listitem [ref=e80]:
+                - generic [ref=e82]:
+                  - generic [ref=e83]: "Current step:"
+                  - text: Personal Information
+              - listitem [ref=e84]:
+                - generic [ref=e86]:
+                  - generic [ref=e87]: "Upcoming:"
+                  - text: Application Questions
+              - listitem [ref=e88]:
+                - generic [ref=e90]:
+                  - generic [ref=e91]: "Upcoming:"
+                  - text: Attachments
+          - heading "Personal Information" [level=2] [ref=e92]
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - generic [ref=e97]:
+                - generic [ref=e98]: Full Name *
+                - textbox "Full Name" [ref=e99]:
+                  - /placeholder: Juan dela Cruz
+              - generic [ref=e100]:
+                - generic [ref=e101]: Student Number *
+                - textbox "Student Number" [ref=e102]:
+                  - /placeholder: 2026-12345-BN-0
+              - generic [ref=e103]:
+                - generic [ref=e104]:
+                  - generic [ref=e105]: Course *
+                  - combobox "Course" [ref=e106] [cursor=pointer]:
+                    - option "Select course" [disabled] [selected]
+                    - option "BS Information Technology"
+                    - option "BS Industrial Engineering"
+                    - option "BS Computer Engineering"
+                    - option "Other"
+                - generic [ref=e107]:
+                  - generic [ref=e108]: Year Level *
+                  - combobox "Year Level" [ref=e109] [cursor=pointer]:
+                    - option "Select year level" [disabled] [selected]
+                    - option "1st Year"
+                    - option "2nd Year"
+                    - option "3rd Year"
+                    - option "4th Year"
+                    - option "Ladderized"
+              - generic [ref=e110]:
+                - generic [ref=e111]: Section *
+                - combobox "Section" [ref=e112] [cursor=pointer]:
+                  - option "Select section" [disabled] [selected]
+                  - option "Section 1"
+                  - option "Section 2"
+                - paragraph [ref=e113]: Each course and year level has two sections.
+              - generic [ref=e114]:
+                - generic [ref=e115]: Personal Email *
+                - textbox "Personal Email" [ref=e116]:
+                  - /placeholder: juan@gmail.com
+              - generic [ref=e117]:
+                - generic [ref=e118]: PUP Webmail *
+                - textbox "PUP Webmail" [ref=e119]:
+                  - /placeholder: juandelacruz@iskolarngbayan.pup.edu.ph
+                - paragraph [ref=e120]: "Format: YourFullName@iskolarngbayan.pup.edu.ph"
+              - generic [ref=e121]:
+                - generic [ref=e122]: Gender *
+                - combobox "Gender" [ref=e123] [cursor=pointer]:
+                  - option "Select gender" [disabled] [selected]
+                  - option "Male"
+                  - option "Female"
+                  - option "Non-binary"
+                  - option "Prefer not to say"
+              - generic [ref=e124]:
+                - generic [ref=e125]: AWS Interests *
+                - group "AWS Interests" [ref=e126]:
+                  - button "Cloud Computing" [ref=e127] [cursor=pointer]
+                  - button "Machine Learning / AI" [ref=e128] [cursor=pointer]
+                  - button "Serverless" [ref=e129] [cursor=pointer]
+                  - button "Containers & Kubernetes" [ref=e130] [cursor=pointer]
+                  - button "DevOps & CI/CD" [ref=e131] [cursor=pointer]
+                  - button "Security" [ref=e132] [cursor=pointer]
+                  - button "Databases" [ref=e133] [cursor=pointer]
+                  - button "Networking" [ref=e134] [cursor=pointer]
+                  - button "IoT" [ref=e135] [cursor=pointer]
+                  - button "Web Development" [ref=e136] [cursor=pointer]
+                  - button "Mobile Development" [ref=e137] [cursor=pointer]
+                  - button "Data Analytics" [ref=e138] [cursor=pointer]
+            - button "Continue to Application Questions" [ref=e139] [cursor=pointer]
+  - status

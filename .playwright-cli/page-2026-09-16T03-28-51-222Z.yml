@@ -1,0 +1,38 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - button "Back to Registration" [ref=e8] [cursor=pointer]
+      - generic: Back to Registration
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - img "SBG Logo" [ref=e15]
+          - generic [ref=e16]:
+            - heading "Student Builder Group" [level=1] [ref=e17]
+            - paragraph [ref=e18]: PUP Biñan Campus
+        - heading "Submit your COR" [level=2] [ref=e19]
+        - paragraph [ref=e20]: Registered without a Certificate of Registration? Upload it here to complete your application.
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Student Number
+          - textbox "Student number" [invalid] [ref=e25]:
+            - /placeholder: 2026-12345-BN-0
+            - text: not-a-valid-number
+          - alert [ref=e51]: Student number must be in format 20XX-XXXXX-BN-X.
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]: Certificate of Registration (COR)
+            - generic [ref=e29]: REQUIRED
+          - button "Certificate of Registration (COR). Upload a file. Accepted formats JPEG, PNG or PDF, maximum 1 megabyte." [ref=e30] [cursor=pointer]:
+            - generic [ref=e34]:
+              - paragraph [ref=e35]: Drop file here or browse
+              - paragraph [ref=e36]: JPEG, PNG, or PDF — max 1 MB
+          - button "Certificate of Registration (COR) REQUIRED" [ref=e37]
+          - alert [ref=e48]: Please attach your Certificate of Registration.
+        - button "Submit COR" [active] [ref=e39] [cursor=pointer]
+        - paragraph [ref=e43]:
+          - text: Trouble uploading? Email your COR to
+          - link "sbg.pupbinan@gmail.com" [ref=e44] [cursor=pointer]:
+            - /url: mailto:sbg.pupbinan@gmail.com
+          - text: with your student number in the subject line.
+  - status

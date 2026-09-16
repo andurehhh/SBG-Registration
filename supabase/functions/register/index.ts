@@ -15,6 +15,45 @@ function sanitize(str: string): string {
     .replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
 }
 
+const STUDENT_NUMBER_REGEX = /^\d{4}-\d{5}-BN-\d$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const VALID_GENDERS = ["Male", "Female", "NonBinary", "PreferNotToSay"];
+
+/**
+ * Server-side validation of the registration payload. The client validates the
+ * same rules, but the backend is the real trust boundary — never insert empty
+ * or malformed required fields just because the client sent them.
+ * Returns an error message string, or null when the payload is valid.
+ */
+function validateRegistration(form: FormData): string | null {
+  const str = (k: string) => (form.get(k) as string | null)?.trim() ?? "";
+
+  const fullName = str("full_name");
+  if (fullName.length < 2 || fullName.length > 100) return "Full name must be 2–100 characters.";
+
+  if (!STUDENT_NUMBER_REGEX.test(str("student_number"))) return "Student number must be in format 20XX-XXXXX-BN-X.";
+
+  if (str("course").length < 1) return "Course is required.";
+
+  const yearLevel = parseInt(str("year_level"), 10);
+  if (!Number.isInteger(yearLevel) || yearLevel < 1 || yearLevel > 6) return "Year level is required.";
+
+  if (str("section").length < 1) return "Section is required.";
+
+  if (!EMAIL_REGEX.test(str("email"))) return "A valid personal email is required.";
+  if (!EMAIL_REGEX.test(str("scholar_email"))) return "A valid PUP webmail is required.";
+
+  if (!VALID_GENDERS.includes(str("gender"))) return "A valid gender selection is required.";
+
+  const skills = (form.getAll("skills") as string[]).filter((s) => s.trim().length > 0);
+  if (skills.length < 1) return "Please select at least one AWS interest.";
+
+  if (str("why_join").length < 25) return "Please write at least 25 characters about why you want to join.";
+  if (str("expectations").length < 25) return "Please write at least 25 characters about your expectations.";
+
+  return null;
+}
+
 async function uploadToCloudinary(fileBuffer: ArrayBuffer, mimeType: string, publicId: string): Promise<string> {
   const cloudName = Deno.env.get("CLOUDINARY_CLOUD_NAME")!;
   const apiKey = Deno.env.get("CLOUDINARY_API_KEY")!;
@@ -87,6 +126,13 @@ Deno.serve(async (req) => {
       if (file.size > MAX_FILE_SIZE) return Response.json({ success: false, error: "File size must be under 1MB" }, { status: 400, headers: CORS_HEADERS });
     }
 
+    // Validate required text fields server-side — never trust the client to
+    // have blocked blank/invalid inputs.
+    const validationError = validateRegistration(formData);
+    if (validationError) {
+      return Response.json({ success: false, error: validationError }, { status: 400, headers: CORS_HEADERS });
+    }
+
     const studentNumber = formData.get("student_number") as string;
 
     const { data: existing } = await supabase.from("Member").select("id, status").eq("student_number", studentNumber).single();
@@ -131,34 +177,40 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    // Build email body — include COR submission link if COR was not provided
+    // Build email body — copy differs depending on whether a COR was attached.
     const fullName = sanitize(formData.get("full_name") as string);
-    let emailBody = `Thank you for your application to the Student Builder Group (SBG)!
+    let emailBody: string;
 
-We have received your registration and are currently reviewing your application. You will be notified as soon as we complete our review process.`;
+    if (corFile) {
+      // COR attached — simple confirmation.
+      emailBody = `Thank you for submitting your membership application to the <b>AWS Student Builder Group – PUP Biñan</b>.
 
-    if (!corFile) {
-      emailBody += `
+We have received your application and attached copy of your Certificate of Registration (COR). Our team will review your application and contact you regarding the next steps.
 
-<strong>Important: Submit your COR</strong>
+Please make sure that the information you submitted is accurate and that your email remains accessible for future updates.
 
-We noticed you registered without uploading your Certificate of Registration (COR). Once you have your COR available, please submit it using the link below:
+Thank you for your interest in joining our community.`;
+    } else {
+      // COR missing — ask them to reply or upload.
+      emailBody = `Thank you for submitting your membership application to the <b>AWS Student Builder Group – PUP Biñan</b>.
 
-<a href="${FRONTEND_URL}/submit-cor" style="display:inline-block;padding:10px 20px;background:#2f6fd6;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Submit Your COR</a>
+We received your application, but we noticed that your Certificate of Registration (COR) was not included.
 
-You will need your student number (<strong>${sanitize(studentNumber)}</strong>) to submit.`;
+Please reply to this email with a clear copy of your COR or upload it through the membership website:
+
+<a href="${FRONTEND_URL}/submit-cor" style="display:inline-block;padding:10px 20px;background:#2f6fd6;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;margin:12px 0;">Upload COR</a>
+
+You'll need your student number (<strong>${sanitize(studentNumber)}</strong>) to submit. Your application may not be processed until the required document is submitted.
+
+Thank you for your cooperation.`;
     }
-
-    emailBody += `
-
-In the meantime, if you have any questions, feel free to reach out to us.`;
 
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
     const html = generateEmailHTML({
       recipientName: fullName,
       body: emailBody,
-      heading: "Application received!",
-      signature: "Best regards,\nThe Core Team\nAWS Student Builder Group – PUP Biñan",
+      heading: "Application Received",
+      signature: "Best regards,\nAWS Student Builder Group – PUP Biñan",
     });
 
     const { data: queuedEmail, error: queueError } = await supabase

@@ -1,0 +1,52 @@
+-- ============================================================
+-- SBG Portal — Drop Legacy Member Email Trigger
+-- Run this in Supabase SQL Editor AFTER 005_renewal_view.sql
+-- ============================================================
+-- Background:
+--   An untracked AFTER INSERT trigger on "Member" (`on_member_created`,
+--   backed by `on_member_created_trigger()`) queued a SECOND confirmation
+--   email on every registration, using old hardcoded inline HTML
+--   ("Thank you for your application to the Student Builder Group (SBG)!").
+--
+--   The `register` Edge Function already queues the correct, branded
+--   confirmation email. The trigger therefore produced a duplicate email
+--   with outdated copy for every applicant.
+--
+-- This migration:
+--   1. Drops the duplicate-email trigger on "Member"
+--   2. Drops its backing function
+--
+-- The `register` Edge Function is now the single source of truth for the
+-- registration confirmation email.
+--
+-- NOTE: This does NOT touch `member_updated_at` (the BEFORE UPDATE trigger
+--       that maintains updated_at via update_updated_at()) — that is kept.
+-- ============================================================
+
+-- ── Step 1: Drop the duplicate-email trigger ─────────────────────────────────
+DROP TRIGGER IF EXISTS on_member_created ON "Member";
+
+-- ── Step 2: Drop its backing function ────────────────────────────────────────
+DROP FUNCTION IF EXISTS public.on_member_created_trigger();
+
+-- ============================================================
+-- ROLLBACK (for reference only — recreates the legacy behavior):
+--
+-- CREATE OR REPLACE FUNCTION public.on_member_created_trigger()
+--   RETURNS trigger
+--   LANGUAGE plpgsql
+-- AS $function$
+-- DECLARE
+--   v_html TEXT;
+-- BEGIN
+--   v_html := '<html><body><p>Thank you for your application to the Student Builder Group (SBG)!</p><p>We have received your registration and are currently reviewing your application.</p></body></html>';
+--   INSERT INTO "EmailQueue" ("to", subject, html, from_email, status)
+--   VALUES (NEW.email, 'Application Received – SBG PUP Biñan', v_html, 'sbg.pupbinan@gmail.com', 'pending');
+--   RETURN NEW;
+-- END;
+-- $function$;
+--
+-- CREATE TRIGGER on_member_created
+--   AFTER INSERT ON public."Member"
+--   FOR EACH ROW EXECUTE FUNCTION on_member_created_trigger();
+-- ============================================================

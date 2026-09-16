@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { generateEmailHTML } from "../_shared/emailTemplate.ts";
+import { generateEmailHTML, SOCIAL_LINKS } from "../_shared/emailTemplate.ts";
 import { isRateLimited, getClientIp, CORS_HEADERS, corsResponse, rateLimitedResponse } from "../_shared/rateLimiter.ts";
 import { sendEmailViaLambda } from "../_shared/emailSender.ts";
 
@@ -54,17 +54,18 @@ Deno.serve(async (req) => {
     if (updateError) throw updateError;
 
     // Queue approval email and send immediately
+    const appUrl = (Deno.env.get("APP_URL") || "https://sbg-registration.app").replace(/\/$/, "");
     const html = generateEmailHTML({
       recipientName: member.full_name,
-      body: `Congratulations! Your application to the <b>AWS Student Builder Group</b> has been <b>approved</b>!\n\nYour SBG ID: <b>${sbgId}</b>\n\nYou are now an official member of AWS SBG – PUP Biñan. Visit the portal to view and download your digital membership ID, and join our community using the links below to get event updates.`,
-      heading: "Welcome to the team!",
-      signature: "Welcome aboard,\nThe Core Team\nAWS Student Builder Group – PUP Biñan",
+      body: `Congratulations! Your membership application has been approved, and you are now officially part of the <b>AWS Student Builder Group – PUP Biñan</b> community.\n\nYour official SBG Member ID is:\n<b>${sbgId}</b>\n\nYou can view and download your digital membership ID here:\n<a href="${appUrl}/id-finder">${appUrl}/id-finder</a>\n\nAs the Lead and Founder, I'm excited to welcome you to a community where students learn, build, collaborate, and grow through cloud technology and hands-on experiences.\n\nHere at AWS, "It's Always Day One!" This reminds us to stay curious, keep learning, and approach every challenge with the excitement of a new beginning.\n\n<b>Stay connected through our official channels:</b>\n• Facebook Page: <a href="${SOCIAL_LINKS.facebook}">${SOCIAL_LINKS.facebook}</a>\n• Messenger Community: <a href="${SOCIAL_LINKS.messenger}">${SOCIAL_LINKS.messenger}</a>\n• Instagram: <a href="${SOCIAL_LINKS.instagram}">${SOCIAL_LINKS.instagram}</a>\n• Official Website: Coming soon — stay tuned!\n\nPlease join our <b>Messenger community first</b>, as it will be our primary channel for announcements, activities, and member coordination.\n\nWelcome to AWS SBG PUP Biñan. We're looking forward to learning and building with you!`,
+      heading: "You're In! Welcome to AWS SBG PUP Biñan",
+      signature: "Best regards,\nJohn Lexter Reyes\nLead and Founder\nAWS Student Builder Group – PUP Biñan",
     });
 
     const fromEmail = Deno.env.get("GMAIL_ADDRESS")!;
     const { data: queuedEmail, error: queueError } = await supabase.from("EmailQueue").insert({
       to: member.email,
-      subject: "Welcome to SBG! Your Membership is Approved",
+      subject: "You're In! Welcome to AWS SBG PUP Biñan",
       html,
       from_email: fromEmail,
       status: "pending",
