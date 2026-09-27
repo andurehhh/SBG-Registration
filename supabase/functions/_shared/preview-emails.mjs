@@ -19,7 +19,7 @@ const REPO_ROOT = resolve(HERE, '../../..')
 const OUT_DIR = resolve(REPO_ROOT, 'docs/email-previews')
 
 // Preview-only value; the real URL comes from the APP_URL secret at runtime.
-const APP = 'https://master.d2wu91yk4gkty0.amplifyapp.com'
+const APP = 'https://sbg-registration.vercel.app'
 
 // For local previews, point the banners at the actual assets served
 // from the frontend's public/ folder (see the preview command in the README).

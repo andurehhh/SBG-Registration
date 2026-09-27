@@ -8,4 +8,4 @@ supabase secrets set \
   CLOUDINARY_API_SECRET=your_api_secret \
   RESEND_API_KEY=re_xxxxxxxxxxxx \
   RESEND_FROM_EMAIL="SBG Portal <noreply@yourdomain.com>" \
-  APP_URL=https://master.d2wu91yk4gkty0.amplifyapp.com
+  APP_URL=https://sbg-registration.vercel.app

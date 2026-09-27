@@ -39,9 +39,6 @@ const BRAND = {
   border: "#dbe4f3",
 } as const;
 
-const ADDRESS = "Barangay Zapote, Biñan, Laguna, Philippines";
-const TAGLINE = "It's Always Day One!";
-
 interface EmailTemplateOptions {
   recipientName: string;
   /** Body content. May contain simple HTML (links, <b>) and newlines. */
@@ -66,16 +63,8 @@ function nl2br(value: string): string {
   return value.replace(/\r?\n/g, "<br>");
 }
 
-function socialCell(label: string, href: string): string {
-  return `<td style="padding:0 10px;">
-        <a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer"
-           style="color:${BRAND.footerText};text-decoration:none;font-size:13px;font-weight:600;font-family:Arial,Helvetica,sans-serif;">${label}</a>
-      </td>`;
-}
-
 export function generateEmailHTML(options: EmailTemplateOptions): string {
   const { recipientName, body, signature, heading } = options;
-  const year = new Date().getFullYear();
 
   const headingHtml = heading
     ? `<tr><td style="padding:0 0 12px 0;">
@@ -140,53 +129,11 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
             </td>
           </tr>
 
-          <!-- Footer: branded footer banner, then links + info -->
+          <!-- Footer: branded footer banner (socials + info baked into the image) -->
           <tr>
             <td align="center" style="padding:0;background-color:${BRAND.footerBg};font-size:0;line-height:0;">
-              <img src="${escapeAttr(FOOTER_IMAGE_URL)}" alt="AWS Student Builder Group – PUP Biñan"
+              <img src="${escapeAttr(FOOTER_IMAGE_URL)}" alt="AWS Student Builder Group – PUP Biñan · It's Always Day One"
                    width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;">
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:22px 32px 28px 32px;background-color:${BRAND.footerBg};">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center" style="padding:0 0 12px 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                      <tr>
-                        ${socialCell("Messenger", SOCIAL_LINKS.messenger)}
-                        <td style="color:${BRAND.footerText};font-size:13px;">·</td>
-                        ${socialCell("Facebook", SOCIAL_LINKS.facebook)}
-                        <td style="color:${BRAND.footerText};font-size:13px;">·</td>
-                        ${socialCell("Instagram", SOCIAL_LINKS.instagram)}
-                        <td style="color:${BRAND.footerText};font-size:13px;">·</td>
-                        ${socialCell("Meetup", SOCIAL_LINKS.meetup)}
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center" style="padding:0 0 6px 0;">
-                    <p style="margin:0;color:${BRAND.footerText};font-size:12px;line-height:1.5;font-family:Arial,Helvetica,sans-serif;">
-                      ${ADDRESS}
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center" style="padding:0 0 4px 0;">
-                    <p style="margin:0;color:#ffffff;font-size:12px;font-style:italic;font-family:Arial,Helvetica,sans-serif;">
-                      &ldquo;${TAGLINE}&rdquo;
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">
-                    <p style="margin:0;color:${BRAND.footerText};font-size:11px;font-family:Arial,Helvetica,sans-serif;">
-                      &copy; ${year} AWS Student Builder Group – PUP Biñan Campus
-                    </p>
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
 
