@@ -201,7 +201,7 @@ SQL migrations are in the `database/` directory (run them in order in the Supaba
 
 ### Branding
 
-All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a header banner image (`${APP_URL}/emailHeader.png`, served from the frontend's `public/` folder), the message body, and a footer that repeats the banner and always links our Messenger community, Facebook, Instagram, and Meetup. The banner must be deployed to the frontend for it to render in sent emails.
+All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a header banner image (`${APP_URL}/emailHeader.png`), the message body, and a footer banner image (`${APP_URL}/emailFooter.png`) above the community links (Messenger, Facebook, Instagram, Meetup). Both banners are served from the frontend's `public/` folder and must be deployed to the frontend for them to render in sent emails.
 
 Preview every email type locally (no sending required) — renders sample HTML into `docs/email-previews/`:
 
@@ -291,8 +291,9 @@ SBG-Registration/
 | `GMAIL_APP_PASSWORD` | Gmail app password (16-char token) |
 | `LAMBDA_EMAIL_ENDPOINT` | AWS API Gateway URL for email Lambda |
 | `LAMBDA_API_KEY` | API key for Lambda endpoint |
-| `APP_URL` | Frontend URL (used in email links and the header banner image) |
+| `APP_URL` | Frontend URL (used in email links and the header/footer banner images) |
 | `EMAIL_HEADER_URL` | Optional — overrides the email header banner image (defaults to `${APP_URL}/emailHeader.png`) |
+| `EMAIL_FOOTER_URL` | Optional — overrides the email footer banner image (defaults to `${APP_URL}/emailFooter.png`) |
 
 ### GitHub Actions Secrets
 
