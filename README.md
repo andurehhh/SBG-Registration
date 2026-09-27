@@ -151,9 +151,6 @@ Required secrets:
 - `LAMBDA_EMAIL_ENDPOINT`, `LAMBDA_API_KEY`
 - `APP_URL`
 
-Optional:
-- `EMAIL_LOGO_URL` — overrides the branded email header logo (defaults to `${APP_URL}/blue-logo.png`)
-
 ### Deploy Edge Functions
 
 ```bash
@@ -204,7 +201,7 @@ SQL migrations are in the `database/` directory (run them in order in the Supaba
 
 ### Branding
 
-All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a logo header, the message body, and a footer that always links our Messenger community, Facebook, Instagram, and Meetup. The header logo is served from the frontend at `${APP_URL}/blue-logo.png` (override with `EMAIL_LOGO_URL`).
+All emails share one branded, table-based template (`supabase/functions/_shared/emailTemplate.ts`) — a header banner image (`${APP_URL}/emailHeader.png`, served from the frontend's `public/` folder), the message body, and a footer that repeats the banner and always links our Messenger community, Facebook, Instagram, and Meetup. The banner must be deployed to the frontend for it to render in sent emails.
 
 Preview every email type locally (no sending required) — renders sample HTML into `docs/email-previews/`:
 
@@ -294,8 +291,8 @@ SBG-Registration/
 | `GMAIL_APP_PASSWORD` | Gmail app password (16-char token) |
 | `LAMBDA_EMAIL_ENDPOINT` | AWS API Gateway URL for email Lambda |
 | `LAMBDA_API_KEY` | API key for Lambda endpoint |
-| `APP_URL` | Frontend URL (used in email links and the branded email logo) |
-| `EMAIL_LOGO_URL` | Optional — overrides the email header logo (defaults to `${APP_URL}/blue-logo.png`) |
+| `APP_URL` | Frontend URL (used in email links and the header banner image) |
+| `EMAIL_HEADER_URL` | Optional — overrides the email header banner image (defaults to `${APP_URL}/emailHeader.png`) |
 
 ### GitHub Actions Secrets
 

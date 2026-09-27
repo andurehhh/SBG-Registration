@@ -18,11 +18,16 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, '../../..')
 const OUT_DIR = resolve(REPO_ROOT, 'docs/email-previews')
 
-// Preview-only value; the real logo URL comes from the APP_URL secret at runtime.
+// Preview-only value; the real URL comes from the APP_URL secret at runtime.
 const APP = 'https://master.d2wu91yk4gkty0.amplifyapp.com'
 
+// For local previews, point the banners at the actual assets served
+// from the frontend's public/ folder (see the preview command in the README).
+const LOCAL_HEADER = process.env.PREVIEW_HEADER_URL || `${APP}/emailHeader.png`
+const LOCAL_FOOTER = process.env.PREVIEW_FOOTER_URL || `${APP}/emailFooter.png`
+
 // Stub Deno.env so the Deno template module runs under Node.
-globalThis.Deno = { env: { get: (k) => ({ APP_URL: APP }[k]) } }
+globalThis.Deno = { env: { get: (k) => ({ APP_URL: APP, EMAIL_HEADER_URL: LOCAL_HEADER, EMAIL_FOOTER_URL: LOCAL_FOOTER }[k]) } }
 
 const templateTs = readFileSync(resolve(HERE, 'emailTemplate.ts'), 'utf8')
 const { code } = transformSync(templateTs, { loader: 'ts', format: 'esm' })

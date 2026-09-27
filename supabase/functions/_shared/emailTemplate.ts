@@ -9,9 +9,13 @@
 // The frontend deployment hosts our image assets; APP_URL points at it.
 const APP_URL = (Deno.env.get("APP_URL") || "https://sbg-registration.vercel.app").replace(/\/$/, "");
 
-// Full horizontal logo lockup (blue mark + wordmark on transparent bg).
-// Override with EMAIL_LOGO_URL if the asset ever moves.
-const LOGO_URL = Deno.env.get("EMAIL_LOGO_URL") || `${APP_URL}/blue-logo.png`;
+// Branded header banner (contains the group name + campus text baked in).
+// Served from the frontend's public/ folder. Override with EMAIL_HEADER_URL.
+const HEADER_IMAGE_URL = Deno.env.get("EMAIL_HEADER_URL") || `${APP_URL}/emailHeader.png`;
+
+// Branded footer banner. Served from the frontend's public/ folder.
+// Override with EMAIL_FOOTER_URL.
+const FOOTER_IMAGE_URL = Deno.env.get("EMAIL_FOOTER_URL") || `${APP_URL}/emailFooter.png`;
 
 // Official community channels — surfaced in every email footer.
 export const SOCIAL_LINKS = {
@@ -106,11 +110,11 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
       <td align="center" style="padding:24px 12px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:${BRAND.cardBg};border:1px solid ${BRAND.border};border-radius:12px;overflow:hidden;">
 
-          <!-- Header -->
+          <!-- Header: branded banner image (group name + campus baked in) -->
           <tr>
-            <td align="center" style="padding:28px 32px 20px 32px;background-color:${BRAND.cardBg};border-bottom:1px solid ${BRAND.border};">
-              <img src="${escapeAttr(LOGO_URL)}" alt="AWS Student Builder Group – PUP Biñan"
-                   width="300" style="display:block;width:300px;max-width:80%;height:auto;border:0;outline:none;text-decoration:none;">
+            <td align="center" style="padding:0;background-color:${BRAND.footerBg};font-size:0;line-height:0;">
+              <img src="${escapeAttr(HEADER_IMAGE_URL)}" alt="AWS Student Builder Group – Polytechnic University of the Philippines"
+                   width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;">
             </td>
           </tr>
 
@@ -136,52 +140,16 @@ export function generateEmailHTML(options: EmailTemplateOptions): string {
             </td>
           </tr>
 
-          <!-- Community channels callout -->
+          <!-- Footer: branded footer banner, then links + info -->
           <tr>
-            <td style="padding:0 32px 8px 32px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${BRAND.pageBg};border-radius:10px;">
-                <tr>
-                  <td align="center" style="padding:18px 16px;">
-                    <p style="margin:0 0 12px 0;color:${BRAND.blueDark};font-size:13px;font-weight:700;letter-spacing:0.4px;font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;">
-                      Stay connected with the community
-                    </p>
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                      <tr>
-                        <td style="padding:4px 6px;">
-                          <a href="${escapeAttr(SOCIAL_LINKS.messenger)}" target="_blank" rel="noopener noreferrer"
-                             style="display:inline-block;background-color:${BRAND.blueBright};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Messenger</a>
-                        </td>
-                        <td style="padding:4px 6px;">
-                          <a href="${escapeAttr(SOCIAL_LINKS.facebook)}" target="_blank" rel="noopener noreferrer"
-                             style="display:inline-block;background-color:${BRAND.blue};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Facebook</a>
-                        </td>
-                        <td style="padding:4px 6px;">
-                          <a href="${escapeAttr(SOCIAL_LINKS.instagram)}" target="_blank" rel="noopener noreferrer"
-                             style="display:inline-block;background-color:${BRAND.blueDark};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Instagram</a>
-                        </td>
-                        <td style="padding:4px 6px;">
-                          <a href="${escapeAttr(SOCIAL_LINKS.meetup)}" target="_blank" rel="noopener noreferrer"
-                             style="display:inline-block;background-color:${BRAND.blue};color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;font-family:Arial,Helvetica,sans-serif;padding:9px 16px;border-radius:8px;">Meetup</a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
+            <td align="center" style="padding:0;background-color:${BRAND.footerBg};font-size:0;line-height:0;">
+              <img src="${escapeAttr(FOOTER_IMAGE_URL)}" alt="AWS Student Builder Group – PUP Biñan"
+                   width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;">
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
-            <td style="padding:24px 32px 28px 32px;background-color:${BRAND.footerBg};">
+            <td style="padding:22px 32px 28px 32px;background-color:${BRAND.footerBg};">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center" style="padding:0 0 10px 0;">
-                    <p style="margin:0;color:#ffffff;font-size:15px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">
-                      AWS Student Builder Group – PUP Biñan
-                    </p>
-                  </td>
-                </tr>
                 <tr>
                   <td align="center" style="padding:0 0 12px 0;">
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
