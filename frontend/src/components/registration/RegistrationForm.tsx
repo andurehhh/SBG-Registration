@@ -94,8 +94,9 @@ export function RegistrationForm() {
   return (
     <Card>
       <div className="flex flex-col gap-6">
-        {/* Step indicator at the top so users always see where they are */}
-        <ProgressBar current={store.currentStep} total={3} />
+        <div className="registration-progress-sticky">
+          <ProgressBar current={store.currentStep} total={3} />
+        </div>
 
         <h2 className="font-sans text-lg font-bold" style={{ color: 'var(--text)' }}>
           {stepTitle}

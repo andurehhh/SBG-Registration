@@ -1,7 +1,7 @@
 // frontend/src/components/registration/StepPersonalInfo.tsx
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '../ui/Input'
 import { Select } from '../ui/Select'
 import { Button } from '../ui/Button'
@@ -58,6 +58,7 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegistrationStep1Data>({
     resolver: zodResolver(registrationStep1Schema),
@@ -73,6 +74,17 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
       skills: store.skills,
     },
   })
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      const fields = ['full_name', 'student_number', 'course', 'year_level', 'section', 'email', 'scholar_email', 'gender', 'skills'] as const
+      fields.forEach((field) => {
+        const value = values[field]
+        if (value !== undefined) store.setField(field, value as never)
+      })
+    })
+    return () => subscription.unsubscribe()
+  }, [watch, store])
 
   async function onSubmit(data: RegistrationStep1Data) {
     store.setField('full_name', data.full_name)

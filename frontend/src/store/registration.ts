@@ -1,6 +1,9 @@
 // frontend/src/store/registration.ts
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { Gender } from '../types'
+
+export const REGISTRATION_DRAFT_STORAGE_KEY = 'sbg-registration-draft'
 
 type SubmissionStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -84,7 +87,7 @@ function initialHeardFrom(): string {
   return map[utm.toLowerCase()] || ''
 }
 
-export const useRegistrationStore = create<RegistrationState>((set) => ({
+export const useRegistrationStore = create<RegistrationState>()(persist((set) => ({
   ...initialState,
 
   setField: (key, value) => set({ [key]: value } as Partial<RegistrationState>),
@@ -98,4 +101,26 @@ export const useRegistrationStore = create<RegistrationState>((set) => ({
   setServerError: (msg) => set({ serverError: msg }),
 
   reset: () => set(initialState),
+}), {
+  name: REGISTRATION_DRAFT_STORAGE_KEY,
+  partialize: (state) => ({
+    currentStep: state.currentStep,
+    isFlipping: false,
+    full_name: state.full_name,
+    student_number: state.student_number,
+    course: state.course,
+    year_level: state.year_level,
+    section: state.section,
+    email: state.email,
+    scholar_email: state.scholar_email,
+    gender: state.gender,
+    skills: state.skills,
+    why_join: state.why_join,
+    expectations: state.expectations,
+    // File objects cannot be restored after a refresh. Applicants will be
+    // prompted to re-attach them on the attachments step.
+    heard_from: state.heard_from,
+    submissionStatus: 'idle' as SubmissionStatus,
+    serverError: null,
+  }),
 }))

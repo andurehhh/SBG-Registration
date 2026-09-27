@@ -1,6 +1,6 @@
 // frontend/src/components/admin/AdminSidebar.tsx
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, BarChart2, Megaphone, ClipboardList, Settings as SettingsIcon, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, BarChart2, Megaphone, ClipboardList, Settings as SettingsIcon, LogOut, X } from 'lucide-react'
 import { useAdminStore } from '../../store/admin'
 
 const NAV_ITEMS = [
@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { to: `/${__ADMIN_PATH__}/settings`, label: 'Settings', icon: SettingsIcon },
 ]
 
-export function AdminSidebar() {
+export function AdminSidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose: () => void }) {
   const navigate = useNavigate()
   const { logout } = useAdminStore()
 
@@ -22,17 +22,17 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside
-      style={{ width: '240px', minWidth: '240px' }}
-      className="flex flex-col h-full bg-sbg-surface border-r border-white/[0.06]"
-    >
+    <>
+      {mobileOpen && <button type="button" className="admin-scrim" onClick={onClose} aria-label="Close admin navigation" />}
+      <aside className={['admin-sidebar flex flex-col h-full bg-sbg-surface border-r border-white/[0.06]', mobileOpen ? 'is-open' : ''].join(' ')}>
       {/* Logo + Title */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.06]">
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/[0.06] admin-sidebar-header">
         <img src="/sbg-logo-white.svg" alt="SBG" className="h-7 w-7 flex-shrink-0" />
         <div>
           <p className="font-sans font-bold text-white text-sm leading-tight">Student Builder Group</p>
           <p className="text-sbg-text-muted text-xs font-mono">Admin Panel</p>
         </div>
+        <button type="button" className="admin-close-button" onClick={onClose} aria-label="Close admin navigation"><X size={18} aria-hidden="true" /></button>
       </div>
 
       {/* Navigation */}
@@ -49,6 +49,7 @@ export function AdminSidebar() {
                   : 'text-sbg-text-muted hover:text-white hover:bg-white/5',
               ].join(' ')
             }
+            onClick={onClose}
           >
             <Icon className="w-4 h-4 flex-shrink-0" />
             {label}
@@ -80,6 +81,7 @@ export function AdminSidebar() {
           Logout
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   )
 }

@@ -1,4 +1,5 @@
 // frontend/src/components/registration/StepApplicationQuestions.tsx
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Textarea } from '../ui/Textarea'
@@ -40,6 +41,14 @@ export function StepApplicationQuestions({ onNext, onBack }: StepApplicationQues
 
   const whyJoinValue = watch('why_join', store.why_join)
   const expectationsValue = watch('expectations', store.expectations)
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      if (values.why_join !== undefined) store.setField('why_join', values.why_join)
+      if (values.expectations !== undefined) store.setField('expectations', values.expectations)
+    })
+    return () => subscription.unsubscribe()
+  }, [watch, store])
 
   function onSubmit(data: RegistrationStep2Data) {
     store.setField('why_join', data.why_join)

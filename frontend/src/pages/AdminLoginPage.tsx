@@ -37,55 +37,26 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sbg-black flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center gap-3 mb-8">
-          <img src="/sbg-logo-white.svg" alt="SBG Logo" className="h-12 w-12" />
-          <div className="text-center">
-          <h1 className="font-bold text-white text-xl">SBG Admin</h1>
-          <p className="text-sbg-text-muted text-xs">AWS Student Builder Group</p>
-          </div>
+    <div className="admin-login-page">
+      <div className="admin-login-grid" aria-hidden="true" />
+      <div className="admin-login-wrap">
+        <div className="admin-login-brand">
+          <div className="admin-login-mark"><img src="/sbg-logo-white.svg" alt="" /></div>
+          <div><p>STUDENT BUILDER GROUP</p><h1>Admin workspace</h1><span>PUP Biñan · secure access</span></div>
         </div>
-
         <Card>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 admin-login-card">
             <div className="flex flex-col gap-1">
-              <h2 className="font-sans text-white text-lg font-bold">Sign In</h2>
-              <p className="text-sbg-text-muted text-sm">Enter your admin secret to continue.</p>
+              <div className="admin-login-kicker"><span /> SIGN IN</div>
+              <h2 className="font-sans text-white text-2xl font-bold">Welcome back.</h2>
+              <p className="text-sbg-text-muted text-sm">Use your admin credentials to manage the chapter portal.</p>
             </div>
-
-            <Input
-              label="Email"
-              type="email"
-              placeholder="admin@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Enter password..."
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={error ?? undefined}
-              autoComplete="current-password"
-            />
-
-            <Button
-              type="submit"
-              loading={isLoading}
-              icon={<Lock className="w-4 h-4" />}
-              className="w-full"
-            >
-              Sign In
-            </Button>
+            <Input label="Email" type="email" placeholder="admin@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+            <Input label="Password" type="password" placeholder="Enter password..." value={password} onChange={(e) => setPassword(e.target.value)} error={error ?? undefined} autoComplete="current-password" />
+            <Button type="submit" loading={isLoading} icon={<Lock className="w-4 h-4" />} className="w-full admin-login-submit">Sign In</Button>
           </form>
         </Card>
-
-        <p className="text-center text-sbg-text-muted text-xs mt-6 font-mono">
-          SBG Portal Admin Panel
-        </p>
+        <p className="admin-login-foot">SBG PORTAL ADMIN PANEL <span>·</span> ACCESS LOGGED</p>
       </div>
     </div>
   )
