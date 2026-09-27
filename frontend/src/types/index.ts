@@ -102,6 +102,7 @@ export interface AppSettings {
 export type AuditActionType =
   | 'approve'
   | 'reject'
+  | 'remove'
   | 'bulk_approve'
   | 'bulk_reject'
   | 'announcement_sent'

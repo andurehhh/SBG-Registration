@@ -7,9 +7,11 @@ import type { Member, MemberStatus } from '../../types'
 
 interface MembersTableProps {
   members: Member[]
+  /** Called after a member is changed (e.g. removed) so the list can refresh. */
+  onChanged?: () => void
 }
 
-export function MembersTable({ members }: MembersTableProps) {
+export function MembersTable({ members, onChanged }: MembersTableProps) {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
 
   if (members.length === 0) {
@@ -78,6 +80,7 @@ export function MembersTable({ members }: MembersTableProps) {
         <MemberDetailModal
           member={selectedMember}
           onClose={() => setSelectedMember(null)}
+          onRemoved={onChanged}
         />
       )}
     </>

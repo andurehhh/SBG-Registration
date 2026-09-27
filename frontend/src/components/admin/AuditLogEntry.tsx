@@ -5,6 +5,7 @@ import {
   Megaphone,
   ToggleRight,
   RotateCcw,
+  Trash2,
 } from 'lucide-react'
 import type { AuditLogEntry as AuditLogEntryType, AuditActionType } from '../../types'
 
@@ -27,6 +28,11 @@ const BADGE_CONFIG: Record<AuditActionType, BadgeConfig> = {
   reject: {
     label: 'Rejected',
     icon: <XCircle className="w-3.5 h-3.5" />,
+    classes: 'bg-red-900/50 text-red-400 border-red-700/50',
+  },
+  remove: {
+    label: 'Removed',
+    icon: <Trash2 className="w-3.5 h-3.5" />,
     classes: 'bg-red-900/50 text-red-400 border-red-700/50',
   },
   bulk_approve: {

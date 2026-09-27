@@ -1,15 +1,20 @@
 // frontend/src/components/admin/MemberDetailModal.tsx
-import { useEffect } from 'react'
-import { X, ExternalLink } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { X, ExternalLink, Trash2 } from 'lucide-react'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
 import { IdCard } from '../id-card/IdCard'
 import { assignSticker, formatDate } from '../../lib/utils'
+import { edgeFn, supabase } from '../../lib/api'
+import { insertAuditLog } from '../../lib/auditLog'
+import { useToastStore } from '../../store/toast'
 import type { Member, MemberStatus } from '../../types'
 
 interface MemberDetailModalProps {
   member: Member
   onClose: () => void
+  /** Called after the member is successfully removed, so the list can refresh. */
+  onRemoved?: () => void
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -41,8 +46,40 @@ function LinkField({ label, url }: { label: string; url: string | null }) {
   )
 }
 
-export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
+export function MemberDetailModal({ member, onClose, onRemoved }: MemberDetailModalProps) {
   const stickerId = member.sticker_id ?? assignSticker(member.id)
+  const addToast = useToastStore((s) => s.addToast)
+  const [confirmingRemove, setConfirmingRemove] = useState(false)
+  const [removing, setRemoving] = useState(false)
+  const alreadyRemoved = member.status === 'removed'
+
+  async function handleRemove() {
+    setRemoving(true)
+    try {
+      await edgeFn.post('remove-member', { id: member.id })
+
+      const { data: sessionData } = await supabase.auth.getSession()
+      const user = sessionData.session?.user
+      if (user) {
+        await insertAuditLog({
+          action_type: 'remove',
+          actor_email: user.email ?? '',
+          actor_id: user.id,
+          target_member_id: member.id,
+          target_member_name: member.full_name,
+          details: { student_number: member.student_number },
+        })
+      }
+
+      addToast(`${member.full_name} has been removed`, 'success')
+      onRemoved?.()
+      onClose()
+    } catch {
+      addToast('Failed to remove member', 'error')
+      setRemoving(false)
+      setConfirmingRemove(false)
+    }
+  }
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -190,6 +227,54 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             </section>
           </div>
         </div>
+
+        {/* Danger zone / footer */}
+        {!alreadyRemoved && (
+          <div className="flex items-center justify-between gap-4 p-6 border-t border-white/[0.06] flex-wrap">
+            {confirmingRemove ? (
+              <>
+                <p className="text-sm text-sbg-text-muted font-mono">
+                  Remove <span className="text-white">{member.full_name}</span>? This sets their status
+                  to <span className="text-red-400">removed</span>. You can restore them later.
+                </p>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setConfirmingRemove(false)}
+                    disabled={removing}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    icon={<Trash2 className="w-4 h-4" />}
+                    onClick={handleRemove}
+                    loading={removing}
+                  >
+                    Confirm removal
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-sbg-text-muted font-mono">
+                  Remove this member from the active roster.
+                </p>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  icon={<Trash2 className="w-4 h-4" />}
+                  onClick={() => setConfirmingRemove(true)}
+                  className="flex-shrink-0"
+                >
+                  Remove member
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

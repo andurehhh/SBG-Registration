@@ -15,6 +15,7 @@ const STATUS_OPTIONS = [
   { value: 'approved', label: 'Approved' },
   { value: 'inactive', label: 'Inactive (Previous Term)' },
   { value: 'rejected', label: 'Rejected' },
+  { value: 'removed', label: 'Removed' },
 ]
 
 const COURSE_OPTIONS = [
@@ -251,7 +252,7 @@ export function MembersTab() {
           </div>
         ) : (
           <>
-            <MembersTable members={members} />
+            <MembersTable members={members} onChanged={() => fetchMembers(page)} />
             <Pagination
               page={page}
               totalPages={totalPages}

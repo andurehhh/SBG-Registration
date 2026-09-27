@@ -15,7 +15,7 @@ The SBG Registration Portal is a comprehensive membership management system that
 - **Late COR submission** — applicants who registered without a COR can upload it later via `/submit-cor`
 - **Semester management** — per-semester term resets with school year + semester tracking
 - **Digital ID retrieval** for approved and inactive members (with QR code for event check-in)
-- **Admin dashboard** — bulk approve/reject, CSV export, audit log, announcements
+- **Admin dashboard** — bulk approve/reject, member removal, CSV export, audit log, announcements
 - **Automated email notifications** for registrations, approvals, and announcements
 - **Data visualization** with member statistics and analytics
 
@@ -158,6 +158,7 @@ supabase functions deploy register
 supabase functions deploy submit-cor
 supabase functions deploy approve
 supabase functions deploy reject
+supabase functions deploy remove-member
 supabase functions deploy send-announcement
 supabase functions deploy send-approval-email
 supabase functions deploy registration-confirmation
