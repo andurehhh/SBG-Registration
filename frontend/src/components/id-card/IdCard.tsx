@@ -38,6 +38,9 @@ export function IdCard({ member, stickerId }: IdCardProps) {
         cacheBust: true,
         pixelRatio: 3, // crisp, print-friendly export
         backgroundColor: '#161616',
+        // A missing optional image (e.g. /stickers/*.png) makes html-to-image
+        // reject the whole export. Swallow it so the card still downloads.
+        onImageErrorHandler: () => undefined,
       })
 
       const side = isFlipped ? 'back' : 'front'
