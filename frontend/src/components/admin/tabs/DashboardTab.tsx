@@ -1,8 +1,9 @@
 // frontend/src/components/admin/tabs/DashboardTab.tsx
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { RefreshCw, ToggleLeft, ToggleRight, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RefreshCw, ToggleLeft, ToggleRight, RotateCcw } from 'lucide-react'
 import { PendingApplicantList } from '../PendingApplicantList'
 import { BulkActionToolbar } from '../BulkActionToolbar'
+import { Pagination } from '../Pagination'
 import { ConfirmationModal } from '../../ui/ConfirmationModal'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
@@ -27,44 +28,6 @@ const SORT_OPTIONS = [
 
 const PAGE_SIZE = 15
 
-function Pagination({ page, totalPages, total, pageSize, onPage }: {
-  page: number; totalPages: number; total: number; pageSize: number; onPage: (p: number) => void
-}) {
-  if (totalPages <= 1) return null
-  const from = (page - 1) * pageSize + 1
-  const to = Math.min(page * pageSize, total)
-  return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06]">
-      <p className="text-xs text-sbg-text-muted font-mono">{from}–{to} of {total}</p>
-      <div className="flex items-center gap-1">
-        <button onClick={() => onPage(page - 1)} disabled={page === 1}
-          className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-          let p = i + 1
-          if (totalPages > 5) {
-            if (page <= 3) p = i + 1
-            else if (page >= totalPages - 2) p = totalPages - 4 + i
-            else p = page - 2 + i
-          }
-          return (
-            <button key={p} onClick={() => onPage(p)}
-              className={['w-7 h-7 rounded-[8px] text-xs font-mono transition-colors',
-                p === page ? 'bg-white text-white' : 'text-sbg-text-muted hover:text-white hover:bg-white/5'].join(' ')}>
-              {p}
-            </button>
-          )
-        })}
-        <button onClick={() => onPage(page + 1)} disabled={page === totalPages}
-          className="p-1.5 rounded-[8px] text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  )
-}
-
 export function DashboardTab() {
   const addToast = useToastStore((state) => state.addToast)
   const [members, setMembers] = useState<Member[]>([])
@@ -79,6 +42,7 @@ export function DashboardTab() {
   const [isResetting, setIsResetting] = useState(false)
   const [newSchoolYear, setNewSchoolYear] = useState('')
   const [newSemester, setNewSemester] = useState<'1st' | '2nd'>('1st')
+  const [showToggleConfirm, setShowToggleConfirm] = useState(false)
 
   // Bulk action state
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -161,6 +125,11 @@ export function DashboardTab() {
   }
 
   async function toggleRegistration() {
+    setShowToggleConfirm(true)
+  }
+
+  async function handleConfirmToggle() {
+    setShowToggleConfirm(false)
     const next = !registrationOpen
     setIsTogglingRegistration(true)
     try {
@@ -343,6 +312,53 @@ export function DashboardTab() {
           <span className="text-sm text-white font-mono">
             Processing {bulkAction.progress.completed} / {bulkAction.progress.total}...
           </span>
+        </div>
+      )}
+
+      {/* Registration toggle confirmation */}
+      {showToggleConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+          onClick={() => setShowToggleConfirm(false)}
+        >
+          <div
+            className="bg-sbg-surface border border-white/[0.06] rounded-[8px] p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                <ToggleLeft className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-white font-bold font-mono">
+                  {registrationOpen ? 'Close Registration' : 'Open Registration'}
+                </h3>
+                <p className="text-sbg-text-muted text-xs mt-0.5">
+                  {registrationOpen
+                    ? 'Students will no longer be able to submit applications.'
+                    : 'Students will be able to submit applications again.'}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                className="flex-1"
+                onClick={() => setShowToggleConfirm(false)}
+                disabled={isTogglingRegistration}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                className="flex-1"
+                loading={isTogglingRegistration}
+                onClick={handleConfirmToggle}
+              >
+                {registrationOpen ? 'Close' : 'Open'}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 

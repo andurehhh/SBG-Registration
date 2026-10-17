@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { --bg:#181d26; --panel:#202733; --ink:#f5f7f2; --muted:#a8b0b7; --line:rgba(229,239,234,.18); --green:#00e582; --blue:#42b4ff; --pink:#ff57e9; --orange:#ff9900; --font-display:'Space Grotesk',sans-serif; --font-pixel:'Press Start 2P',monospace; --font-mono:'DM Sans',sans-serif; --accent:var(--blue); --accent-bright:#70c6ff; --text:var(--ink); --text-secondary:var(--muted); }
+:root { --bg:#181d26; --panel:#202733; --ink:#f5f7f2; --muted:#a8b0b7; --line:rgba(229,239,234,.18); --green:#00e582; --blue:#42b4ff; --pink:#ff57e9; --orange:#ff9900; --danger:#f87171; --font-display:'Space Grotesk',sans-serif; --font-pixel:'Press Start 2P',monospace; --font-mono:'DM Sans',sans-serif; --accent:var(--green); --accent-bright:#5dffb5; --text:var(--ink); --text-secondary:var(--muted); }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
 body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-display); line-height:1.55; }

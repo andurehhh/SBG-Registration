@@ -105,6 +105,8 @@ export type AuditActionType =
   | 'remove'
   | 'bulk_approve'
   | 'bulk_reject'
+  | 'bulk_reinstate'
+  | 'reinstate'
   | 'announcement_sent'
   | 'registration_toggled'
   | 'term_reset';

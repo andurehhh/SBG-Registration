@@ -1,6 +1,6 @@
 // frontend/src/components/admin/PendingApplicantList.tsx
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { CheckCircle, XCircle, ChevronRight } from 'lucide-react'
+import { CheckCircle, XCircle, ChevronRight, Trash2 } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { ApplicantDetailModal } from './ApplicantDetailModal'
 import { edgeFn, supabase } from '../../lib/api'
@@ -17,6 +17,7 @@ interface PendingApplicantListProps {
 export function PendingApplicantList({ members, onRefresh, onSelectionChange }: PendingApplicantListProps) {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState<{ type: 'approve' | 'reject'; memberId: string } | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const headerCheckboxRef = useRef<HTMLInputElement>(null)
   const addToast = useToastStore((state) => state.addToast)
@@ -59,6 +60,12 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
 
   async function handleQuickApprove(e: React.MouseEvent, member: Member) {
     e.stopPropagation()
+    if (confirming?.memberId === member.id && confirming.type === 'approve') {
+      setConfirming(null)
+    } else {
+      setConfirming({ type: 'approve', memberId: member.id })
+      return
+    }
     setActionLoading(`approve-${member.id}`)
     try {
       await edgeFn.post(`approve`, { id: member.id })
@@ -85,6 +92,12 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
 
   async function handleQuickReject(e: React.MouseEvent, member: Member) {
     e.stopPropagation()
+    if (confirming?.memberId === member.id && confirming.type === 'reject') {
+      setConfirming(null)
+    } else {
+      setConfirming({ type: 'reject', memberId: member.id })
+      return
+    }
     setActionLoading(`reject-${member.id}`)
     try {
       await edgeFn.post(`reject`, { id: member.id })
@@ -181,23 +194,48 @@ export function PendingApplicantList({ members, onRefresh, onSelectionChange }: 
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      icon={<XCircle className="w-3.5 h-3.5" />}
-                      loading={actionLoading === `reject-${member.id}`}
-                      onClick={(e) => handleQuickReject(e, member)}
-                    >
-                      Reject
-                    </Button>
-                    <Button
-                      size="sm"
-                      icon={<CheckCircle className="w-3.5 h-3.5" />}
-                      loading={actionLoading === `approve-${member.id}`}
-                      onClick={(e) => handleQuickApprove(e, member)}
-                    >
-                      Approve
-                    </Button>
+                    {confirming?.memberId === member.id && confirming.type === 'reject' ? (
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        icon={<Trash2 className="w-3.5 h-3.5" />}
+                        loading={actionLoading === `reject-${member.id}`}
+                        onClick={(e) => handleQuickReject(e, member)}
+                      >
+                        Confirm reject
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        icon={<XCircle className="w-3.5 h-3.5" />}
+                        loading={actionLoading === `reject-${member.id}`}
+                        disabled={confirming?.memberId === member.id}
+                        onClick={(e) => handleQuickReject(e, member)}
+                      >
+                        Reject
+                      </Button>
+                    )}
+                    {confirming?.memberId === member.id && confirming.type === 'approve' ? (
+                      <Button
+                        size="sm"
+                        icon={<CheckCircle className="w-3.5 h-3.5" />}
+                        loading={actionLoading === `approve-${member.id}`}
+                        onClick={(e) => handleQuickApprove(e, member)}
+                      >
+                        Confirm approve
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        icon={<CheckCircle className="w-3.5 h-3.5" />}
+                        loading={actionLoading === `approve-${member.id}`}
+                        disabled={confirming?.memberId === member.id}
+                        onClick={(e) => handleQuickApprove(e, member)}
+                      >
+                        Approve
+                      </Button>
+                    )}
                   </div>
                 </td>
               </tr>

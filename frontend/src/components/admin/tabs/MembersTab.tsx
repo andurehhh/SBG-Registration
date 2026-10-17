@@ -1,11 +1,13 @@
 // frontend/src/components/admin/tabs/MembersTab.tsx
-import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, ChevronLeft, ChevronRight, Download } from 'lucide-react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { RefreshCw, Download, RotateCcw } from 'lucide-react'
 import { MembersTable } from '../MembersTable'
+import { Pagination } from '../Pagination'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase } from '../../../lib/api'
 import { generateCsv, triggerDownload } from '../../../lib/csvExporter'
+import { useBulkAction } from '../../../lib/useBulkAction'
 import { useToastStore } from '../../../store/toast'
 import type { Member, MemberStatus } from '../../../types'
 
@@ -32,62 +34,16 @@ const SORT_OPTIONS = [
   { value: 'year_level', label: 'By Year Level' },
 ]
 
-const PAGE_SIZE = 20
+const YEAR_LEVEL_OPTIONS = [
+  { value: '', label: 'All Year Levels' },
+  { value: '1', label: '1st Year' },
+  { value: '2', label: '2nd Year' },
+  { value: '3', label: '3rd Year' },
+  { value: '4', label: '4th Year' },
+  { value: '5', label: 'Ladderized' },
+]
 
-function Pagination({
-  page, totalPages, total, pageSize, onPage,
-}: {
-  page: number; totalPages: number; total: number; pageSize: number; onPage: (p: number) => void
-}) {
-  if (totalPages <= 1) return null
-  const from = (page - 1) * pageSize + 1
-  const to = Math.min(page * pageSize, total)
-  return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06]">
-      <p className="text-xs text-sbg-text-muted font-mono">
-        {from}–{to} of {total}
-      </p>
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => onPage(page - 1)}
-          disabled={page === 1}
-          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-          let p = i + 1
-          if (totalPages > 5) {
-            if (page <= 3) p = i + 1
-            else if (page >= totalPages - 2) p = totalPages - 4 + i
-            else p = page - 2 + i
-          }
-          return (
-            <button
-              key={p}
-              onClick={() => onPage(p)}
-              className={[
-                'w-7 h-7 text-xs font-mono transition-colors',
-                p === page
-                  ? 'bg-white text-sbg-black'
-                  : 'text-sbg-text-muted hover:text-white hover:bg-white/5',
-              ].join(' ')}
-            >
-              {p}
-            </button>
-          )
-        })}
-        <button
-          onClick={() => onPage(page + 1)}
-          disabled={page === totalPages}
-          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  )
-}
+const PAGE_SIZE = 20
 
 export function MembersTab() {
   const [members, setMembers] = useState<Member[]>([])
@@ -97,8 +53,38 @@ export function MembersTab() {
   const [isExporting, setIsExporting] = useState(false)
   const [filterStatus, setFilterStatus] = useState<MemberStatus | 'approved_inactive' | ''>('approved')
   const [filterCourse, setFilterCourse] = useState('')
+  const [filterYearLevel, setFilterYearLevel] = useState('')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [sort, setSort] = useState('created_at_desc')
+  const [search, setSearch] = useState('')
   const addToast = useToastStore((state) => state.addToast)
+
+  const memberNames = useMemo(() => {
+    const map = new Map<string, string>()
+    members.forEach((m) => map.set(m.id, m.full_name))
+    return map
+  }, [members])
+
+  useEffect(() => {
+    setSelectedIds(new Set())
+  }, [members])
+
+  const reinstatableIds = useMemo(() => {
+    return Array.from(selectedIds).filter((id) => {
+      const m = members.find((mem) => mem.id === id)
+      return m && m.status === 'inactive'
+    })
+  }, [selectedIds, members])
+
+  const bulkReinstate = useBulkAction({
+    action: 'reinstate',
+    memberIds: reinstatableIds,
+    memberNames,
+    onComplete: () => {
+      setSelectedIds(new Set())
+      void fetchMembers(page)
+    },
+  })
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -115,6 +101,12 @@ export function MembersTab() {
         query = query.eq('status', filterStatus)
       }
       if (filterCourse) query = query.eq('course', filterCourse)
+      if (filterYearLevel) query = query.eq('year_level', filterYearLevel)
+
+      if (search) {
+        const term = `%${search.trim()}%`
+        query = query.or(`full_name.ilike.${term},student_number.ilike.${term},sbg_id.ilike.${term}`)
+      }
 
       const orderMap: Record<string, { col: string; asc: boolean }> = {
         created_at_desc: { col: 'created_at', asc: false },
@@ -135,9 +127,20 @@ export function MembersTab() {
     } finally {
       setIsLoading(false)
     }
-  }, [filterStatus, filterCourse, sort])
+  }, [filterStatus, filterCourse, filterYearLevel, sort])
 
   useEffect(() => { void fetchMembers(1) }, [fetchMembers])
+
+  async function handleBulkReinstate() {
+    if (reinstatableIds.length === 0) return
+    const result = await bulkReinstate.execute()
+    if (result.succeeded > 0) {
+      addToast(`${result.succeeded} member${result.succeeded !== 1 ? 's' : ''} reinstated`, 'success')
+    }
+    if (result.failed > 0) {
+      addToast(`${result.failed} member${result.failed !== 1 ? 's' : ''} failed to reinstate`, 'error')
+    }
+  }
 
   const handleExportCsv = useCallback(async () => {
     setIsExporting(true)
@@ -153,6 +156,11 @@ export function MembersTab() {
       }
       if (filterCourse) query = query.eq('course', filterCourse)
 
+      if (search) {
+        const term = `%${search.trim()}%`
+        query = query.or(`full_name.ilike.${term},student_number.ilike.${term},sbg_id.ilike.${term}`)
+      }
+
       const orderMap: Record<string, { col: string; asc: boolean }> = {
         created_at_desc: { col: 'created_at', asc: false },
         created_at_asc: { col: 'created_at', asc: true },
@@ -162,16 +170,41 @@ export function MembersTab() {
       const order = orderMap[sort] ?? { col: 'created_at', asc: false }
       query = query.order(order.col, { ascending: order.asc })
 
-      // Bypass pagination — fetch all matching members
-      query = query.range(0, 9999)
-
-      const { data, error } = await query
-
-      if (error) {
-        addToast('Failed to export members', 'error')
-        return
+      // Fetch all matching members in pages (no silent truncation at 9999).
+      const buildMembersQuery = (from: number, to: number) => {
+        let q = supabase.from('Member').select('*')
+        if (filterStatus === 'approved_inactive') {
+          q = q.in('status', ['approved', 'inactive'])
+        } else if (filterStatus) {
+          q = q.eq('status', filterStatus)
+        }
+        if (filterCourse) {
+          q = q.eq('course', filterCourse)
+        }
+        if (filterYearLevel) {
+          q = q.eq('year_level', filterYearLevel)
+        }
+        if (search) {
+          const term = `%${search.trim()}%`
+          q = q.or(`full_name.ilike.${term},student_number.ilike.${term},sbg_id.ilike.${term}`)
+        }
+        const ordered = orderMap[sort] ?? { col: 'created_at', asc: false }
+        return q.order(ordered.col, { ascending: ordered.asc }).range(from, to)
       }
 
+      const allMembers: any[] = []
+      let offset = 0
+      const fetchPage = 50
+      for (;;) {
+        const { data, error } = await buildMembersQuery(offset, offset + fetchPage - 1)
+        if (error) throw error
+        if (!data || data.length === 0) break
+        allMembers.push(...data)
+        if (data.length < fetchPage) break
+        offset += fetchPage
+      }
+
+      const data = allMembers
       if (!data || data.length === 0) {
         addToast('No members to export', 'info')
         return
@@ -185,7 +218,7 @@ export function MembersTab() {
     } finally {
       setIsExporting(false)
     }
-  }, [filterStatus, filterCourse, sort, addToast])
+  }, [filterStatus, filterCourse, filterYearLevel, sort, addToast])
 
   return (
     <div className="p-6 flex flex-col gap-6">
@@ -219,6 +252,24 @@ export function MembersTab() {
         </div>
       </div>
 
+      {/* Bulk reinstate toolbar */}
+      {reinstatableIds.length > 0 && (
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-4 py-3 bg-sbg-surface border border-white/[0.06] mb-4">
+          <span className="text-sm text-white font-mono">
+            {reinstatableIds.length} inactive member{reinstatableIds.length !== 1 ? 's' : ''} selected
+          </span>
+          <Button
+            size="sm"
+            variant="primary"
+            icon={<RotateCcw className="w-4 h-4" />}
+            disabled={bulkReinstate.isRunning}
+            onClick={handleBulkReinstate}
+          >
+            Reinstate Selected
+          </Button>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <div className="w-52">
@@ -233,6 +284,22 @@ export function MembersTab() {
             options={COURSE_OPTIONS}
             value={filterCourse}
             onChange={(e) => { setFilterCourse(e.target.value); setPage(1) }}
+          />
+        </div>
+        <div className="w-48">
+          <Select
+            options={YEAR_LEVEL_OPTIONS}
+            value={filterYearLevel}
+            onChange={(e) => { setFilterYearLevel(e.target.value); setPage(1) }}
+          />
+        </div>
+        <div className="flex-1 min-w-[200px]">
+          <input
+            type="text"
+            placeholder="Search name, student number, or SBG ID..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+            className="w-full px-3 py-2 text-sm text-white bg-white/[0.03] border border-white/[0.06] focus:outline-none focus:ring-2 focus:ring-sbg-accent/40 focus:border-sbg-accent/40 transition-colors placeholder:text-sbg-text-muted"
           />
         </div>
         <div className="w-44">
@@ -252,7 +319,7 @@ export function MembersTab() {
           </div>
         ) : (
           <>
-            <MembersTable members={members} onChanged={() => fetchMembers(page)} />
+            <MembersTable members={members} selectedIds={selectedIds} onSelectionChange={(ids) => setSelectedIds(new Set(ids))} onChanged={() => fetchMembers(page)} />
             <Pagination
               page={page}
               totalPages={totalPages}

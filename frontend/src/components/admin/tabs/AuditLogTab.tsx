@@ -1,7 +1,8 @@
 // frontend/src/components/admin/tabs/AuditLogTab.tsx
 import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import { AuditLogEntry } from '../AuditLogEntry'
+import { Pagination } from '../Pagination'
 import { Select } from '../../ui/Select'
 import { Button } from '../../ui/Button'
 import { supabase } from '../../../lib/api'
@@ -21,67 +22,17 @@ const ACTION_TYPE_OPTIONS = [
 
 const PAGE_SIZE = 25
 
-function Pagination({
-  page,
-  totalPages,
-  total,
-  pageSize,
-  onPage,
-}: {
-  page: number
-  totalPages: number
-  total: number
-  pageSize: number
-  onPage: (p: number) => void
-}) {
-  if (totalPages <= 1) return null
-  const from = (page - 1) * pageSize + 1
-  const to = Math.min(page * pageSize, total)
-  return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06]">
-      <p className="text-xs text-sbg-text-muted font-mono">
-        {from}–{to} of {total}
-      </p>
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => onPage(page - 1)}
-          disabled={page === 1}
-          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-          let p = i + 1
-          if (totalPages > 5) {
-            if (page <= 3) p = i + 1
-            else if (page >= totalPages - 2) p = totalPages - 4 + i
-            else p = page - 2 + i
-          }
-          return (
-            <button
-              key={p}
-              onClick={() => onPage(p)}
-              className={[
-                'w-7 h-7 text-xs font-mono transition-colors',
-                p === page
-                  ? 'bg-white text-sbg-black'
-                  : 'text-sbg-text-muted hover:text-white hover:bg-white/5',
-              ].join(' ')}
-            >
-              {p}
-            </button>
-          )
-        })}
-        <button
-          onClick={() => onPage(page + 1)}
-          disabled={page === totalPages}
-          className="p-1.5 text-sbg-text-muted hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  )
+// The chapter is in PUP Biñan (PHT, UTC+8). Date-picker values are local PHT dates,
+// so convert them to UTC bounds before querying the TIMESTAMPTZ created_at column.
+// Without this, same-day PHT entries fall outside a UTC-midnight range.
+function phtStartISO(dateStr: string) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d, 0, 0, 0) - 8 * 60 * 60 * 1000).toISOString()
+}
+
+function phtEndISO(dateStr: string) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d, 23, 59, 59, 999) - 8 * 60 * 60 * 1000).toISOString()
 }
 
 export function AuditLogTab() {
@@ -109,11 +60,11 @@ export function AuditLogTab() {
       }
 
       if (startDate) {
-        query = query.gte('created_at', `${startDate}T00:00:00.000Z`)
+        query = query.gte('created_at', phtStartISO(startDate))
       }
 
       if (endDate) {
-        query = query.lte('created_at', `${endDate}T23:59:59.999Z`)
+        query = query.lte('created_at', phtEndISO(endDate))
       }
 
       const from = (p - 1) * PAGE_SIZE

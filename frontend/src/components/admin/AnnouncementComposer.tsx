@@ -419,6 +419,11 @@ export function AnnouncementComposer() {
   const [sendResult, setSendResult] = useState<SendResult | null>(null)
   const [sendError, setSendError] = useState<string | null>(null)
 
+  // Recipient count preview (estimated before sending)
+  const [recipientCount, setRecipientCount] = useState<number | null>(null)
+  const [countLoading, setCountLoading] = useState(false)
+  const [countError, setCountError] = useState<string | null>(null)
+
   // Message presets state
   const [messagePresets, setMessagePresets] = useState<MessagePreset[]>(loadMessagePresets)
   const [showMessagePresets, setShowMessagePresets] = useState(false)
@@ -522,6 +527,75 @@ export function AnnouncementComposer() {
     setSendResult(null)
     setSendError(null)
   }
+
+  // Build the same recipient filters the send-announcement Edge Function uses,
+  // so the preview count matches what will actually be sent.
+  function buildCountQuery() {
+    let query = supabase.from('Member').select('*', { count: 'exact', head: true })
+
+    if (recipientType === 'individual') {
+      if (selectedMembers.length === 0) return null
+      return query.in('id', selectedMembers.map((m) => m.id))
+    }
+
+    // Base recipient-type filters
+    if (recipientType === 'all' || recipientType === 'group') {
+      query = query.eq('status', 'approved')
+    } else if (recipientType === 'devteam') {
+      query = query.eq('course', 'DevTeam')
+    } else if (recipientType === 'pending') {
+      query = query.eq('status', 'pending')
+    }
+    // 'non-renewed' is resolved server-side; fall back to inactive members here.
+    else if (recipientType === 'non-renewed') {
+      query = query.eq('status', 'inactive')
+    }
+
+    // Optional refinements (only apply when meaningful for the recipient type)
+    if (filterCourse && recipientType !== 'devteam') {
+      query = query.eq('course', filterCourse)
+    }
+    if (filterYearLevel) {
+      query = query.eq('year_level', filterYearLevel)
+    }
+    if (filterStatus && recipientType !== 'all' && recipientType !== 'group' && recipientType !== 'pending') {
+      query = query.eq('status', filterStatus)
+    }
+
+    return query
+  }
+
+  async function fetchRecipientCount() {
+    const query = buildCountQuery()
+    if (!query) {
+      setRecipientCount(0)
+      setCountError(null)
+      return
+    }
+
+    setCountLoading(true)
+    setCountError(null)
+    try {
+      const { count, error } = await query
+      if (error) throw error
+      setRecipientCount(count ?? 0)
+    } catch (err) {
+      setCountError('Failed to count recipients')
+      setRecipientCount(null)
+      console.error('Recipient count error:', err)
+    } finally {
+      setCountLoading(false)
+    }
+  }
+
+  // Re-count whenever recipient scope or filters change
+  useEffect(() => {
+    let cancelled = false
+    if (!cancelled) {
+      void fetchRecipientCount()
+    }
+    return () => { cancelled = true }
+  }, [recipientType, filterCourse, filterYearLevel, filterStatus, selectedMembers.length])
 
   async function handleSend() {
     if (!canSend) return
@@ -642,6 +716,26 @@ export function AnnouncementComposer() {
               )}
             </div>
             <RecipientSwitcher value={recipientType} onChange={handleRecipientTypeChange} />
+          </div>
+
+          {/* Recipient count preview */}
+          <div className="px-5 py-2 border-b border-white/[0.06] flex items-center gap-3 shrink-0">
+            <span className="text-sm text-sbg-text-muted shrink-0 font-mono">Recipients:</span>
+            {countLoading ? (
+              <span className="text-xs text-sbg-text-muted font-mono animate-pulse">Counting...</span>
+            ) : countError ? (
+              <span className="text-xs text-red-400 font-mono">Count unavailable</span>
+            ) : (
+              <span
+                className="text-sm font-mono font-semibold"
+                style={{ color: recipientCount === 0 ? 'var(--danger)' : 'var(--ink)' }}
+              >
+                {recipientCount === null ? '—' : recipientCount} recipient{recipientCount !== 1 ? 's' : ''}
+              </span>
+            )}
+            {recipientCount === 0 && (
+              <span className="text-xs text-sbg-text-muted font-mono">(no one will receive this email)</span>
+            )}
           </div>
 
           <div className="px-5 py-2.5 border-b border-white/[0.06] shrink-0 flex items-center gap-2">

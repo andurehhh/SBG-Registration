@@ -81,6 +81,33 @@ export function MemberDetailModal({ member, onClose, onRemoved }: MemberDetailMo
     }
   }
 
+  async function handleReinstate() {
+    setRemoving(true)
+    try {
+      await edgeFn.post('approve', { id: member.id, action: 'reinstate' })
+
+      const { data: sessionData } = await supabase.auth.getSession()
+      const user = sessionData.session?.user
+      if (user) {
+        await insertAuditLog({
+          action_type: 'reinstate',
+          actor_email: user.email ?? '',
+          actor_id: user.id,
+          target_member_id: member.id,
+          target_member_name: member.full_name,
+          details: { student_number: member.student_number },
+        })
+      }
+
+      addToast(`${member.full_name} has been reinstated`, 'success')
+      onRemoved?.()
+      onClose()
+    } catch {
+      addToast('Failed to reinstate member', 'error')
+      setRemoving(false)
+    }
+  }
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
@@ -231,7 +258,32 @@ export function MemberDetailModal({ member, onClose, onRemoved }: MemberDetailMo
         {/* Danger zone / footer */}
         {!alreadyRemoved && (
           <div className="flex items-center justify-between gap-4 p-6 border-t border-white/[0.06] flex-wrap">
-            {confirmingRemove ? (
+            {member.status === 'inactive' ? (
+              <>
+                <p className="text-sm text-sbg-text-muted font-mono">
+                  Reinstate <span className="text-white">{member.full_name}</span>? This sets their status back to{' '}
+                  <span className="text-green-400">approved</span>.
+                </p>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setConfirmingRemove(false)}
+                    disabled={removing}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    loading={removing}
+                    onClick={handleReinstate}
+                  >
+                    Reinstate member
+                  </Button>
+                </div>
+              </>
+            ) : confirmingRemove ? (
               <>
                 <p className="text-sm text-sbg-text-muted font-mono">
                   Remove <span className="text-white">{member.full_name}</span>? This sets their status

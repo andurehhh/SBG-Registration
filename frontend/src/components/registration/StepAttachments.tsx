@@ -169,6 +169,7 @@ export function StepAttachments({ onBack }: StepAttachmentsProps) {
         </Button>
         <Button
           type="submit"
+          disabled={!store.proof_of_share_file || (corRequired && !store.cor_file)}
           loading={store.submissionStatus === 'submitting'}
           className="flex-1"
         >

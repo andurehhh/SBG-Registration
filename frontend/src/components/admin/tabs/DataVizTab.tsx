@@ -1,5 +1,5 @@
 // frontend/src/components/admin/tabs/DataVizTab.tsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Users, UserCheck, Clock, UserX, RefreshCw } from 'lucide-react'
 import { BarChartCard, PieChartCard } from '../Charts'
 import { Button } from '../../ui/Button'
@@ -69,7 +69,7 @@ export function DataVizTab() {
       })
   }, [])
 
-  useEffect(() => {
+  const fetchStats = useCallback(() => {
     setIsLoading(true)
     setError(null)
 
@@ -117,6 +117,10 @@ export function DataVizTab() {
       .finally(() => setIsLoading(false))
   }, [selectedYear])
 
+  useEffect(() => {
+    void fetchStats()
+  }, [fetchStats])
+
   const acceptedVsRejectedData = stats
     ? [
         { name: 'Approved', value: stats.approved },
@@ -162,7 +166,7 @@ export function DataVizTab() {
             variant="ghost"
             size="sm"
             icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
-            onClick={() => setSelectedYear((y) => y)}
+            onClick={fetchStats}
             disabled={isLoading}
           >
             Refresh

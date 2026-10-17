@@ -75,6 +75,8 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
     },
   })
 
+  const studentNumberValue = watch('student_number', '')
+
   useEffect(() => {
     const subscription = watch((values) => {
       const fields = ['full_name', 'student_number', 'course', 'year_level', 'section', 'email', 'scholar_email', 'gender', 'skills'] as const
@@ -128,12 +130,16 @@ export function StepPersonalInfo({ onNext }: StepPersonalInfoProps) {
         <Input
           label="Student Number"
           placeholder="2026-12345-BN-0"
+          hint="Format: 20XX-XXXXX-BN-X"
           autoComplete="off"
           inputMode="text"
           required
           error={errors.student_number?.message}
           {...register('student_number')}
         />
+        <p className="text-[11px] text-right font-mono" style={{ color: 'var(--text-secondary)' }}>
+          {studentNumberValue.length} of 15 characters
+        </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Select

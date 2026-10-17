@@ -45,6 +45,16 @@ const BADGE_CONFIG: Record<AuditActionType, BadgeConfig> = {
     icon: <XCircle className="w-3.5 h-3.5" />,
     classes: 'bg-red-900/50 text-red-400 border-red-700/50',
   },
+  bulk_reinstate: {
+    label: 'Bulk Reinstated',
+    icon: <RotateCcw className="w-3.5 h-3.5" />,
+    classes: 'bg-green-900/50 text-green-400 border-green-700/50',
+  },
+  reinstate: {
+    label: 'Reinstated',
+    icon: <RotateCcw className="w-3.5 h-3.5" />,
+    classes: 'bg-green-900/50 text-green-400 border-green-700/50',
+  },
   announcement_sent: {
     label: 'Announcement',
     icon: <Megaphone className="w-3.5 h-3.5" />,

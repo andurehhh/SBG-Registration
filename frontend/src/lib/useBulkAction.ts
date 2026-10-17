@@ -5,7 +5,7 @@ import { supabase } from './supabase'
 import type { BulkOperationResult } from '../types'
 
 interface UseBulkActionOptions {
-  action: 'approve' | 'reject'
+  action: 'approve' | 'reject' | 'reinstate'
   memberIds: string[]
   memberNames: Map<string, string>
   onComplete: () => void
@@ -34,7 +34,9 @@ export function useBulkAction({
     const results = await Promise.allSettled(
       memberIds.map(async (id) => {
         try {
-          await edgeFn.post(action, { id })
+          const fnName = action === 'reinstate' ? 'approve' : action
+          const body = action === 'reinstate' ? { id, action: 'reinstate' } : { id }
+          await edgeFn.post(fnName, body)
           setProgress((prev) => ({ ...prev, completed: prev.completed + 1 }))
           return { memberId: id, success: true as const }
         } catch (err) {
@@ -86,7 +88,12 @@ export function useBulkAction({
       const actorId = user?.id ?? '00000000-0000-0000-0000-000000000000'
 
       await insertAuditLog({
-        action_type: action === 'approve' ? 'bulk_approve' : 'bulk_reject',
+        action_type:
+          action === 'approve'
+            ? 'bulk_approve'
+            : action === 'reject'
+            ? 'bulk_reject'
+            : 'bulk_reinstate',
         actor_email: actorEmail,
         actor_id: actorId,
         target_member_id: null,
